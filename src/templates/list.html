@@ -1,0 +1,40 @@
+<head>
+	<style>
+a{TEXT-DECORATION:none}
+table{border-spacing:1px}
+td{padding:2px}
+    </style>
+</head>
+
+<body bgcolor="#FFCC99">
+<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
+
+<div>
+<span style="float:left"><b>{{listname}}</b>，共有{{count}}条数据。</span>
+<span style="float:right">{{htmlpage|safe}}</span>
+</div>
+<br>
+<table bgcolor="#ccffcc" width="100%">
+	<tr bgcolor="lightgray">
+		<td align="center">来自</td>
+		<td align="center">标题</td>
+		<td align="center">获取时间</td>
+	</tr>
+{% for entry in entries %}
+	<tr{{ loop.cycle(' bgColor=Lavender', '') }}>	
+		<td  width="18%">{{entry.author}}</td>	
+		<td>{% if entry.summary %}<img src='/static/s.gif' />{% endif %}
+			<a href="{{entry.url}}" target="_blank"{% if entry.summary %} onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()"{% endif %}>
+				{{entry.title}}
+			</a>
+		</td>
+		<td style="white-space:nowrap"{% if entry.pub_date %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% endif %} {% if entry.temp == 1 %}bgcolor=#FF99CC{% elif entry.temp == 2 %}bgcolor=#FFCC99{% endif %}>
+			{% if entry.pub_date %}<img src='/static/n2.gif' />{% else %}&nbsp;&nbsp;{% endif %}{{entry.fetch_date}}
+		</td>
+	</tr>{% endfor %}
+</table>
+<div>
+<span style="float:left">页面生成时间{{nowtime}}，生成页面数据历时{{time}}秒</span>
+<span style="float:right">{{htmlpage|safe}}</span>
+</div>
+</body>

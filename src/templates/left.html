@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<style>
+			a{text-decoration:none; color:#FFFFEF}
+			a:hover{color: #FFFF00}
+		</style>
+	</head>
+	
+	<body bgcolor="#336633">
+		<a href='/list0' target='show'>所有级别</a><br>
+		<a href='/list1' target='show'>关注级别</a><br>
+		<a href='/list2' target='show'>重要级别</a><br><hr>
+{% for category in categories %}		<a href='/list/{{category|urlencode}}' target='show'>{{category}}</a><br>
+{% endfor %}
+		<hr>
+		<form action="/left" method="post">
+			<font color=#FFFFFF>{{usertype}}</font>
+			<font color=#99FFFF>{{username}}</font><br>
+			<button name="name" value="logout">退出登录</button><br>
+			<hr>
+			<a href='/cateinfo' target='show'>版块信息</a><br>
+			<a href='/panel' target='show'>控制面板</a>
+{% if allowfetch %}
+			<br><br>
+			<button name="name" value="fetch_mine">更新我的源</button>{% endif %}
+		</form>
+		<a href='/m' target='_top'>手机版</a>
+	</body>
+</html>

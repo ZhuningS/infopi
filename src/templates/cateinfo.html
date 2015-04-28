@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <style>a{TEXT-DECORATION:none}</style>
+        <style>.keepline{word-break: keep-all;}</style>
+    </head>
+	<body bgcolor="#ccccff">
+	<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
+		<table border="1" width="100%">
+			<tr>
+				<td align="center">版块/信息源</td>
+				<td align="center">备注</td>
+                <td align="center"  style="white-space:nowrap">级别</td>
+				<td align="center"  style="white-space:nowrap">刷新间隔</td>
+				<td align="center"  style="white-space:nowrap">查看列表</td>
+			</tr>
+{% for cate, lst in show_list %}
+			<tr bgcolor="#cc99cc"><td>{{cate}}</td><td></td><td></td><td></td><td></td></tr>
+{% for one in lst %}
+			<tr>
+				<td>
+					{% if one.link %}<a href='{{one.link}}' target='_blank'>{{one.name}}</a>{% else %}{{one.name}}{% endif %}
+				</td>
+				<td>
+					{{one.comment}}
+				</td>
+				<td>
+					{{one.level_str}}
+				</td>
+				<td class='keepline'>
+					{{one.interval_str}}
+				</td>
+				<td>
+					<a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a>
+				</td>
+			</tr>{% endfor %}{% endfor %}
+		</table>
+	 共有{{cate_num}}个版块。信息源出现{{allnum}}次，其中有{{setnum}}个不重复的信息源。<br><br>
+	</body>
+</html>
+ 

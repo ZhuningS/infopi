@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <style>a{TEXT-DECORATION:none}</style>
+    </head>
+	<body bgcolor="#ccccff">
+	<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
+		<table border="1" width="100%">
+{% for one in info_list %}
+			<tr>
+				<td>
+					{{one[0]}}
+				</td>
+				<td>
+					{{one[1]}}
+				</td>
+			</tr>{% endfor %}
+		</table>
+{% if proc_list %}		
+		<table border="1" width="100%">
+			<tr>
+				<td>进程</td>
+				<td>进程ID</td>
+				<td>用户ID</td>
+				<td>状态</td>
+				<td>CPU使用率</td>
+				<td>CPU时间</td>
+				<td>内存占用率</td>
+				<td>物理内存</td>
+				<td>虚拟内存</td>
+			</tr>
+			<tr>
+{% for i in proc_list[0] %}
+				<td>{{i}}</td>{% endfor %}
+			</tr>
+			<tr>
+{% for i in proc_list[1] %}
+				<td>{{i}}</td>{% endfor %}
+			</tr>
+		</table>{% endif %}
+{% if type == 2 %}
+<form action="/panel" method="post" enctype="multipart/form-data">
+<table border='1' cellpadding="5">
+    <tr>
+        <td align="center" bgcolor="#ff9999"><button name="name" value="fetch_all">更新所有信息源</button>
+        </td>
+        <td align="center" bgcolor="#ff9999"><button name="name" value="del_except">删除所有异常信息</button>
+        </td>
+        <td align="center" bgcolor="#cc9900"><button name="name" value="download_err">下载web进程异常记录文件</button>
+        </td>
+        <th rowspan="4" align="left">上传、加载新配置的方法：<br>1、把整个cfg目录压缩到一个zip文件<br>2、点“浏览”选择该zip文件<br>3、点“上传并加载此配置”</th>
+    </tr>
+    <tr>
+        <td align="center" bgcolor="#ffcc33"><button name="name" value="compact_db">紧凑当前数据库文件</button>
+        </td>
+        <td align="center" bgcolor="#ffcc33"><button name="name" value="backup_db">备份当前数据库文件到磁盘</button>
+        </td>
+        <td align="center" bgcolor="#ffcc33"><button name="name" value="download_db">下载当前数据库文件</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center" bgcolor="#339966"><button name="name" value="download_cfg">下载当前服务器配置</button>
+        </td>
+        <td align="center" bgcolor="#339966"><button name="name" value="reload_data">重新加载服务器上的配置</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center" bgcolor="#cc6699"><input type="file" name="file" accept="application/zip">
+        </td>
+        <td align="center" bgcolor="#cc6699"><input type="submit" value="上传并加载此配置">
+        </td>
+    </tr>
+</table>
+</form>{% endif %}
+{% if type == 2 %}
+所有用户的异常信息：<br>
+{% else %}
+<br>当前用户的异常信息：<br>{% endif %}
+		<table border="1" width="100%">
+			<tr bgcolor="lightgray">
+				<td align="center">author</td>
+				<td align="center">title</td>
+				<td align="center">fetch_date</td>
+			</tr>
+{% for entry in entries %}
+	<tr>	
+		<td  width="18%">{{entry.author}}</td>	
+		<td>{% if entry.summary %}<img src='/static/s.gif' />{% endif %}
+			<a href="{{entry.url}}" target="_blank"{% if entry.summary %} onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()"{% endif %}>
+				{{entry.title}}
+			</a>
+		</td>
+		<td style="white-space:nowrap">
+			{{entry.fetch_date}}
+		</td>
+	</tr>{% endfor %}
+</table>
+在问题消失或被解决后，程序会自动删除以上异常信息。
+	</body>
+</html>
+ 

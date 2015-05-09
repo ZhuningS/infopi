@@ -120,7 +120,7 @@ class c_for_show:
 class c_for_listall:
     __slots__ = ('source_id', 'interval_str', 'userlist',
                  'name', 'comment', 'link',
-                 'encoded_url', 'color')
+                 'color')
     
     def __init__(self):
         self.source_id = ''
@@ -131,7 +131,6 @@ class c_for_listall:
         self.comment = ''
         self.link = ''
         
-        self.encoded_url = ''
         self.color = 0
         
     def __lt__(self, other):
@@ -368,10 +367,7 @@ class c_db_wrapper:
         for item in self.listall:
             # sort userlist
             item.userlist.sort()
-            
-            # encoded url
-            item.encoded_url = encode_url(item.source_id)
-        
+                
             # color
             category, temp = item.source_id.split(':')
             if category != last_category:

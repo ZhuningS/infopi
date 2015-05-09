@@ -11,7 +11,6 @@
     <td align="center">source_id</td>
     <td align="center">name/link</td>
     <td align="center">刷新间隔</td>
-    <td align="center">查看列表</td>
     <td align="center" class='keepline'>用户列表</td>
 </tr>
 {% for item in items %}
@@ -24,9 +23,6 @@
     </td>
     <td>
     {{item.interval_str}}
-    </td>
-    <td>
-    <a href='/slist/{{item.encoded_url}}' target='_blank'>点击查看</a>
     </td>
     <td class='keepline'>
     {% for name in item.userlist %}{{name}}&nbsp;{% endfor %}

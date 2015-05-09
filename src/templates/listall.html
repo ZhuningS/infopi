@@ -1,8 +1,7 @@
 <head>
 	<title>InfoPi</title>
-	<style>
-a{TEXT-DECORATION:none}
-    </style>
+	<style>a{TEXT-DECORATION:none}</style>
+	<style>.keepline{word-break: keep-all;}</style>
 </head>
 
 <body bgcolor="#ccccff">
@@ -12,7 +11,8 @@ a{TEXT-DECORATION:none}
     <td align="center">source_id</td>
     <td align="center">name/link</td>
     <td align="center">刷新间隔</td>
-    <td align="center">用户列表</td>
+    <td align="center">查看列表</td>
+    <td align="center" class='keepline'>用户列表</td>
 </tr>
 {% for item in items %}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
@@ -26,10 +26,13 @@ a{TEXT-DECORATION:none}
     {{item.interval_str}}
     </td>
     <td>
+    <a href='/slist/{{item.encoded_url}}' target='_blank'>点击查看</a>
+    </td>
+    <td class='keepline'>
     {% for name in item.userlist %}{{name}}&nbsp;{% endfor %}
     </td>
 </tr>
-    <tr><td colspan="4">
+    <tr><td colspan="5">
 {{item.comment}}
     </td></tr>
 {% endfor %}

@@ -105,6 +105,9 @@ class c_source_table:
         self.index_list = list()
 
 class c_for_show:
+    __slots__ = ('name', 'comment', 'link',
+                 'level_str', 'interval_str', 'encoded_url')
+    
     def __init__(self):
         self.name = ''
         self.comment = ''
@@ -113,12 +116,52 @@ class c_for_show:
         self.level_str = ''
         self.interval_str = ''
         self.encoded_url = ''
+        
+class c_for_listall:
+    __slots__ = ('source_id', 'interval_str', 'userlist',
+                 'name', 'comment', 'link',
+                 'color')
+    
+    def __init__(self):
+        self.source_id = ''
+        self.interval_str = ''
+        self.userlist = list()
+        
+        self.name = ''
+        self.comment = ''
+        self.link = ''
+        
+        self.color = 0
+        
+    def __lt__(self, other):
+        if self.source_id < other.source_id:
+            return True
+        else:
+            return False
+        
+def get_interval_str(interval):
+    interval_str = ''
+    
+    if interval >= 24*3600:
+        interval_str += '%d天' % (interval//(24*3600))
+        interval = interval % (24*3600)
+
+    if interval >= 3600:
+        interval_str += '%d小时' % (interval//3600)
+        interval = interval % 3600
+
+    if interval >= 60:
+        interval_str += '%d分钟' % (interval//60)
+        interval = interval % 60
+    
+    return interval_str
+
 
 class c_db_wrapper:
     __slots__ = ('sqldb', 
                  'users', 'sources', 'hash_user', 
                  'ghost_sources', 'exceptions_index', 
-                 'cfg')
+                 'cfg', 'listall')
 
     def __init__(self, tmpfs_path):
         self.sqldb = c_sqldb(tmpfs_path)
@@ -138,6 +181,7 @@ class c_db_wrapper:
         self.exceptions_index = list()
 
         self.cfg = None
+        self.listall = None
 
     def add_infos(self, lst):
         # add one by one
@@ -267,22 +311,7 @@ class c_db_wrapper:
                     one.level_str = '重要'
 
                 # interval str
-                interval = source.interval
-                interval_str = ''
-                
-                if interval >= 24*3600:
-                    interval_str += '%d天' % (interval//(24*3600))
-                    interval = interval % (24*3600)
-
-                if interval >= 3600:
-                    interval_str += '%d小时' % (interval//3600)
-                    interval = interval % 3600
-
-                if interval >= 60:
-                    interval_str += '%d分钟' % (interval//60)
-                    interval = interval % 60
-
-                one.interval_str = interval_str
+                one.interval_str = get_interval_str(source.interval)
 
                 temp_lst.append(one)
 
@@ -309,8 +338,43 @@ class c_db_wrapper:
             self.add_one_user(cfg, user)
 
         # load data to build indexs
-        self.sqldb.get_all_for_make_index()          
+        self.sqldb.get_all_for_make_index()
 
+        # build listall infomation ---------------
+        tempd = dict()
+        for source in self.sources.values():
+            item = c_for_listall()
+            item.source_id = source.source_id
+            item.interval_str = get_interval_str(source.interval)
+            
+            item.name = source.name
+            item.comment = source.comment
+            item.link = source.link
+            
+            tempd[item.source_id] = item
+            
+        for user, ut in self.users.items():
+            for sid in ut.sid_list:
+                tempd[sid].userlist.append(user)
+                
+        # sort by source_id
+        self.listall = [item for item in tempd.values()]
+        self.listall.sort()
+        
+        # sort userlist
+        for item in self.listall:
+            item.userlist.sort()
+        
+        # color
+        last_category = ''
+        now_color = 2
+        for item in self.listall:
+            category, temp = item.source_id.split(':')
+            
+            if category != last_category:
+                now_color = 2 if now_color == 1 else 1
+                last_category = category
+            item.color = now_color
 
     # --------------- callbacks -------------------
 
@@ -460,6 +524,10 @@ class c_db_wrapper:
     # for show
     def get_forshow_by_user(self, username):
         return self.users[username].show_list
+    
+    # listall
+    def get_listall(self):
+        return self.listall
 
     # for cateinfo. all/unduplicated sources number
     def get_sourcenum_by_user(self, username):

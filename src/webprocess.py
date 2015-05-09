@@ -760,6 +760,20 @@ def panel():
                            entries = exceptions)
 
 
+@web.route('/listall')
+def listall():
+    username = check_cookie()
+    if not username:
+        return r'<script>top.location.href="/";</script>'
+
+    usertype = db.get_usertype(username)
+    if usertype != 2:
+        return '请使用管理员帐号查看此页面'
+    
+    listall = db.get_listall()
+    return render_template('listall.html',
+                           items=listall, source_num=len(listall))
+
 @web.errorhandler(404)
 def page_not_found(e):
     s = ('无效网址<br>'

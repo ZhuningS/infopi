@@ -97,7 +97,9 @@ class c_sqldb:
 
     # backup db file
     def backup_db(self, max_files=10):
-        if not self.has_changed:
+        db_lst = self.get_dbfile_list(self.dbfile_dir)
+        
+        if not self.has_changed and db_lst:
             return
         
         print('try to backup database file')
@@ -118,7 +120,6 @@ class c_sqldb:
             self.current_file = dest_fn
 
         # remove earlier db
-        db_lst = self.get_dbfile_list(self.dbfile_dir)
         if len(db_lst) > max_files:
             db_lst = db_lst[0:len(db_lst)-max_files]
             for del_fn in db_lst:

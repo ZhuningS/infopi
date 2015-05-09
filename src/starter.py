@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'v.2015-05-09a'
+version = 'v.2015-05-09b'
 
 def main():
     # -------------------

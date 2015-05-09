@@ -157,6 +157,9 @@ def get_interval_str(interval):
     
     return interval_str
 
+def encode_url(sid):
+    b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
+    return b64.decode('ascii')
 
 class c_db_wrapper:
     __slots__ = ('sqldb', 
@@ -298,9 +301,7 @@ class c_db_wrapper:
                 #print(one.name, one.comment, one.link)
 
                 # encoded url
-                b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
-                one.encoded_url = b64.decode('ascii')
-                #print(one.encoded_url)
+                one.encoded_url = encode_url(sid)
 
                 # level
                 temp_level = ut.sid_level_dict[sid]
@@ -362,20 +363,17 @@ class c_db_wrapper:
         self.listall = [item for item in tempd.values()]
         self.listall.sort()
         
+        last_category = ''
+        now_color = 2
         for item in self.listall:
             # sort userlist
             item.userlist.sort()
             
             # encoded url
-            b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
-            item.encoded_url = b64.decode('ascii')
+            item.encoded_url = encode_url(item.source_id)
         
-        # color
-        last_category = ''
-        now_color = 2
-        for item in self.listall:
+            # color
             category, temp = item.source_id.split(':')
-            
             if category != last_category:
                 now_color = 2 if now_color == 1 else 1
                 last_category = category

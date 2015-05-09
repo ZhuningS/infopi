@@ -156,10 +156,6 @@ def get_interval_str(interval):
     
     return interval_str
 
-def encode_url(sid):
-    b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
-    return b64.decode('ascii')
-
 class c_db_wrapper:
     __slots__ = ('sqldb', 
                  'users', 'sources', 'hash_user', 
@@ -300,7 +296,8 @@ class c_db_wrapper:
                 #print(one.name, one.comment, one.link)
 
                 # encoded url
-                one.encoded_url = encode_url(sid)
+                b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
+                one.encoded_url = b64.decode('ascii')
 
                 # level
                 temp_level = ut.sid_level_dict[sid]

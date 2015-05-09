@@ -161,6 +161,15 @@ def main_process(version, web_port, tmpfs_path,
                  web_back_queue, back_web_queue):
 
     def load_config_sources_users(web_port, tmpfs_path):
+        # check cfg directory exist?
+        root_path = os.path.dirname(os.path.abspath(__file__))
+        root_path = os.path.dirname(root_path)
+        config_path = os.path.join(root_path, 'cfg')
+        if not os.path.isdir(config_path):
+            print('不存在cfg文件夹，无法加载配置。')
+            print('请在准备好cfg配置文件夹后重新启动程序。')
+            return None, None
+        
         # clrear red & fetcher cache
         c_red.clear_cache()
         c_fetcher.clear_cache()
@@ -282,6 +291,8 @@ def main_process(version, web_port, tmpfs_path,
             timer_heap, user_list = load_config_sources_users(web_port, 
                                                               tmpfs_path
                                                               )
+            if timer_heap == None:
+                continue
 
             ctrl.set_data(gcfg, timer_heap)
 

@@ -162,9 +162,7 @@ def main_process(version, web_port, tmpfs_path,
 
     def load_config_sources_users(web_port, tmpfs_path):
         # check cfg directory exist?
-        root_path = os.path.dirname(os.path.abspath(__file__))
-        root_path = os.path.dirname(root_path)
-        config_path = os.path.join(root_path, 'cfg')
+        config_path = os.path.join(bvars.root_path, 'cfg')
         if not os.path.isdir(config_path):
             print('不存在cfg文件夹，无法加载配置。')
             print('请在准备好cfg配置文件夹后重新启动程序。')

@@ -7,6 +7,7 @@ import codecs
 
 from red import red
 
+import bvars
 
 class VALUE_TYPE(IntEnum):
     STRING = 0
@@ -94,9 +95,7 @@ def load_config(version, web_port, tmpfs_path):
 
     # run-time status
     cfg.web_port = web_port
-    root_path = os.path.dirname(os.path.abspath(__file__))
-    root_path = os.path.dirname(root_path)
-    cfg.root_path = root_path
+    cfg.root_path = bvars.root_path
     cfg.tmpfs_path = tmpfs_path
 
     cfg.start_time = datetime.datetime.\
@@ -104,7 +103,7 @@ def load_config(version, web_port, tmpfs_path):
     cfg.back_pid = os.getpid()
     #cfg.web_pid is not set, send to web-process
 
-    config_path = os.path.join(root_path, 'cfg', 'config.ini')
+    config_path = os.path.join(cfg.root_path, 'cfg', 'config.ini')
 
     # load file
     try:

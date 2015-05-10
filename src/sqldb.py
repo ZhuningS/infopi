@@ -10,6 +10,7 @@ import datetime
 
 from datadefine import *
 from db_wrapper import *
+import wvars
 
 __all__ = ('DB_RESULT', 'c_sqldb')
 
@@ -90,9 +91,7 @@ class c_sqldb:
 
     # get db files dir
     def get_dbfile_dir(self):
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        script_dir = os.path.dirname(script_dir)
-        script_dir = os.path.join(script_dir, 'database')
+        script_dir = os.path.join(wvars.root_path, 'database')
         return script_dir
 
     # backup db file

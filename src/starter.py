@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'v.2015-05-09e'
+version = 'v.2015-05-10'
 
 def main():
     # -------------------
@@ -19,9 +19,7 @@ def main():
         return ret
 
     def get_root_subdir(sub):
-        ret = os.path.dirname(os.path.realpath(__file__))
-        ret = os.path.dirname(ret)
-        ret = os.path.join(ret, sub)
+        ret = os.path.join(wvars.root_path, sub)
         return ret
 
     # argparse

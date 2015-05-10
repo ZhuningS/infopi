@@ -129,9 +129,7 @@ def load_sources():
     sources.clear()
 
     # sources_path
-    root_path = os.path.dirname(os.path.abspath(__file__))
-    root_path = os.path.dirname(root_path)
-    sources_path = os.path.join(root_path, 'cfg')
+    sources_path = os.path.join(bvars.root_path, 'cfg')
 
     # for load father data
     global temp_dict

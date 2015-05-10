@@ -1,5 +1,5 @@
 # coding=utf-8
-
+import os
 
 # source_id -> source
 sources = dict()
@@ -16,3 +16,6 @@ back_web_queue = None
 bb_queue = None
 
 #gcfg = None
+
+root_path = os.path.dirname(os.path.abspath(__file__))
+root_path = os.path.dirname(root_path)

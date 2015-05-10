@@ -4,6 +4,8 @@ import codecs
 
 from red import *
 
+import bvars
+
 class c_user_cfg:
     __slots__ = ('username', 'password', 
                  'col_per_page', 'usertype',
@@ -25,9 +27,7 @@ class c_user_cfg:
 
     @staticmethod
     def load_users():
-        root_path = os.path.dirname(os.path.abspath(__file__))
-        root_path = os.path.dirname(root_path)
-        users_path = os.path.join(root_path, 'cfg')
+        users_path = os.path.join(bvars.root_path, 'cfg')
 
         user_cfg_list = list()
 

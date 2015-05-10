@@ -1,7 +1,6 @@
 <head>
 	<title>InfoPi</title>
 	<style>a{TEXT-DECORATION:none}</style>
-	<style>.keepline{word-break: keep-all;}</style>
 </head>
 
 <body bgcolor="#ccccff">
@@ -11,7 +10,7 @@
     <td align="center">source_id</td>
     <td align="center">name/link</td>
     <td align="center">刷新间隔</td>
-    <td align="center" class='keepline'>用户列表</td>
+    <td align="center">用户列表</td>
 </tr>
 {% for item in items %}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
@@ -24,7 +23,7 @@
     <td>
     {{item.interval_str}}
     </td>
-    <td class='keepline'>
+    <td>
     {% for name in item.userlist %}{{name}}&nbsp;{% endfor %}
     </td>
 </tr>

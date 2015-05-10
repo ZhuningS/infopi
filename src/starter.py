@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'v.2015-05-10'
+version = 'v.2015-05-10a'
 
 def main():
     # -------------------
@@ -107,8 +107,11 @@ def main():
     # web process
     #-----------------   
     from webprocess import run_web
-    run_web(web_port, tmpfs_path,
-            web_back_queue, back_web_queue)
+    try:
+        run_web(web_port, tmpfs_path,
+                web_back_queue, back_web_queue)
+    except Exception as e:
+        print('启动web端进程时出现异常:', e)
 
 if __name__ == '__main__':
     main()

@@ -702,12 +702,12 @@ def panel():
                     try:
                         shutil.rmtree(zftmp)
                     except Exception as e:
-                        print('正常(?): unzip error, rmtree tmp dir.', e)
+                        print('删除/temp/tmp时出现异常，这可能是正常现象。')
 
                     try:
                         os.mkdir(zftmp)
                     except Exception as e:
-                        print('unzip error, mkdir tmp dir.', e)
+                        print('创建/temp/tmp时出现异常。', e)
 
                     # extract to tmp dir
                     try:

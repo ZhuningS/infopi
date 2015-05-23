@@ -31,7 +31,7 @@ td{padding:2px}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- elif entry.summary and not entry.url -%}
 <img src='/static/s.gif' />
-<div onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</div>
+<span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
 {%- else  -%}
 {{entry.title}}
 {%- endif -%}

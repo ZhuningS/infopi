@@ -22,11 +22,19 @@ td{padding:2px}
 	</tr>
 {% for entry in entries %}
 	<tr{{ loop.cycle(' bgColor=Lavender', '') }}>	
-		<td  width="18%">{{entry.author}}</td>	
-		<td>{% if entry.summary %}<img src='/static/s.gif' />{% endif %}
-			<a href="{{entry.url}}" target="_blank"{% if entry.summary %} onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()"{% endif %}>
-				{{entry.title}}
-			</a>
+		<td  width="18%">{{entry.author}}</td>
+		<td>
+{%- if entry.summary and entry.url -%}
+<img src='/static/s.gif' />
+<a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
+{%- elif not entry.summary and entry.url -%}
+<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
+{%- elif entry.summary and not entry.url -%}
+<img src='/static/s.gif' />
+<div onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</div>
+{%- else  -%}
+{{entry.title}}
+{%- endif -%}
 		</td>
 		<td style="white-space:nowrap"{% if entry.pub_date %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% endif %} {% if entry.temp == 1 %}bgcolor=#FF99CC{% elif entry.temp == 2 %}bgcolor=#FFCC99{% endif %}>
 			{% if entry.pub_date %}<img src='/static/n2.gif' />{% else %}&nbsp;&nbsp;{% endif %}{{entry.fetch_date}}

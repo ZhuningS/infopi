@@ -15,7 +15,7 @@
 {% for item in items %}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
     <td>{{item.source_id}}</td>
-    <td><a href="{{item.link}}" target="_blank">{{item.name}}</a></td>
+    <td>{% if item.link %}<a href="{{item.link}}" target="_blank">{{item.name}}</a>{% else %}{{item.name}}{% endif %}</td>
     <td>{{item.interval_str}}</td>
     <td>{{item.userlist|safe}}</td>
 </tr>

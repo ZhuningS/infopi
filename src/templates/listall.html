@@ -14,22 +14,12 @@
 </tr>
 {% for item in items %}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
-    <td>
-    {{item.source_id}}
-    </td>
-    <td>
-    <a href="{{item.link}}" target="_blank">{{item.name}}</a>
-    </td>
-    <td>
-    {{item.interval_str}}
-    </td>
-    <td>
-    {% for name in item.userlist %}{{name}}&nbsp;{% endfor %}
-    </td>
+    <td>{{item.source_id}}</td>
+    <td><a href="{{item.link}}" target="_blank">{{item.name}}</a></td>
+    <td>{{item.interval_str}}</td>
+    <td>{{item.userlist|safe}}</td>
 </tr>
-    <tr><td colspan="4">
-{{item.comment}}
-    </td></tr>
+<tr><td colspan="4">{{item.comment}}</td></tr>
 {% endfor %}
 </table>
 <br><br>

@@ -364,6 +364,7 @@ class c_db_wrapper:
         for item in self.listall:
             # sort userlist
             item.userlist.sort()
+            item.userlist = '&nbsp;'.join(item.userlist)
                 
             # color
             category, temp = item.source_id.split(':')

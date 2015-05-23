@@ -124,9 +124,10 @@ def parse_html(data_dict, base_url, html):
 def download_process(data_dict, worker_dict):
     url = data_dict['url']
     encoding = data_dict.get('encoding', '')
+    errors = data_dict.get('errors', '')
 
     f = Fetcher()
-    string = f.fetch_html(url, encoding)
+    string = f.fetch_html(url, encoding, errors)
 
     return parse_html(data_dict, url, string)
 
@@ -183,6 +184,9 @@ def html_re_parser(xml_string):
 
         str_encoding = url_tag.attrib.get('encoding', '').strip()
         d['encoding'] = Fetcher.lookup_encoding(str_encoding)
+        
+        str_errors = url_tag.attrib.get('errors', '').strip()
+        d['errors'] = str_errors
 
     blocks = data.findall('block')
     if blocks:

@@ -94,7 +94,7 @@ class Fetcher:
         # opener
         self.opener = urllib.request.build_opener(proxy, cj)
 
-    def fetch_html(self, url, encoding=''):
+    def fetch_html(self, url, encoding='', errors='strict'):
         bytes_data, bytes_encoding = self.fetch_bytes_encoding(url)
 
         # get encoding
@@ -113,7 +113,9 @@ class Fetcher:
 
         # decode
         try:
-            return bytes_data.decode(encoding)
+            if not errors:
+                errors = 'strict'
+            return bytes_data.decode(encoding, errors)
 
         except:
             print('下载器<解文本编码>失败')

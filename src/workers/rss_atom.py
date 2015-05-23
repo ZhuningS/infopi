@@ -153,9 +153,10 @@ def parse_xml(data_dict, xml):
 def download_process(data_dict, worker_dict):
     url = data_dict['url']
     encoding = data_dict.get('encoding', '')
+    errors = data_dict.get('errors', '')
 
     f = Fetcher()
-    xml = f.fetch_html(url, encoding)
+    xml = f.fetch_html(url, encoding, errors)
 
     return parse_xml(data_dict, xml)
 
@@ -170,6 +171,9 @@ def rss_atom_parser(xml_string):
 
     str_encoding = url_tag.attrib.get('encoding', '').strip()
     d['encoding'] = Fetcher.lookup_encoding(str_encoding)
+    
+    str_errors = url_tag.attrib.get('errors', '').strip()
+    d['errors'] = str_errors
 
     use_feed_author = data.find('use_feed_author')
     if use_feed_author != None:

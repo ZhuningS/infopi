@@ -67,11 +67,11 @@
         </td>
     </tr>
 </table>
-</form>{% endif %}
-{% if type == 2 -%}
+</form>{% endif %}<br>
+{% if type == 2 %}
 所有用户的异常信息：<br>
-{%- else -%}
-<br>当前用户的异常信息：<br>{%- endif %}
+{% else %}
+当前用户的异常信息：<br>{% endif %}
 <table border="1" width="100%">
 	<tr bgcolor="lightgray">
 		<td align="center">author</td>

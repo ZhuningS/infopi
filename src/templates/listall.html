@@ -1,4 +1,4 @@
-<head>
+<!DOCTYPE html><html><head>
 	<title>InfoPi</title>
 	<style>a{TEXT-DECORATION:none}</style>
 </head>
@@ -12,15 +12,15 @@
     <td align="center">刷新间隔</td>
     <td align="center">用户列表</td>
 </tr>
-{% for item in items %}
+{% for item in items -%}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
     <td>{{item.source_id}}</td>
     <td>{% if item.link %}<a href="{{item.link}}" target="_blank">{{item.name}}</a>{% else %}{{item.name}}{% endif %}</td>
     <td>{{item.interval_str}}</td>
     <td>{{item.userlist|safe}}</td>
+</tr><tr><td colspan="4">{{item.comment}}</td>
 </tr>
-<tr><td colspan="4">{{item.comment}}</td></tr>
 {% endfor %}
 </table>
 <br><br>
-</body>
+</body></html>

@@ -1,4 +1,4 @@
-<head>
+<!DOCTYPE html><html><head>
 	<style>
 a{TEXT-DECORATION:none}
 table{border-spacing:1px}
@@ -20,10 +20,10 @@ td{padding:2px}
 		<td align="center">标题</td>
 		<td align="center">获取时间</td>
 	</tr>
-{% for entry in entries %}
-	<tr{{ loop.cycle(' bgColor=Lavender', '') }}>	
-		<td  width="18%">{{entry.author}}</td>
-		<td>
+{%- for entry in entries -%}
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}>
+	<td width="18%">{{entry.author}}</td>
+	<td>
 {%- if entry.summary and entry.url -%}
 <img src='/static/s.gif' />
 <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
@@ -32,17 +32,17 @@ td{padding:2px}
 {%- elif entry.summary and not entry.url -%}
 <img src='/static/s.gif' />
 <span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
-{%- else  -%}
+{%- else -%}
 {{entry.title}}
 {%- endif -%}
-		</td>
-		<td style="white-space:nowrap"{% if entry.pub_date %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% endif %} {% if entry.temp == 1 %}bgcolor=#FF99CC{% elif entry.temp == 2 %}bgcolor=#FFCC99{% endif %}>
-			{% if entry.pub_date %}<img src='/static/n2.gif' />{% else %}&nbsp;&nbsp;{% endif %}{{entry.fetch_date}}
-		</td>
-	</tr>{% endfor %}
+	</td>
+	<td style="white-space:nowrap"{% if entry.pub_date %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% endif %} {% if entry.temp == 1 %}bgcolor=#FF99CC{% elif entry.temp == 2 %}bgcolor=#FFCC99{% endif %}>
+{%- if entry.pub_date -%}<img src='/static/n2.gif' />{%- else -%}&nbsp;&nbsp;{%- endif -%}{{-entry.fetch_date-}}
+	</td>
+</tr>{% endfor %}
 </table>
 <div>
 <span style="float:left">页面生成时间{{nowtime}}，生成页面数据历时{{time}}秒</span>
 <span style="float:right">{{htmlpage|safe}}</span>
 </div>
-</body>
+</body></html>

@@ -1,42 +1,38 @@
-<html>
+<!DOCTYPE html><html>
     <head>
         <style>a{TEXT-DECORATION:none}</style>
     </head>
 	<body bgcolor="#ccccff">
 	<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
-		<table border="1" width="100%">
+<table border="1" width="100%">
 {% for one in info_list %}
-			<tr>
-				<td>
-					{{one[0]}}
-				</td>
-				<td>
-					{{one[1]}}
-				</td>
-			</tr>{% endfor %}
-		</table>
-{% if proc_list %}		
-		<table border="1" width="100%">
-			<tr>
-				<td>进程</td>
-				<td>进程ID</td>
-				<td>用户ID</td>
-				<td>状态</td>
-				<td>CPU使用率</td>
-				<td>CPU时间</td>
-				<td>内存占用率</td>
-				<td>物理内存</td>
-				<td>虚拟内存</td>
-			</tr>
-			<tr>
+<tr>
+	<td>{{one[0]}}</td>
+	<td>{{one[1]}}</td>
+</tr>{% endfor %}
+</table>
+{%- if proc_list -%}		
+<table border="1" width="100%">
+	<tr>
+		<td>进程</td>
+		<td>进程ID</td>
+		<td>用户ID</td>
+		<td>状态</td>
+		<td>CPU使用率</td>
+		<td>CPU时间</td>
+		<td>内存占用率</td>
+		<td>物理内存</td>
+		<td>虚拟内存</td>
+	</tr>
+	<tr>
 {% for i in proc_list[0] %}
-				<td>{{i}}</td>{% endfor %}
-			</tr>
-			<tr>
+		<td>{{i}}</td>{% endfor %}
+	</tr>
+	<tr>
 {% for i in proc_list[1] %}
-				<td>{{i}}</td>{% endfor %}
-			</tr>
-		</table>{% endif %}
+		<td>{{i}}</td>{% endfor %}
+	</tr>
+</table>{% endif %}
 {% if type == 2 %}
 <form action="/panel" method="post" enctype="multipart/form-data">
 <table border='1' cellpadding="5">
@@ -72,28 +68,28 @@
     </tr>
 </table>
 </form>{% endif %}
-{% if type == 2 %}
+{% if type == 2 -%}
 所有用户的异常信息：<br>
-{% else %}
-<br>当前用户的异常信息：<br>{% endif %}
-		<table border="1" width="100%">
-			<tr bgcolor="lightgray">
-				<td align="center">author</td>
-				<td align="center">title</td>
-				<td align="center">fetch_date</td>
-			</tr>
+{%- else -%}
+<br>当前用户的异常信息：<br>{%- endif %}
+<table border="1" width="100%">
+	<tr bgcolor="lightgray">
+		<td align="center">author</td>
+		<td align="center">title</td>
+		<td align="center">fetch_date</td>
+	</tr>
 {% for entry in entries %}
 	<tr>	
-		<td  width="18%">{{entry.author}}</td>	
+		<td width="18%">{{entry.author}}</td>	
 		<td>{% if entry.summary %}<img src='/static/s.gif' />{% endif %}
 			<a href="{{entry.url}}" target="_blank"{% if entry.summary %} onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()"{% endif %}>
-				{{entry.title}}
+				{{-entry.title-}}
 			</a>
 		</td>
 		<td style="white-space:nowrap">
-			{{entry.fetch_date}}
+			{{-entry.fetch_date-}}
 		</td>
-	</tr>{% endfor %}
+	</tr>{%- endfor -%}
 </table>
 在问题消失或被解决后，程序会自动删除以上异常信息。
 	</body>

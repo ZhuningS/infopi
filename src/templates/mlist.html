@@ -1,4 +1,4 @@
-<head>
+<!DOCTYPE html><html><head>
 	<title>InfoPi</title>
 	<meta content="width=device-width" name="viewport">
 	<style>
@@ -16,26 +16,25 @@ th, td{border:1px solid black; padding:2px;}
 {{htmlpage|safe}}
 </div>
 <table bgcolor="#ccffcc" width="100%">
-{% for entry in entries %}
-	<tr>
-		<td>{{entry.author}}</td>
-		<td style="white-space:nowrap"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
-	</tr>
-	<tr>
-		<td colspan=2>
+{%- for entry in entries -%}
+<tr>
+	<td>{{entry.author}}</td>
+	<td style="white-space:nowrap"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+</tr><tr>
+	<td colspan=2>
 {%- if entry.summary -%}
 <img src='/static/s.gif' />
 {%- endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
-{%- else  -%}
-<font color="#006600">{{entry.title}}</font>
+{%- else -%}
+{{entry.title}}
 {%- endif -%}
-		</td>
-	</tr>{% endfor %}
+	</td>
+</tr>{%- endfor -%}
 </table>
 <div>
 {{htmlpage|safe}}<br>
 页面生成时间{{nowtime}}&nbsp;&nbsp;<a href="/m">返回</a>
 </div>
-</body>
+</body></html>

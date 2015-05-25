@@ -453,7 +453,7 @@ class c_db_wrapper:
 
     def db_process(self):
         print('database maintenance')
-        
+
         # del too-many data
         del_lst = list()
         if self.cfg.db_process_del_days != -1:

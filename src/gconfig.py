@@ -70,7 +70,7 @@ def load_config(version, web_port, tmpfs_path):
     def get_value(string, t):
 
         if t == VALUE_TYPE.INT:
-            p = red.d(r'^(\d+)\s*(?:#.*)?$')
+            p = red.d(r'^(-?\d+)\s*(?:#.*)?$')
             m = p.search(string)
             if m:
                 v = int(m.group(1))
@@ -247,6 +247,8 @@ def load_config(version, web_port, tmpfs_path):
         else:
             print('无法识别的config.ini设置', k)
 
+    cfg.db_process_del_entries = max(cfg.runcfg.max_entries,
+                                    cfg.db_process_del_entries)
 
     return cfg
 

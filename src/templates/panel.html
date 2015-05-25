@@ -81,10 +81,18 @@
 {% for entry in entries %}
 	<tr>	
 		<td width="18%">{{entry.author}}</td>	
-		<td>{% if entry.summary %}<img src='/static/s.gif' />{% endif %}
-			<a href="{{entry.url}}" target="_blank"{% if entry.summary %} onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()"{% endif %}>
-				{{-entry.title-}}
-			</a>
+		<td>
+{%- if entry.summary and entry.url -%}
+<img src='/static/s.gif' />
+<a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
+{%- elif not entry.summary and entry.url -%}
+<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
+{%- elif entry.summary and not entry.url -%}
+<img src='/static/s.gif' />
+<span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
+{%- else -%}
+{{entry.title}}
+{%- endif -%}
 		</td>
 		<td style="white-space:nowrap">
 			{{-entry.fetch_date-}}

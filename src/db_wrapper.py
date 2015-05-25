@@ -453,21 +453,31 @@ class c_db_wrapper:
 
     def db_process(self):
         print('database maintenance')
-
+        
         # del too-many data
-        before_del = int(time.time())-self.cfg.db_process_del_days*24*3600
-        tmp_unit = c_index_unit(0, before_del)
-
         del_lst = list()
-        for s in self.sources.values():
-            sid = s.source_id
-            index = s.index_list
-            if len(index) > self.cfg.db_process_del_entries:
-                p = bisect.bisect_left(index, tmp_unit)
-                #(source_id, id, fetch_date)
-                tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
-                del_lst.extend(tuple_lst)
+        if self.cfg.db_process_del_days != -1:
+            before_del = int(time.time())-self.cfg.db_process_del_days*24*3600
+            tmp_unit = c_index_unit(0, before_del)
 
+            for s in self.sources.values():
+                sid = s.source_id
+                index = s.index_list
+                if len(index) > self.cfg.db_process_del_entries:
+                    p = bisect.bisect_left(index, tmp_unit)
+                    #(source_id, id, fetch_date)
+                    tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
+                    del_lst.extend(tuple_lst)
+        else:
+            for s in self.sources.values():
+                sid = s.source_id
+                index = s.index_list
+                if len(index) > self.cfg.db_process_del_entries:
+                    p = self.cfg.db_process_del_entries
+                    #(source_id, id, fetch_date)
+                    tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
+                    del_lst.extend(tuple_lst)
+    
         print('%d条数据将被删除' % len(del_lst))
         self.sqldb.del_info_by_tuplelist(del_lst)
 

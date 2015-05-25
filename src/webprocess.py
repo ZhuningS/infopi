@@ -876,9 +876,13 @@ def run_web(web_port, tmpfs_path,
     from tornado.httpserver import HTTPServer
     from tornado.ioloop import IOLoop
 
-    http_server = HTTPServer(WSGIContainer(web))
-    http_server.listen(web_port)
-    IOLoop.instance().start()
+    try:
+        http_server = HTTPServer(WSGIContainer(web))
+        http_server.listen(web_port)
+        IOLoop.instance().start()
+    except Exception as e:
+        print('启动web服务器时出现异常，异常信息:')
+        print(e)
 
     #-----------------
     # web service

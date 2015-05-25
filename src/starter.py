@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'InfoPi v.2015-05-25'
+version = 'InfoPi v.2015-05-25a'
 
 def main():
     # -------------------
@@ -107,11 +107,9 @@ def main():
     # web process
     #-----------------   
     from webprocess import run_web
-    try:
-        run_web(web_port, tmpfs_path,
-                web_back_queue, back_web_queue)
-    except Exception as e:
-        print('启动web端进程时出现异常:', e)
+    run_web(web_port, tmpfs_path,
+            web_back_queue, back_web_queue)
+
 
 if __name__ == '__main__':
     main()

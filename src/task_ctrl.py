@@ -50,10 +50,6 @@ class c_task_controller:
         # deque: source_id
         self.queue_deque = collections.deque()
 
-        # 僵尸列表------------------
-        # item of list: (source_id, start_time)
-        self.zombie_list = list()
-
     def set_data(self, gcfg, timer_heap):
         self.gcfg = gcfg
         self.timer_heap = timer_heap
@@ -66,8 +62,6 @@ class c_task_controller:
 
         self.queue_set.clear()
         self.queue_deque.clear()
-
-        self.zombie_list.clear()
 
     def task_finished(self, source_id):
         # remove from running
@@ -84,10 +78,8 @@ class c_task_controller:
     def fresh_job(self):
         now_time = int(time.time())
 
-        while self.queue_set:
-            # has slots
-            if len(self.running_map) < self.gcfg.task_pipes:
-
+        while len(self.running_map) < self.gcfg.task_pipes:
+            if self.queue_set:
                 # remove from queue
                 source_id = self.queue_deque.popleft()
                 self.queue_set.remove(source_id)
@@ -104,7 +96,7 @@ class c_task_controller:
                 # start thread
                 worker_manage.worker_starter(self.gcfg.runcfg, source_id)
             else:
-                break   
+                break
 
     def fetch(self, lst):
         now_time = int(time.time())
@@ -144,7 +136,7 @@ class c_task_controller:
         self.temp_fetch_list.clear()
 
         # timer of source
-        while self.timer_heap and now_time > self.timer_heap[0].next_time:
+        while self.timer_heap and now_time >= self.timer_heap[0].next_time:
             # timer heap
             temp = heapq.heappop(self.timer_heap)
             temp.next_time += temp.interval
@@ -162,16 +154,18 @@ class c_task_controller:
         if self.temp_fetch_list:
             self.fetch(self.temp_fetch_list)
 
-        # timer of running timeout 
-        if self.running_sorted_list:
-            if now_time > self.running_sorted_list[0].timeout_time:
+        # timer of running timeout
+        mark = False
+        while self.running_sorted_list and \
+              now_time > self.running_sorted_list[0].timeout_time:
                 temp_source_id = self.running_sorted_list[0].source_id
-                temp_start_time = self.running_map[temp_source_id]
                 del self.running_map[temp_source_id]
                 del self.running_sorted_list[0]
 
-                self.zombie_list.append((temp_source_id, te_time))
-                self.fresh_job()
+                mark = True
+                print('任务%s超时' % temp_source_id)
+        if mark:
+            self.fresh_job()
 
         # print('running: %d, queue: %d' % \
         #       (len(running_map), len(queue_set))
@@ -180,17 +174,10 @@ class c_task_controller:
     def get_status_str(self):
         s = ('timer heap length: %d<br>'
              'running source number: %d<br>'
-             'queue length: %d<br>'
-             'zombie length: %d<br>')
+             'queue length: %d<br>')
         s = s % (len(self.timer_heap), 
                  len(self.running_map), 
-                 len(self.queue_deque),
-                 len(self.zombie_list)
+                 len(self.queue_deque)
                  )
 
-        for i in self.zombie_list:
-            s += 'zombie: %s, %d<br>' % (i[0], i[1])
-
         return s
-
-

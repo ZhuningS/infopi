@@ -78,12 +78,13 @@ class c_task_controller:
     def fresh_job(self):
         now_time = int(time.time())
 
-        while len(self.running_map) < self.gcfg.task_pipes:
-            if self.queue_set:
+        while True:
+            if self.queue_set and \
+               len(self.running_map) < self.gcfg.task_pipes:
                 # remove from queue
                 source_id = self.queue_deque.popleft()
                 self.queue_set.remove(source_id)
-                
+
                 # add to running
                 self.running_map[source_id] = now_time
 

@@ -78,26 +78,24 @@ class c_task_controller:
     def fresh_job(self):
         now_time = int(time.time())
 
-        while True:
-            if self.queue_set and \
-               len(self.running_map) < self.gcfg.task_pipes:
-                # remove from queue
-                source_id = self.queue_deque.popleft()
-                self.queue_set.remove(source_id)
+        while self.queue_set and \
+              len(self.running_map) < self.gcfg.task_pipes:
 
-                # add to running
-                self.running_map[source_id] = now_time
+            # remove from queue
+            source_id = self.queue_deque.popleft()
+            self.queue_set.remove(source_id)
 
-                item = c_running_unit(source_id, 
-                                      now_time+self.gcfg.task_timeout
-                                      )
-                self.running_sorted_list.append(item)
-                self.running_sorted_list.sort()
+            # add to running
+            self.running_map[source_id] = now_time
 
-                # start thread
-                worker_manage.worker_starter(self.gcfg.runcfg, source_id)
-            else:
-                break
+            item = c_running_unit(source_id, 
+                                  now_time+self.gcfg.task_timeout
+                                  )
+            self.running_sorted_list.append(item)
+            self.running_sorted_list.sort()
+
+            # start thread
+            worker_manage.worker_starter(self.gcfg.runcfg, source_id)
 
     def fetch(self, lst):
         now_time = int(time.time())

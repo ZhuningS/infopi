@@ -6,6 +6,7 @@ a{TEXT-DECORATION:none}
 a:link{color:#0000DD;} 
 table{border:1px solid black; border-collapse:collapse;}
 th, td{border:1px solid black; padding:2px;}
+.s{color:#cc3300}
     </style>
 </head>
 
@@ -23,7 +24,7 @@ th, td{border:1px solid black; padding:2px;}
 </tr><tr>
 	<td colspan=2>
 {%- if entry.summary -%}
-<img src='/static/s.gif' />
+<span class="s">s</span>
 {%- endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>

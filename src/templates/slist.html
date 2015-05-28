@@ -4,6 +4,8 @@
 a{TEXT-DECORATION:none}
 table{border-spacing:1px}
 td{padding:2px}
+.s{color:#cc3300}
+.p{color:#3333ff}
     </style>
 </head>
 <body bgcolor="#FFCC99">
@@ -24,19 +26,17 @@ td{padding:2px}
 	<td  width="18%">{{entry.author}}</td>
 	<td>
 {%- if entry.summary and entry.url -%}
-<img src='/static/s.gif' />
-<a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
+<span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
 {%- elif not entry.summary and entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- elif entry.summary and not entry.url -%}
-<img src='/static/s.gif' />
-<span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
+<span class="s">s</span> <span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
 {%- else -%}
 {{entry.title}}
 {%- endif -%}
 	</td>
 	<td style="white-space:nowrap"{% if entry.pub_date %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% endif %} {% if entry.temp == 1 %}bgcolor=#FF99CC{% elif entry.temp == 2 %}bgcolor=#FFCC99{% endif %}>
-{%- if entry.pub_date -%}<img src='/static/n2.gif' />{%- else -%}&nbsp;&nbsp;{%- endif -%}{{-entry.fetch_date-}}
+{%- if entry.pub_date -%}<span class="p">p</span>{%- else -%}&nbsp;&nbsp;{%- endif -%}{{-entry.fetch_date-}}
 	</td>
 </tr>{% endfor %}
 </table>

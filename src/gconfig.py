@@ -211,7 +211,7 @@ def load_config(version, web_port, tmpfs_path):
         # database maintenance
         elif k == 'db_process_at':
             v = get_value(string, VALUE_TYPE.INT_TUPLE_2)
-            if v:
+            if v and 0 <= v[0] <= 24 and 0 <= v[1] <= 60:
                 cfg.db_process_at = v
             else:
                 print('db_process_at', string) 

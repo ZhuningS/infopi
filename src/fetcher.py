@@ -95,6 +95,9 @@ class Fetcher:
         self.opener = urllib.request.build_opener(proxy, cj)
 
     def fetch_html(self, url, encoding='', errors='strict'):
+        if not errors:
+            errors = 'strict'
+
         bytes_data, bytes_encoding = self.fetch_bytes_encoding(url)
 
         # get encoding
@@ -112,9 +115,6 @@ class Fetcher:
                     encoding = 'utf-8'
 
         # decode
-        if not errors:
-            errors = 'strict'
-
         try:
             return bytes_data.decode(encoding, errors)
         except:

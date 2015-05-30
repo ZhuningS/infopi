@@ -112,11 +112,11 @@ class Fetcher:
                     encoding = 'utf-8'
 
         # decode
-        try:
-            if not errors:
-                errors = 'strict'
-            return bytes_data.decode(encoding, errors)
+        if not errors:
+            errors = 'strict'
 
+        try:
+            return bytes_data.decode(encoding, errors)
         except:
             print('下载器<解文本编码>失败')
 

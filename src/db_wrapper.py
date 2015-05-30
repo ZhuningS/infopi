@@ -456,7 +456,16 @@ class c_db_wrapper:
 
         # del too-many data
         del_lst = list()
-        if self.cfg.db_process_del_days != -1:
+        if self.cfg.db_process_del_days == -1:
+            for s in self.sources.values():
+                sid = s.source_id
+                index = s.index_list
+                if len(index) > self.cfg.db_process_del_entries:
+                    p = self.cfg.db_process_del_entries
+                    #(source_id, id, fetch_date)
+                    tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
+                    del_lst.extend(tuple_lst)
+        else:
             before_del = int(time.time())-self.cfg.db_process_del_days*24*3600
             tmp_unit = c_index_unit(0, before_del)
 
@@ -468,16 +477,7 @@ class c_db_wrapper:
                     #(source_id, id, fetch_date)
                     tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
                     del_lst.extend(tuple_lst)
-        else:
-            for s in self.sources.values():
-                sid = s.source_id
-                index = s.index_list
-                if len(index) > self.cfg.db_process_del_entries:
-                    p = self.cfg.db_process_del_entries
-                    #(source_id, id, fetch_date)
-                    tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
-                    del_lst.extend(tuple_lst)
-    
+
         print('%d条数据将被删除' % len(del_lst))
         self.sqldb.del_info_by_tuplelist(del_lst)
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html><html>
 <head><style>
 a{TEXT-DECORATION:none}
+.tb{white-space:nowrap;text-align:center}
 .s{color:#cc3300}
 .p{color:#3333ff}
 </style></head>
@@ -37,27 +38,27 @@ a{TEXT-DECORATION:none}
 </table>{% endif %}
 {% if type == 2 %}
 <br><form action="/panel" method="post" enctype="multipart/form-data">
-<table border='1' cellpadding="5">
+<table border="1" cellpadding="5">
     <tr>
-        <td align="center" bgcolor="#ff9999"><nobr><button name="name" value="fetch_all">更新所有信息源</button></nobr></td>
-        <td align="center" bgcolor="#ff9999"><nobr><button name="name" value="del_except">删除所有异常信息</button></nobr></td>
-        <td align="center" bgcolor="#ffcc33"><nobr><button name="name" value="download_db">下载当前数据库文件</button></nobr></td>
+        <td class="tb" bgcolor="#ff9999"><button name="name" value="fetch_all">更新所有信息源</button></td>
+        <td class="tb" bgcolor="#ff9999"><button name="name" value="del_except">删除所有异常信息</button></td>
+        <td class="tb" bgcolor="#ffcc33"><button name="name" value="download_db">下载当前数据库文件</button></td>
         <th rowspan="4" align="left">上传、加载新配置的方法：<br>1、把整个cfg目录压缩到一个zip文件<br>2、点“浏览”选择该zip文件<br>3、点“上传并加载此配置”</th>
     </tr>
     <tr>
-        <td align="center" bgcolor="#ffcc33"><nobr><button name="name" value="compact_db">紧凑当前数据库文件</button></nobr></td>
-        <td align="center" bgcolor="#ffcc33"><nobr><button name="name" value="backup_db">备份当前数据库文件到磁盘</button></nobr></td>
-        <td align="center" bgcolor="#ffcc33"><nobr><button name="name" value="maintain_db">手动执行数据库每日维护</button></nobr></td>
+        <td class="tb" bgcolor="#ffcc33"><button name="name" value="compact_db">紧凑当前数据库文件</button></td>
+        <td class="tb" bgcolor="#ffcc33"><button name="name" value="backup_db">备份当前数据库文件到磁盘</button></td>
+        <td class="tb" bgcolor="#ffcc33"><button name="name" value="maintain_db">手动执行数据库每日维护</button></td>
     </tr>
     <tr>
-        <td align="center" bgcolor="#339966"><nobr><a href="/listall" style="color:#ffffff">查看启用的信息源</a></nobr></td>
-        <td align="center" bgcolor="#339966"><nobr><button name="name" value="download_cfg">下载当前服务器配置</button></nobr></td>
-        <td align="center" bgcolor="#339966"><nobr><button name="name" value="reload_data">重新加载服务器上的配置</button></nobr></td>
+        <td class="tb" bgcolor="#339966"><a href="/listall" style="color:#ffffff">查看启用的信息源</a></td>
+        <td class="tb" bgcolor="#339966"><button name="name" value="download_cfg">下载当前服务器配置</button></td>
+        <td class="tb" bgcolor="#339966"><button name="name" value="reload_data">重新加载服务器上的配置</button></td>
     </tr>
     <tr>
- 		<td align="center" bgcolor="#9999ff"><nobr><button name="name" value="download_err">下载web进程异常记录文件</button></nobr></td>
-        <td align="center" bgcolor="#cc6699"><nobr><input type="file" name="file" accept="application/zip"></nobr></td>
-        <td align="center" bgcolor="#cc6699"><nobr><input type="submit" value="上传并加载此配置"></nobr></td>
+ 		<td class="tb" bgcolor="#9999ff"><button name="name" value="download_err">下载web进程异常记录文件</button></td>
+        <td class="tb" bgcolor="#cc6699"><input type="file" name="file" accept="application/zip"></td>
+        <td class="tb" bgcolor="#cc6699"><input type="submit" value="上传并加载此配置"></td>
     </tr>
 </table>
 </form>{% endif %}<br>

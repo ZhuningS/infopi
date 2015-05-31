@@ -684,6 +684,9 @@ def panel():
 
             elif name == 'reload_data':
                 c_message.make(web_back_queue, 'wb:request_load')
+                
+            elif name == 'maintain_db':
+                db.db_process()
 
         elif 'file' in request.files:
             f = request.files['file']

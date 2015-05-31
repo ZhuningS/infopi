@@ -177,7 +177,6 @@ class c_sqldb:
         self.cursor.close()
         self.conn.close()
 
-
     def set_callbacks(self, append, remove, add):
         self.cb_append = append
         self.cb_remove = remove
@@ -232,7 +231,7 @@ class c_sqldb:
                                       )
                                 )
             
-            if self.cursor.rowcount:
+            if self.cursor.rowcount > 0:
                 one.id = _id
 
                 self.conn.commit()
@@ -404,7 +403,7 @@ class c_sqldb:
         sql = 'DELETE FROM info_tbl WHERE suid = "<exception>"'
         self.cursor.execute(sql)
 
-        if self.cursor.rowcount:
+        if self.cursor.rowcount > 0:
             self.conn.commit()
             self.has_changed = True
 
@@ -431,12 +430,15 @@ class c_sqldb:
         sql = 'DELETE FROM info_tbl WHERE id = ?'
         self.cursor.execute(sql, (_id,))
 
-        if self.cursor.rowcount:
+        if self.cursor.rowcount > 0:
             self.conn.commit()
             self.has_changed = True
 
     # lst: (source_id, id, fetch_date)
     def del_info_by_tuplelist(self, lst):
+        if not lst:
+            return
+        
         sql1 = 'SELECT suid FROM info_tbl WHERE id = ?'
         sql2 = 'DELETE FROM info_tbl WHERE id = ?'
 
@@ -451,7 +453,7 @@ class c_sqldb:
             # sql2
             self.cursor.execute(sql2, (_id,))
 
-        if self.cursor.rowcount:
+        if self.cursor.rowcount > 0:
             self.conn.commit()
             self.has_changed = True
 
@@ -460,7 +462,7 @@ class c_sqldb:
         sql = 'DELETE FROM info_tbl WHERE source_id = ?'
         self.cursor.execute(sql, (sid,))
 
-        if self.cursor.rowcount:
+        if self.cursor.rowcount > 0:
             self.conn.commit()
             self.has_changed = True
             print('%s有%d条幽灵数据被删除' % (sid, self.cursor.rowcount))

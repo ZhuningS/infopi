@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'InfoPi v.2015-05-29'
+version = 'InfoPi v.2015-05-30'
 
 def main():
     # -------------------

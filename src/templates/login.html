@@ -1,26 +1,24 @@
 <!DOCTYPE html><html>
-	<head>
-    <title>登录 - InfoPi</title>
-{% if m %}
-	<meta content="width=device-width" name="viewport">{% endif %}
-	</head>
-	
-	<body bgcolor="#99CCCC">
-		<form action="/{{m}}login" method="post">
-			<table>
-				<tr align=center>
-					<td>用户名</td>
-					<td><input type="text" name="username"></td>
-				</tr>
-                <tr align=center>
-					<td>密码</td>
-					<td><input type="password" name="password"></td>
-				</tr>
-                <tr align=center>
-					<td colspan="2"><input type="submit" name="submit" value="登录"></td>
-				</tr>
-            </table>
-		</form>
-		<br>{{msg|safe}}
-	</body>
+<head>
+	<title>登录 - InfoPi</title>
+{% if m %}	<meta content="width=device-width" name="viewport">{% endif %}
+</head>
+<body bgcolor="#99CCCC">
+	<form action="/{{m}}login" method="post">
+		<table>
+			<tr align=center>
+				<td>用户名</td>
+				<td><input type="text" name="username"></td>
+			</tr>
+            <tr align=center>
+				<td>密码</td>
+				<td><input type="password" name="password"></td>
+			</tr>
+            <tr align=center>
+				<td colspan="2"><input type="submit" name="submit" value="登录"></td>
+			</tr>
+        </table>
+	</form>
+	<br>{{msg|safe}}
+</body>
 </html>

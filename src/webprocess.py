@@ -810,7 +810,7 @@ def internal_error(exception):
     return str(exception)
 
 @web.route('/check')
-def check_queue11():
+def check_bw_queue():
     if request.remote_addr != '127.0.0.1':
         print('%s请求检查web端队列，忽略' % request.remote_addr)
         return ''

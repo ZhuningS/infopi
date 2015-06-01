@@ -5,8 +5,9 @@
 a{TEXT-DECORATION:none}
 a:link{color:#0000DD;} 
 table{border:1px solid black; border-collapse:collapse;}
-th, td{border:1px solid black; padding:2px;}
+td{border:1px solid black; padding:2px;}
 .s{color:#cc3300}
+.nb{white-space:nowrap}
     </style>
 </head>
 
@@ -20,7 +21,7 @@ th, td{border:1px solid black; padding:2px;}
 {%- for entry in entries -%}
 <tr>
 	<td>{{entry.author}}</td>
-	<td style="white-space:nowrap"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr>
 	<td colspan=2>
 {%- if entry.summary -%}

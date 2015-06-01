@@ -6,6 +6,7 @@ table{border-spacing:1px}
 td{padding:2px}
 .s{color:#cc3300}
 .p{color:#3333ff}
+.nb{white-space:nowrap}
     </style>
 </head>
 <body bgcolor="#FFCC99">
@@ -23,7 +24,7 @@ td{padding:2px}
 </tr>
 {% for entry in entries %}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
-	<td  width="18%">{{entry.author}}</td>
+	<td width="18%">{{entry.author}}</td>
 	<td>
 {%- if entry.summary and entry.url -%}
 <span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
@@ -36,9 +37,9 @@ td{padding:2px}
 {%- endif -%}
 	</td>
 {%- if entry.pub_date -%}
-<td style="white-space:nowrap" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}><span class="p">p</span>{{entry.fetch_date}}</td>
+<td class="nb" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}><span class="p">p</span>{{entry.fetch_date}}</td>
 {%- else -%}
-<td style="white-space:nowrap"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>&nbsp;&nbsp;{{entry.fetch_date}}</td>
+<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>&nbsp;&nbsp;{{entry.fetch_date}}</td>
 {%- endif -%}
 </tr>{% endfor %}
 </table>

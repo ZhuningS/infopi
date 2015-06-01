@@ -690,59 +690,57 @@ def panel():
 
         elif 'file' in request.files:
             f = request.files['file']
-            if f and f.filename and \
-               'zip' == f.filename.rsplit('.', 1)[1].lower():
-
+            if f and f.filename and f.filename.lower().endswith('.zip'):
                 # save to file
                 fpath = os.path.join(wvars.upload_forlder, 'uploaded.zip')
                 f.save(fpath)
 
-                if is_zipfile(fpath):
-                    cfg_path = os.path.join(gcfg.root_path, 'cfg')
-                    zftmp = os.path.join(wvars.upload_forlder,'tmp')
-
-                    # remove & make tmp dir
-                    try:
-                        shutil.rmtree(zftmp)
-                    except Exception as e:
-                        print('删除/temp/tmp时出现异常，这可能是正常现象。')
-
-                    try:
-                        os.mkdir(zftmp)
-                    except Exception as e:
-                        print('创建/temp/tmp时出现异常。', e)
-
-                    # extract to tmp dir
-                    try:
-                        zf = ZipFile(fpath)
-                        namelist = zf.namelist()
-                        zf.extractall(zftmp)
-                        zf.close()
-                    except Exception as e:
-                        return '解压错误' + str(e)
-
-                    # copy to cfg dir
-                    if 'config.ini' in namelist:
-                        cp_src_path = zftmp
-                    elif 'cfg/config.ini' in namelist:
-                        cp_src_path = os.path.join(zftmp, 'cfg')
-                    else:
-                        return 'zip文件里没有找到config.ini文件'
-
-                    try:
-                        shutil.rmtree(cfg_path)
-                    except Exception as e:
-                        return '无法删除cfg目录' + str(e)
-
-                    try:
-                        shutil.copytree(cp_src_path, cfg_path)
-                    except Exception as e:
-                        return '无法复制cfg目录' + str(e)
-
-                    print('.zip has been extracted')
-                    c_message.make(web_back_queue, 'wb:request_load')
-                else:
+                if not is_zipfile(fpath):
                     return '无效zip文件'
+
+                cfg_path = os.path.join(gcfg.root_path, 'cfg')
+                zftmp = os.path.join(wvars.upload_forlder,'tmp')
+
+                # remove & make tmp dir
+                try:
+                    shutil.rmtree(zftmp)
+                except Exception as e:
+                    print('删除/temp/tmp时出现异常，这可能是正常现象。')
+
+                try:
+                    os.mkdir(zftmp)
+                except Exception as e:
+                    print('创建/temp/tmp时出现异常。', e)
+
+                # extract to tmp dir
+                try:
+                    zf = ZipFile(fpath)
+                    namelist = zf.namelist()
+                    zf.extractall(zftmp)
+                    zf.close()
+                except Exception as e:
+                    return '解压错误' + str(e)
+
+                # copy to cfg dir
+                if 'config.ini' in namelist:
+                    cp_src_path = zftmp
+                elif 'cfg/config.ini' in namelist:
+                    cp_src_path = os.path.join(zftmp, 'cfg')
+                else:
+                    return 'zip文件里没有找到config.ini文件'
+
+                try:
+                    shutil.rmtree(cfg_path)
+                except Exception as e:
+                    return '无法删除cfg目录' + str(e)
+
+                try:
+                    shutil.copytree(cp_src_path, cfg_path)
+                except Exception as e:
+                    return '无法复制cfg目录' + str(e)
+
+                print('.zip has been extracted')
+                c_message.make(web_back_queue, 'wb:request_load')
 
     db_file, db_size = db.get_current_file()
     info_lst = get_info_list(gcfg, usertype, db_file, db_size)

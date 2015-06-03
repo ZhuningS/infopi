@@ -83,11 +83,11 @@ class c_user_table:
         # 出现的信息源数目(包括重复的)
         self.appeared_source_num = 0
 
-
 class c_source_table:
     __slots__ = ('source_id', 
                  'name', 'comment', 'link', 'interval',
-                 'user_cateset_dict', 'index_list')
+                 'user_cateset_dict', 'index_list',
+                 'last_fetch_date')
 
     def __init__(self):
         self.source_id = ''
@@ -103,15 +103,17 @@ class c_source_table:
 
         # 元素为c_index_unit
         self.index_list = list()
+        
+        # last fetch_date
+        self.last_fetch_date = '尚未刷新'
 
 class c_for_show:
-    __slots__ = ('name', 'comment', 'link',
-                 'level_str', 'interval_str', 'encoded_url')
+    __slots__ = ('source',
+                 'level_str', 'interval_str', 'encoded_url'
+                 )
     
     def __init__(self):
-        self.name = ''
-        self.comment = ''
-        self.link = ''
+        self.source = None
 
         self.level_str = ''
         self.interval_str = ''
@@ -183,6 +185,15 @@ class c_db_wrapper:
         self.listall = None
 
     def add_infos(self, lst):
+        if not lst:
+            return
+
+        # last_fetch_date
+        self.sources[lst[0].source_id].last_fetch_date = \
+            datetime.datetime.\
+            fromtimestamp(lst[0].fetch_date).\
+            strftime('%m-%d %H:%M')
+
         # add one by one
         res = [self.sqldb.add_info(i) \
                for i in lst[::-1] \
@@ -289,11 +300,9 @@ class c_db_wrapper:
             for sid in sid_lst:
                 one = c_for_show()
                 source = self.sources[sid]
-
-                one.name = source.name
-                one.comment = source.comment
-                one.link = source.link
-                #print(one.name, one.comment, one.link)
+                
+                # source ref
+                one.source = source
 
                 # encoded url
                 b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))

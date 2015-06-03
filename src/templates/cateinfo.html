@@ -13,16 +13,18 @@ a{TEXT-DECORATION:none}
 		<td align="center">备注</td>
 		<td class="hd">级别</td>
 		<td class="hd">刷新间隔</td>
+		<td class="hd">最后刷新</td>
 		<td class="hd">查看列表</td>
 	</tr>
 {% for cate, lst in show_list %}
-	<tr bgcolor="#cc99cc"><td>{{cate}}</td><td></td><td></td><td></td><td></td></tr>
+	<tr bgcolor="#cc99cc"><td>{{cate}}</td><td></td><td></td><td></td><td></td><td></td></tr>
 {%- for one in lst %}
 	<tr>
-		<td>{% if one.link %}<a href='{{one.link}}' target='_blank'>{{one.name}}</a>{% else %}{{one.name}}{% endif %}</td>
-		<td>{{one.comment}}</td>
+		<td>{% if one.source.link %}<a href='{{one.source.link}}' target='_blank'>{{one.source.name}}</a>{% else %}{{one.source.name}}{% endif %}</td>
+		<td>{{one.source.comment}}</td>
 		<td>{{one.level_str}}</td>
 		<td class="nb">{{one.interval_str}}</td>
+		<td class="nb">{{one.source.last_fetch_date}}</td>
 		<td><a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a></td>
 	</tr>{% endfor %}{% endfor %}
 </table>

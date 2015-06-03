@@ -2,6 +2,7 @@
 import sys
 import threading
 import time
+import datetime
 import heapq
 
 import bvars
@@ -102,9 +103,13 @@ def worker_starter(runcfg, source_id):
                     del lst[i]
 
             # remove existing exception
+            fetch_date_str = datetime.datetime.\
+                fromtimestamp(int_time).\
+                strftime('%m-%d %H:%M')
+
             c_message.make(back_web_queue,
                            'bw:del_exceptions_by_sid',
-                           [source.source_id])
+                           [(source.source_id, fetch_date_str)])
 
         finally:
             # 通知执行结束

@@ -186,12 +186,6 @@ class c_db_wrapper:
         if not lst:
             return
 
-        # last_fetch_date
-        self.sources[lst[0].source_id].last_fetch_date = \
-            datetime.datetime.\
-            fromtimestamp(lst[0].fetch_date).\
-            strftime('%m-%d %H:%M')
-
         # add one by one
         res = [self.sqldb.add_info(i) \
                for i in lst[::-1] \
@@ -502,8 +496,9 @@ class c_db_wrapper:
         return self.sqldb.get_current_file()
 
     def del_exceptions_by_sid(self, lst):
-        for sid in lst:
+        for sid, fetch_date in lst:
             if sid in self.sources:
+                self.sources[sid].last_fetch_date = fetch_date
                 self.sqldb.del_exceptions_by_sid(sid)
 
     def del_all_exceptions(self):

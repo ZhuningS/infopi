@@ -86,8 +86,7 @@ class c_user_table:
 class c_source_table:
     __slots__ = ('source_id', 
                  'name', 'comment', 'link', 'interval',
-                 'user_cateset_dict', 'index_list',
-                 'last_fetch_date')
+                 'user_cateset_dict', 'index_list', 'last_fetch_date')
 
     def __init__(self):
         self.source_id = ''
@@ -109,8 +108,7 @@ class c_source_table:
 
 class c_for_show:
     __slots__ = ('source',
-                 'level_str', 'interval_str', 'encoded_url'
-                 )
+                 'level_str', 'interval_str', 'encoded_url')
     
     def __init__(self):
         self.source = None

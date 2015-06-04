@@ -10,15 +10,17 @@
     <td align="center">source_id</td>
     <td align="center">name/link</td>
     <td align="center">刷新间隔</td>
+    <td align="center">最近有效刷新</td>
     <td align="center">用户列表</td>
 </tr>
 {% for item in items -%}
 <tr bgcolor="{% if item.color == 1 %}#ff9999{% else %}#99cc66{% endif %}">
-    <td>{{item.source_id}}</td>
-    <td>{% if item.link %}<a href="{{item.link}}" target="_blank">{{item.name}}</a>{% else %}{{item.name}}{% endif %}</td>
+    <td>{{item.source.source_id}}</td>
+    <td>{% if item.source.link %}<a href="{{item.source.link}}" target="_blank">{{item.source.name}}</a>{% else %}{{item.source.name}}{% endif %}</td>
     <td>{{item.interval_str}}</td>
+    <td>{{item.source.last_fetch_date}}</td>
     <td>{{item.userlist|safe}}</td>
-</tr><tr><td colspan="4">{{item.comment}}</td>
+</tr><tr><td colspan="5">{{item.source.comment}}</td>
 </tr>
 {% endfor %}
 </table>

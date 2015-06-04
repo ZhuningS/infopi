@@ -85,22 +85,19 @@ def worker_starter(runcfg, source_id):
 
             # remove duplicate suid, only keep the first one
             # (escape special suid inside this code)
-            temp = set()
-            del_lst = list()
+            suid_set = set()
+            del_set = set()
+            for i, one in enumerate(lst):              
+                # escape special suid
+                if one.suid == '<exception>':
+                    one.suid = '#<exception>#'
 
-            for i, one in enumerate(lst):
-                if one.suid not in temp:
-                    temp.add(one.suid)
-
-                    # escape special suid
-                    if one.suid == '<exception>':
-                        one.suid = '#<exception>#'
+                if one.suid not in suid_set:
+                    suid_set.add(one.suid)
                 else:
-                    del_lst.append(i)
-
-            if del_lst:
-                for i in del_lst[::-1]:
-                    del lst[i]
+                    del_set.add(i)
+            
+            lst = [one for i, one in enumerate(lst) if i not in del_set]
 
             # remove existing exception
             fetch_date_str = datetime.datetime.\
@@ -108,7 +105,7 @@ def worker_starter(runcfg, source_id):
                 strftime('%m-%d %H:%M')
 
             c_message.make(back_web_queue,
-                           'bw:del_exceptions_by_sid',
+                           'bw:source_finished',
                            [(source.source_id, fetch_date_str)])
 
         finally:

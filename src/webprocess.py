@@ -827,8 +827,8 @@ def check_bw_queue():
         if msg.command == 'bw:send_infos':
             db.add_infos(msg.data)
 
-        elif msg.command == 'bw:del_exceptions_by_sid':
-            db.del_exceptions_by_sid(msg.data)
+        elif msg.command == 'bw:source_finished':
+            db.source_finished(msg.data)
 
         elif msg.command == 'bw:db_process_time':
             db.db_process()

@@ -118,23 +118,18 @@ class c_for_show:
         self.encoded_url = ''
         
 class c_for_listall:
-    __slots__ = ('source_id', 'interval_str', 'userlist',
-                 'name', 'comment', 'link',
-                 'color')
+    __slots__ = ('source',
+                 'interval_str', 'userlist', 'color')
     
     def __init__(self):
-        self.source_id = ''
+        self.source = None
+        
         self.interval_str = ''
         self.userlist = list()
-        
-        self.name = ''
-        self.comment = ''
-        self.link = ''
-        
         self.color = 0
         
     def __lt__(self, other):
-        if self.source_id < other.source_id:
+        if self.source.source_id < other.source.source_id:
             return True
         else:
             return False
@@ -343,14 +338,10 @@ class c_db_wrapper:
         tempd = dict()
         for source in self.sources.values():
             item = c_for_listall()
-            item.source_id = source.source_id
+            item.source = source
             item.interval_str = get_interval_str(source.interval)
-            
-            item.name = source.name
-            item.comment = source.comment
-            item.link = source.link
-            
-            tempd[item.source_id] = item
+
+            tempd[source.source_id] = item
             
         for user, ut in self.users.items():
             for sid in ut.sid_list:
@@ -366,9 +357,9 @@ class c_db_wrapper:
             # sort userlist
             item.userlist.sort()
             item.userlist = '&nbsp;'.join(item.userlist)
-                
+
             # color
-            category, temp = item.source_id.split(':')
+            category, temp = item.source.source_id.split(':')
             if category != last_category:
                 now_color = 2 if now_color == 1 else 1
                 last_category = category
@@ -495,7 +486,7 @@ class c_db_wrapper:
     def get_current_file(self):
         return self.sqldb.get_current_file()
 
-    def del_exceptions_by_sid(self, lst):
+    def source_finished(self, lst):
         for sid, fetch_date in lst:
             if sid in self.sources:
                 self.sources[sid].last_fetch_date = fetch_date

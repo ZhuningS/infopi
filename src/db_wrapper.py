@@ -74,7 +74,7 @@ class c_user_table:
 
         # category -> <list>
         # <list>元素为c_index_unit
-        # 0,1,2为三种级别信息，19为异常信息
+        # 0,1,2为三种级别信息，-1为异常信息
         self.cate_indexlist_dict = dict()
 
         # 元素为tuple: (category, <list>)
@@ -215,7 +215,7 @@ class c_db_wrapper:
         ut.cate_indexlist_dict[1] = list()
         ut.cate_indexlist_dict[2] = list()
         # exception infos
-        ut.cate_indexlist_dict[19] = list()
+        ut.cate_indexlist_dict[-1] = list()
 
         for cate_tuple in user.category_list:
             now_cate = cate_tuple[0]
@@ -396,7 +396,7 @@ class c_db_wrapper:
         if suid == '<exception>':
             self.exceptions_index.append(unit)
             for user in ucd.keys():
-                self.users[user].cate_indexlist_dict[19].append(unit)
+                self.users[user].cate_indexlist_dict[-1].append(unit)
 
     # remove from indexs
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
@@ -423,7 +423,7 @@ class c_db_wrapper:
             del sindex[p]
             
             for user in ucd.keys():
-                sindex = self.users[user].cate_indexlist_dict[19]
+                sindex = self.users[user].cate_indexlist_dict[-1]
                 p = bisect.bisect_left(sindex, unit)
                 del sindex[p]
 
@@ -447,7 +447,7 @@ class c_db_wrapper:
             bisect.insort_left(self.exceptions_index, unit)
             
             for user in ucd.keys():
-                index = self.users[user].cate_indexlist_dict[19]
+                index = self.users[user].cate_indexlist_dict[-1]
                 bisect.insort_left(index, unit)                
 
     # ----------- utility --------------
@@ -610,7 +610,7 @@ class c_db_wrapper:
     # get exceptions by username
     def get_exceptions_by_username(self, username):
         lst = list()
-        for unit in self.users[username].cate_indexlist_dict[19]:
+        for unit in self.users[username].cate_indexlist_dict[-1]:
             info = self.sqldb.get_info_by_iid(unit.iid)
             lst.append(info)
 

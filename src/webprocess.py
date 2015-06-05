@@ -389,7 +389,7 @@ def left():
         # fetch my sources
         elif usertype > 0 and name == 'fetch_mine':
             lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', lst)
+            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
 
 
     category_list = db.get_category_list_by_username(username)
@@ -422,7 +422,7 @@ def mobile():
         # fetch my sources
         elif usertype > 0 and name == 'fetch_mine':
             lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', lst)
+            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
 
 
     category_list = db.get_category_list_by_username(username)

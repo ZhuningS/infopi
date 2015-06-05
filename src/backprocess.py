@@ -156,14 +156,6 @@ def import_files():
     global c_fetcher
     c_fetcher = fetcher.Fetcher
 
-def get_notifier(bb_queue):
-    msg = c_message('bb:timer')
-
-    def send_msg():
-        bb_queue.put(msg)
-
-    return send_msg
-
 def main_process(version, web_port, tmpfs_path,
                  web_back_queue, back_web_queue):
 
@@ -229,12 +221,11 @@ def main_process(version, web_port, tmpfs_path,
             bb_queue.put(msg)
 
     def timer_thread(bb_queue):
-        bb_notifier = get_notifier(bb_queue)
-        
+        timer_msg = c_message('bb:timer')
         while True:
             time.sleep(3)
-            bb_notifier()
-    
+            bb_queue.put(timer_msg)
+
     # web_back_queue 监视线程
     threading.Thread(target=web_back_queue_monitor,
                      args=(web_back_queue, bb_queue),

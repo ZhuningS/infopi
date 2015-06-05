@@ -32,7 +32,8 @@ def worker_starter(runcfg, source_id):
 
     def worker_wrapper(runcfg, 
                        worker, source, worker_dict,  
-                       back_web_queue, bb_queue):
+                       back_web_queue, bb_queue,
+                       cfg_token):
 
         #print('线程开始：%s' % source.source_id)
 
@@ -106,7 +107,7 @@ def worker_starter(runcfg, source_id):
 
             c_message.make(back_web_queue,
                            'bw:source_finished',
-                           bvars.cfg_token,
+                           cfg_token,
                            [(source.source_id, fetch_date_str)])
 
         finally:
@@ -155,7 +156,7 @@ def worker_starter(runcfg, source_id):
 
             c_message.make(back_web_queue,
                            'bw:send_infos',
-                           bvars.cfg_token,
+                           cfg_token,
                            lst)
 
         #print('线程结束：%s' % source.source_id)        
@@ -170,7 +171,8 @@ def worker_starter(runcfg, source_id):
                          args=(runcfg,
                                worker, 
                                source, worker_dict,
-                               bvars.back_web_queue, bvars.bb_queue), 
+                               bvars.back_web_queue, bvars.bb_queue,
+                               bvars.cfg_token), 
                          daemon=True
                          )
     t.start()

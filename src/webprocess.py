@@ -823,36 +823,41 @@ def check_bw_queue():
             msg = back_web_queue.get(block=False)
         except queue.Empty:
             break
-
-        if msg.command == 'bw:send_infos':
-            db.add_infos(msg.data)
-
-        elif msg.command == 'bw:source_finished':
-            db.source_finished(msg.data)
-
-        elif msg.command == 'bw:db_process_time':
-            db.db_process()
-            login_manager.maintenace()
+        
+        if msg.token == wvars.cfg_token:
+            if msg.command == 'bw:send_infos':
+                db.add_infos(msg.data)
+    
+            elif msg.command == 'bw:source_finished':
+                db.source_finished(msg.data)
+    
+            elif msg.command == 'bw:db_process_time':
+                db.db_process()
+                login_manager.maintenace()
 
         elif msg.command == 'bw:send_config_users':
-            # config
-            cfg = msg.data[0]
-            cfg.web_pid = os.getpid()
-            print('pid(web, back):', cfg.web_pid, cfg.back_pid)
+                # token
+                wvars.cfg_token = msg.data[0]
 
-            global gcfg
-            gcfg = cfg
+                # config
+                cfg = msg.data[1]
+                cfg.web_pid = os.getpid()
+                print('pid(web, back):', cfg.web_pid, cfg.back_pid)
 
-            template_cache.clear()
-            login_manager.clear()
+                global gcfg
+                gcfg = cfg
 
-            # users
-            users = msg.data[1]
-            print('web-side got users: %d' % len(users))
-            db.add_users(cfg, users)
-  
+                template_cache.clear()
+                login_manager.clear()
+
+                # users
+                users = msg.data[2]
+                print('web-side got users: %d' % len(users))
+                db.add_users(cfg, users)
+                
         else:
-            print('can not handle back->web message:', msg.command)
+            print('can not handle back->web message:', 
+                  msg.command, msg.token)
 
     return ''
 

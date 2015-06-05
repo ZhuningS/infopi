@@ -156,6 +156,13 @@ def import_files():
     global c_fetcher
     c_fetcher = fetcher.Fetcher
 
+def get_notifier(bb_queue):
+    msg = c_message('bb:timer')
+
+    def send_msg():
+        bb_queue.put(msg)
+
+    return send_msg
 
 def main_process(version, web_port, tmpfs_path,
                  web_back_queue, back_web_queue):
@@ -186,8 +193,12 @@ def main_process(version, web_port, tmpfs_path,
 
         # pre process
         timer_heap, user_list = pre_process(user_list, bvars.sources)
+        
+        # config token
+        cfg_token = int(time.time())
+        bvars.cfg_token = cfg_token
 
-        return timer_heap, user_list
+        return cfg_token, timer_heap, user_list
 
     # -----------------------
     #         start 
@@ -218,9 +229,11 @@ def main_process(version, web_port, tmpfs_path,
             bb_queue.put(msg)
 
     def timer_thread(bb_queue):
+        bb_notifier = get_notifier(bb_queue)
+        
         while True:
             time.sleep(3)
-            c_message.make(bb_queue, 'bb:timer')
+            bb_notifier()
     
     # web_back_queue 监视线程
     threading.Thread(target=web_back_queue_monitor,
@@ -262,7 +275,9 @@ def main_process(version, web_port, tmpfs_path,
 
             # time to maintenance database
             if now_time > next_db_process_time:
-                c_message.make(back_web_queue, 'bw:db_process_time')
+                c_message.make(back_web_queue, 
+                               'bw:db_process_time',
+                               bvars.cfg_token)
                 next_db_process_time += 24*3600
 
                 # for wrong start-up time
@@ -286,9 +301,9 @@ def main_process(version, web_port, tmpfs_path,
 
         # load config, users
         elif msg.command == 'wb:request_load':
-            timer_heap, user_list = load_config_sources_users(web_port, 
-                                                              tmpfs_path
-                                                              )
+            cfg_token, timer_heap, user_list = \
+                load_config_sources_users(web_port, tmpfs_path)
+
             if timer_heap == None:
                 continue
 
@@ -297,7 +312,8 @@ def main_process(version, web_port, tmpfs_path,
             # send [config, users] to web
             c_message.make(back_web_queue, 
                            'bw:send_config_users',
-                           [gcfg, user_list])
+                           cfg_token,
+                           [cfg_token, gcfg, user_list])
 
             # database process timer
             next_db_process_time = get_db_process_seconds()       

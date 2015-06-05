@@ -48,18 +48,14 @@ class c_info:
         
 
 class c_message:
-    __slots__ = ('command', 'data')
+    __slots__ = ('command', 'token', 'data')
 
-    def __init__(self, command, data=None):
+    def __init__(self, command, token=0, data=None):
         self.command = command
+        self.token = token
         self.data = data
 
     @staticmethod
-    def make(sendto, command, data=None):
-        m = c_message(command, data)
+    def make(sendto, command, token=0, data=None):
+        m = c_message(command, token, data)
         sendto.put(m)
-
-
-
-
-

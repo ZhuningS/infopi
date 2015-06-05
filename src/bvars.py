@@ -11,6 +11,7 @@ workers = dict()
 # worker_id -> parser_function
 dataparsers = dict()
 
+cfg_token = 0
 
 back_web_queue = None
 bb_queue = None

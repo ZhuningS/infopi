@@ -106,12 +106,14 @@ def worker_starter(runcfg, source_id):
 
             c_message.make(back_web_queue,
                            'bw:source_finished',
+                           bvars.cfg_token,
                            [(source.source_id, fetch_date_str)])
 
         finally:
             # 通知执行结束
             c_message.make(bb_queue,
                            'bb:source_return',
+                           bvars.cfg_token,
                            source.source_id
                            )
             
@@ -151,8 +153,9 @@ def worker_starter(runcfg, source_id):
                 i.summary = i.summary.translate(translate_dict)
                 i.pub_date = i.pub_date.translate(translate_dict)
 
-            c_message.make(back_web_queue, 
-                           'bw:send_infos', 
+            c_message.make(back_web_queue,
+                           'bw:send_infos',
+                           bvars.cfg_token,
                            lst)
 
         #print('线程结束：%s' % source.source_id)        

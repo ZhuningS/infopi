@@ -1,6 +1,8 @@
 # coding=utf-8
 import os
 
+cfg_token = 0
+
 static_folder = 'static'
 template_folder = 'templates'
 upload_forlder = r'/\/\/\/'

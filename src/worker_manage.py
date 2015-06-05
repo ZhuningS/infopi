@@ -113,7 +113,7 @@ def worker_starter(runcfg, source_id):
             # 通知执行结束
             c_message.make(bb_queue,
                            'bb:source_return',
-                           bvars.cfg_token,
+                           0, # token
                            source.source_id
                            )
             

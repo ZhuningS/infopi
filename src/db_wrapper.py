@@ -74,6 +74,7 @@ class c_user_table:
 
         # category -> <list>
         # <list>元素为c_index_unit
+        # 0,1,2为三种级别信息，19为异常信息
         self.cate_indexlist_dict = dict()
 
         # 元素为tuple: (category, <list>)
@@ -213,6 +214,8 @@ class c_db_wrapper:
         ut.cate_indexlist_dict[0] = list()
         ut.cate_indexlist_dict[1] = list()
         ut.cate_indexlist_dict[2] = list()
+        # exception infos
+        ut.cate_indexlist_dict[19] = list()
 
         for cate_tuple in user.category_list:
             now_cate = cate_tuple[0]
@@ -356,7 +359,7 @@ class c_db_wrapper:
         for item in self.listall:
             # sort userlist
             item.userlist.sort()
-            item.userlist = '&nbsp;'.join(item.userlist)
+            item.userlist = ' '.join(item.userlist)
 
             # color
             category, temp = item.source.source_id.split(':')
@@ -392,6 +395,8 @@ class c_db_wrapper:
         # exception index
         if suid == '<exception>':
             self.exceptions_index.append(unit)
+            for user in ucd.keys():
+                self.users[user].cate_indexlist_dict[19].append(unit)
 
     # remove from indexs
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
@@ -416,6 +421,11 @@ class c_db_wrapper:
             sindex = self.exceptions_index
             p = bisect.bisect_left(sindex, unit)
             del sindex[p]
+            
+            for user in ucd.keys():
+                sindex = self.users[user].cate_indexlist_dict[19]
+                p = bisect.bisect_left(sindex, unit)
+                del sindex[p]
 
     # add to indexs
     def callback_add_to_indexs(self, source_id, iid, fetch_date, suid):        
@@ -435,6 +445,10 @@ class c_db_wrapper:
         # exception index
         if suid == '<exception>':
             bisect.insort_left(self.exceptions_index, unit)
+            
+            for user in ucd.keys():
+                index = self.users[user].cate_indexlist_dict[19]
+                bisect.insort_left(index, unit)                
 
     # ----------- utility --------------
     def compact_db(self):
@@ -596,12 +610,10 @@ class c_db_wrapper:
     # get exceptions by username
     def get_exceptions_by_username(self, username):
         lst = list()
-        for unit in self.exceptions_index:
+        for unit in self.users[username].cate_indexlist_dict[19]:
             info = self.sqldb.get_info_by_iid(unit.iid)
             lst.append(info)
-        
-        d = self.users[username].sid_level_dict
-        lst = [one for one in lst if one.source_id in d]
+
         return lst
 
     # ----------- for login --------------

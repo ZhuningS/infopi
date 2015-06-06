@@ -156,10 +156,10 @@ def import_files():
     global c_fetcher
     c_fetcher = fetcher.Fetcher
 
-def main_process(version, web_port, tmpfs_path,
+def main_process(version, web_port, https, tmpfs_path,
                  web_back_queue, back_web_queue):
 
-    def load_config_sources_users(web_port, tmpfs_path):
+    def load_config_sources_users(web_port, https, tmpfs_path):
         # check cfg directory exist?
         config_path = os.path.join(bvars.root_path, 'cfg')
         if not os.path.isdir(config_path):
@@ -172,7 +172,7 @@ def main_process(version, web_port, tmpfs_path,
         c_fetcher.clear_cache()
 
         # load config
-        cfg = m_gconfig.load_config(version, web_port, tmpfs_path)
+        cfg = m_gconfig.load_config(version, web_port, https, tmpfs_path)
         global gcfg
         gcfg = cfg
 
@@ -209,7 +209,7 @@ def main_process(version, web_port, tmpfs_path,
     ctrl = m_task_ctrl.c_task_controller()
 
     # http-request for notifying web-process
-    request_web_check = fun_request_web_check(web_port)
+    request_web_check = fun_request_web_check(web_port, https)
 
     # -----------------------
     # threads
@@ -293,7 +293,7 @@ def main_process(version, web_port, tmpfs_path,
         # load config, users
         elif msg.command == 'wb:request_load':
             cfg_token, timer_heap, user_list = \
-                load_config_sources_users(web_port, tmpfs_path)
+                load_config_sources_users(web_port, https, tmpfs_path)
 
             if timer_heap == None:
                 continue
@@ -313,11 +313,20 @@ def main_process(version, web_port, tmpfs_path,
             print('无法处理的web->back消息:', msg.command)
 
 
-def fun_request_web_check(port):
+def fun_request_web_check(port, https):
     import urllib.request
     proxy = urllib.request.ProxyHandler({})
-    opener = urllib.request.build_opener(proxy)
-    req = urllib.request.Request('http://127.0.0.1:%d/check' % port)
+
+    if not https:
+        opener = urllib.request.build_opener(proxy)
+        req = urllib.request.Request('http://127.0.0.1:%d/check' % port)
+    else:
+        import ssl
+        https_handler = urllib.request.HTTPSHandler(
+                context=ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+                )
+        opener = urllib.request.build_opener(proxy, https_handler)
+        req = urllib.request.Request('https://127.0.0.1:%d/check' % port)
 
     def openit():
         opener.open(req)

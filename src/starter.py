@@ -1,6 +1,6 @@
 # coding=utf-8
 
-version = 'InfoPi v.2015-06-05d'
+version = 'InfoPi v.2015-06-06'
 
 def main():
     # -------------------
@@ -38,10 +38,27 @@ def main():
                         metavar='端口',
                         default=5000,
                         dest='web_port')
+
+    #certfile keyfile
+    parser.add_argument('-c', '--certfile', 
+                        type=str, help='证书文件，应位于程序根目录下',
+                        metavar='文件名',
+                        default='',
+                        dest='certfile')
+
+    parser.add_argument('-k', '--keyfile', 
+                        type=str, help='密钥文件，应位于程序根目录下',
+                        metavar='文件名',
+                        default='',
+                        dest='keyfile')
     
     args = parser.parse_args()
+
     tmpfs_path = args.tmpfs_path
     web_port = args.web_port
+
+    certfile = args.certfile
+    keyfile = args.keyfile
 
     # ------------------------
 
@@ -96,7 +113,8 @@ def main():
     global version
     process = multiprocessing.Process(target=main_process,
                                       args=(version,
-                                            web_port, tmpfs_path,
+                                            web_port, bool(certfile),
+                                            tmpfs_path,
                                             web_back_queue,
                                             back_web_queue),
                                       daemon = True
@@ -107,7 +125,7 @@ def main():
     # web process
     #-----------------   
     from webprocess import run_web
-    run_web(web_port, tmpfs_path,
+    run_web(web_port, certfile, keyfile, tmpfs_path,
             web_back_queue, back_web_queue)
 
 

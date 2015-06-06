@@ -53,6 +53,7 @@ class c_config:
 
         # run-time status
         self.web_port = 0
+        self.https = False
         self.root_path = ''
         self.tmpfs_path = ''
 
@@ -66,7 +67,7 @@ class c_config:
         self.runcfg = c_runcfg()
 
 
-def load_config(version, web_port, tmpfs_path):
+def load_config(version, web_port, https, tmpfs_path):
     def get_value(string, t):
 
         if t == VALUE_TYPE.INT:
@@ -95,6 +96,7 @@ def load_config(version, web_port, tmpfs_path):
 
     # run-time status
     cfg.web_port = web_port
+    cfg.https = https
     cfg.root_path = bvars.root_path
     cfg.tmpfs_path = tmpfs_path
 

@@ -36,7 +36,10 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
         lst.append(one)
 
     # web port
-    one = ('web端口', cfg.web_port)
+    s = '端口:%d https:%s' % (cfg.web_port, 
+                               '启用' if cfg.https else '未启用'
+                               )
+    one = ('web服务器', s)
     lst.append(one)
 
     # tmpfs

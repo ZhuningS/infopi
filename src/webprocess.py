@@ -861,7 +861,7 @@ def check_bw_queue():
 
     return ''
 
-def run_web(web_port, tmpfs_path,
+def run_web(web_port, certfile, keyfile, tmpfs_path,
             wb_queue, bw_queue):
 
     # queues
@@ -883,7 +883,21 @@ def run_web(web_port, tmpfs_path,
     from tornado.ioloop import IOLoop
 
     try:
-        http_server = HTTPServer(WSGIContainer(web))
+        if certfile:
+            import ssl
+            context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            
+            cf = os.path.join(wvars.root_path, certfile)
+            if keyfile:
+                kf = os.path.join(wvars.root_path, keyfile)
+            else:
+                kf = None
+            
+            context.load_cert_chain(certfile=cf, keyfile=kf)
+        else:
+            context = None
+        
+        http_server = HTTPServer(WSGIContainer(web), ssl_options=context)
         http_server.listen(web_port)
         IOLoop.instance().start()
     except Exception as e:

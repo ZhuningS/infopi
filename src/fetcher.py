@@ -53,7 +53,7 @@ class Fetcher:
             cd_encoding = cd_r['encoding']
 
             if cd_confidence > 0.8:
-                ret = Fetcher.LABELS.get(cd_encoding.lower(), '')
+                ret = Fetcher.lookup_encoding(cd_encoding)
                 print('\n%s\nchardet[encoding:%s, confidence:%.5f]' % \
                       (url, ret, cd_confidence)
                       )
@@ -135,7 +135,7 @@ class Fetcher:
             matcher = pattern.search(contenttype)
 
             if matcher:
-                return Fetcher.LABELS.get(matcher.group(1).lower(), '')
+                return Fetcher.lookup_encoding(matcher.group(1))
             else:
                 return ''
 
@@ -190,15 +190,17 @@ class Fetcher:
         if not in_encoding:
             return ''
 
-        encoding = Fetcher.LABELS.get(in_encoding, '')
+        encoding = Fetcher.LABELS.get(in_encoding, None)
 
-        if not encoding:
+        if encoding == None:
             try:
                 codecs.lookup(in_encoding)
-            except Exception as e:
+            except:
                 print('无此编码', in_encoding)
+                encoding = ''
             else:
                 encoding = in_encoding
+            Fetcher.LABELS[in_encoding] = encoding
 
         return encoding
 
@@ -422,5 +424,4 @@ class Fetcher:
         'utf-16be':            'utf-16be',
         'utf-16':              'utf-16le',
         'utf-16le':            'utf-16le',
-        'x-user-defined':      '',
     }

@@ -223,6 +223,9 @@ def main_process(version, web_port, https, tmpfs_path,
     # -----------------------
     print('back-side process loop starts')
 
+    # used for fetch all sources
+    fetch_all = list()
+
     while True:
         msg = bb_queue.get()
 
@@ -248,8 +251,7 @@ def main_process(version, web_port, https, tmpfs_path,
         elif msg.command == 'wb:request_fetch':
             print('web side request fetch')
 
-            l = (i.source_id for i in timer_heap) \
-                if not msg.data else msg.data
+            l = fetch_all if msg.data == None else msg.data
             
             # 运行source
             ctrl.fetch(l)
@@ -261,10 +263,12 @@ def main_process(version, web_port, https, tmpfs_path,
 
             if cfg_token == None:
                 continue
+            
+            fetch_all = [i.source_id for i in timer_heap]
 
             ctrl.set_data(gcfg, timer_heap)
 
-            # send [config, users] to web
+            # send [cfg_token, config, users] to web
             c_message.make(back_web_queue, 
                            'bw:send_config_users',
                            cfg_token,

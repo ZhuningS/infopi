@@ -53,7 +53,6 @@ class c_task_controller:
         
         self.gcfg = None
         self.timer_heap = None
-        self.next_db_process_time = sys.maxsize
 
         self.temp_fetch_list = list()
 
@@ -72,8 +71,13 @@ class c_task_controller:
     def set_data(self, gcfg, timer_heap):
         self.gcfg = gcfg
         self.timer_heap = timer_heap
+
         # database process timer
-        self.next_db_process_time = get_db_process_seconds(gcfg)
+        next_db_process_time = get_db_process_seconds(gcfg)
+        db_unit = c_run_heap_unit('db_process',
+                                  3600*24,
+                                  next_db_process_time)
+        heapq.heappush(self.timer_heap, db_unit)
 
         # clear
         self.temp_fetch_list.clear()
@@ -167,8 +171,14 @@ class c_task_controller:
 
             heapq.heappush(self.timer_heap, temp)
 
-            # temp list
-            self.temp_fetch_list.append(temp.source_id)
+            if temp.source_id == 'db_process':
+                # time to maintenance database
+                c_message.make(self.back_web_queue, 
+                               'bw:db_process_time',
+                               bvars.cfg_token)
+            else:
+                # temp list
+                self.temp_fetch_list.append(temp.source_id)
 
         # 运行source
         if self.temp_fetch_list:
@@ -186,17 +196,6 @@ class c_task_controller:
                 print('任务%s超时' % temp_source_id)
         if mark:
             self.fresh_job()
-
-        # time to maintenance database
-        if now_time > self.next_db_process_time:
-            c_message.make(self.back_web_queue, 
-                           'bw:db_process_time',
-                           bvars.cfg_token)
-            self.next_db_process_time += 24*3600
-
-            # for wrong start-up time
-            if self.next_db_process_time <= now_time:
-                self.next_db_process_time = get_db_process_seconds()
 
     def get_status_str(self):
         s = ('timer heap length: %d<br>'

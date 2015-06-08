@@ -89,16 +89,16 @@ def pre_process(users, all_source_dict):
         for sinfo in sid_sinfolist_dict[sid]:
             sinfo[2] = unit.interval
 
-    # print unused sources
-    t_all_source = set(all_source_dict.keys())
-    t_run_source = set(run_source_dict.keys())
-    t_unuse_source = t_all_source.difference(t_run_source)
-    for sid in t_unuse_source:
-        tname = all_source_dict[sid].name
-        tcomment = all_source_dict[sid].comment
-        tlink = all_source_dict[sid].link
-        s = ('未使用的源%s\nname:%s\ncomment:%s\nlink:%s\n')
-        print(s % (sid, tname, tcomment, tlink))
+#     # print unused sources
+#     t_all_source = set(all_source_dict.keys())
+#     t_run_source = set(run_source_dict.keys())
+#     t_unuse_source = t_all_source.difference(t_run_source)
+#     for sid in t_unuse_source:
+#         tname = all_source_dict[sid].name
+#         tcomment = all_source_dict[sid].comment
+#         tlink = all_source_dict[sid].link
+#         s = ('未使用的源%s\nname:%s\ncomment:%s\nlink:%s\n')
+#         print(s % (sid, tname, tcomment, tlink))
 
     return timer_heap, users
 
@@ -145,7 +145,7 @@ def main_process(version, web_port, https, tmpfs_path,
         if not os.path.isdir(config_path):
             print('不存在cfg文件夹，无法加载配置。')
             print('请在准备好cfg配置文件夹后重新启动程序。')
-            return None, None
+            return None, None, None
         
         # clrear red & fetcher cache
         c_red.clear_cache()
@@ -259,7 +259,7 @@ def main_process(version, web_port, https, tmpfs_path,
             cfg_token, timer_heap, user_list = \
                 load_config_sources_users(web_port, https, tmpfs_path)
 
-            if timer_heap == None:
+            if cfg_token == None:
                 continue
 
             ctrl.set_data(gcfg, timer_heap)

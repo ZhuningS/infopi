@@ -74,8 +74,8 @@ def load_xml(sources_path, path, filename):
     short_fn = lfilename[:-4]
 
     # windows不区分大小写，不必提示
-    if os.name != 'nt' and short_fn in temp_dict:
-        print('提示:\n%s:%s已存在，本程序不区分大小写' % (lpath, short_fn))
+    if short_fn in temp_dict:
+        #print('提示:\n%s:%s已存在，本程序不区分大小写' % (lpath, short_fn))
         return
 
     # get xml object

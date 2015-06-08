@@ -267,6 +267,7 @@ def main_process(version, web_port, https, tmpfs_path,
             cfg_token, timer_heap, user_list = \
                 load_config_sources_users(web_port, https, tmpfs_path)
 
+            # 加载cfg文件夹失败
             if cfg_token == None:
                 continue
             

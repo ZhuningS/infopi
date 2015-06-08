@@ -32,7 +32,10 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
         lst.append(one)
 
         # config start time
-        one = ('配置加载时间', cfg.start_time)
+        s = cfg.start_time
+        if cfg.tasks_suspend:
+            s += ' 已挂起'
+        one = ('配置加载时间', s)
         lst.append(one)
 
     # web port

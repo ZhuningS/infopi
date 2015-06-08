@@ -270,6 +270,7 @@ def main_process(version, web_port, https, tmpfs_path,
             if cfg_token == None:
                 continue
             
+            # 挂起?
             if timer_heap == None:
                 fetch_all = list()
             else:

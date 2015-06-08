@@ -73,11 +73,12 @@ class c_task_controller:
         self.timer_heap = timer_heap
 
         # database process timer
-        next_db_process_time = get_db_process_seconds(gcfg)
-        db_unit = c_run_heap_unit('db_process',
-                                  3600*24,
-                                  next_db_process_time)
-        heapq.heappush(self.timer_heap, db_unit)
+        if self.timer_heap != None:
+            next_db_process_time = get_db_process_seconds(gcfg)
+            db_unit = c_run_heap_unit('db_process',
+                                      3600*24,
+                                      next_db_process_time)
+            heapq.heappush(self.timer_heap, db_unit)
 
         # clear
         self.temp_fetch_list.clear()
@@ -204,7 +205,8 @@ class c_task_controller:
         s = ('timer heap length: %d<br>'
              'running source number: %d<br>'
              'queue length: %d<br>')
-        s = s % (len(self.timer_heap), 
+        s = s % (len(self.timer_heap) if self.timer_heap != None 
+                                      else -1, 
                  len(self.running_map), 
                  len(self.queue_deque)
                  )

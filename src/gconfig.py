@@ -42,6 +42,7 @@ class c_config:
         self.task_pipes = 3
         self.task_timeout = 900
         self.default_source_interval = 3600
+        self.tasks_suspend = False
 
         # database auto maintance
         self.db_process_at = (4, 00)
@@ -76,7 +77,6 @@ def load_config(version, web_port, https, tmpfs_path):
             if m:
                 v = int(m.group(1))
                 return v
-
 
         elif t == VALUE_TYPE.INT_TUPLE_2:
             p = red.d(r'^(\d+)\D+(\d+)\s*(?:#.*)?$')
@@ -170,8 +170,12 @@ def load_config(version, web_port, https, tmpfs_path):
             if v:
                 cfg.default_source_interval = v
             else:
-                print('default_source_interval', string)   
-
+                print('default_source_interval', string)
+                
+        elif k == 'tasks_suspend':
+            v = get_value(string, VALUE_TYPE.INT)
+            if v == 1:
+                cfg.tasks_suspend = True
 
         # fetch setting
         elif k == 'fetch_max_entries':

@@ -169,6 +169,10 @@ def main_process(version, web_port, https, tmpfs_path,
         # config token
         cfg_token = int(time.time())
         bvars.cfg_token = cfg_token
+        
+        # tasks_suspend
+        if gcfg.tasks_suspend:
+            return cfg_token, None, user_list
 
         return cfg_token, timer_heap, user_list
 
@@ -250,6 +254,8 @@ def main_process(version, web_port, https, tmpfs_path,
         # 运行sources
         elif msg.command == 'wb:request_fetch':
             print('web side request fetch')
+            if not fetch_all:
+                continue
 
             l = fetch_all if msg.data == None else msg.data
             
@@ -264,7 +270,10 @@ def main_process(version, web_port, https, tmpfs_path,
             if cfg_token == None:
                 continue
             
-            fetch_all = [i.source_id for i in timer_heap]
+            if timer_heap == None:
+                fetch_all = list()
+            else:
+                fetch_all = [i.source_id for i in timer_heap]
 
             ctrl.set_data(gcfg, timer_heap)
 

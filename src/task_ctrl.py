@@ -167,7 +167,10 @@ class c_task_controller:
 
             # for wrong start-up time
             if temp.next_time <= now_time:
-                temp.next_time = now_time + temp.interval
+                if temp.source_id == 'db_process':
+                    temp.next_time = get_db_process_seconds()
+                else:
+                    temp.next_time = now_time + temp.interval
 
             heapq.heappush(self.timer_heap, temp)
 

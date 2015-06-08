@@ -3,7 +3,11 @@
 import heapq
 import collections
 import time
+import datetime
+import sys
 
+from datadefine import c_message
+import bvars
 import worker_manage
 
 class c_run_heap_unit:
@@ -25,11 +29,31 @@ class c_running_unit:
     def __init__(self, source_id, timeout_time):
         self.source_id = source_id
         self.timeout_time = timeout_time
+        
+# database process timer
+def get_db_process_seconds(gcfg):
+    nowdt = datetime.datetime.now()
+
+    one_day = datetime.timedelta(days=1)
+    nextdt = datetime.datetime(nowdt.year, nowdt.month, nowdt.day,
+                               gcfg.db_process_at[0], 
+                               gcfg.db_process_at[1]) + one_day
+
+    dtime = (nextdt - nowdt).total_seconds()
+
+    ret = dtime if dtime < 24*3600 else dtime - 24*3600
+    print('database process after %d seconds' % ret)
+
+    ret += int(time.time())
+    return ret
 
 class c_task_controller:
-    def __init__(self):
+    def __init__(self, back_web_queue):
+        self.back_web_queue = back_web_queue
+        
         self.gcfg = None
         self.timer_heap = None
+        self.next_db_process_time = sys.maxsize
 
         self.temp_fetch_list = list()
 
@@ -48,6 +72,8 @@ class c_task_controller:
     def set_data(self, gcfg, timer_heap):
         self.gcfg = gcfg
         self.timer_heap = timer_heap
+        # database process timer
+        self.next_db_process_time = get_db_process_seconds(gcfg)
 
         # clear
         self.temp_fetch_list.clear()
@@ -120,9 +146,11 @@ class c_task_controller:
                 self.queue_set.add(source_id)
                 self.queue_deque.append(source_id)          
 
-    def timer(self, now_time):
+    def timer(self):
         if not self.timer_heap:
             return
+        
+        now_time = int(time.time())
 
         # 检查到时的source
         self.temp_fetch_list.clear()
@@ -159,9 +187,16 @@ class c_task_controller:
         if mark:
             self.fresh_job()
 
-        # print('running: %d, queue: %d' % \
-        #       (len(running_map), len(queue_set))
-        #       )
+        # time to maintenance database
+        if now_time > self.next_db_process_time:
+            c_message.make(self.back_web_queue, 
+                           'bw:db_process_time',
+                           bvars.cfg_token)
+            self.next_db_process_time += 24*3600
+
+            # for wrong start-up time
+            if self.next_db_process_time <= now_time:
+                self.next_db_process_time = get_db_process_seconds()
 
     def get_status_str(self):
         s = ('timer heap length: %d<br>'

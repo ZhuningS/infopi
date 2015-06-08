@@ -1,7 +1,6 @@
 # coding=utf-8
 
 import time
-import datetime
 import threading
 import queue  
 import heapq
@@ -104,24 +103,6 @@ def pre_process(users, all_source_dict):
 
     return timer_heap, users
 
-# database process timer
-def get_db_process_seconds():
-    nowdt = datetime.datetime.now()
-
-    one_day = datetime.timedelta(days=1)
-    nextdt = datetime.datetime(nowdt.year, nowdt.month, nowdt.day,
-                               gcfg.db_process_at[0], 
-                               gcfg.db_process_at[1]) + one_day
-
-    dtime = (nextdt - nowdt).total_seconds()
-
-    ret = dtime if dtime < 24*3600 else dtime - 24*3600
-    print('database process after %d seconds' % ret)
-
-    ret += int(time.time())
-    return ret
-
-
 def import_files():
     import workers
 
@@ -206,7 +187,7 @@ def main_process(version, web_port, https, tmpfs_path,
     import_files()
 
     # task controller
-    ctrl = m_task_ctrl.c_task_controller()
+    ctrl = m_task_ctrl.c_task_controller(back_web_queue)
 
     # http-request for notifying web-process
     request_web_check = fun_request_web_check(web_port, https)
@@ -243,28 +224,14 @@ def main_process(version, web_port, https, tmpfs_path,
     # -----------------------
     print('back-side process loop starts')
 
-    next_db_process_time = sys.maxsize
     while True:
         msg = bb_queue.get()
 
         # timer
         if msg.command == 'bb:timer':
-            now_time = int(time.time())
-
-            ctrl.timer(now_time)
+            ctrl.timer()
             #status_str = ctrl.get_status_str()
             #print(status_str)
-
-            # time to maintenance database
-            if now_time > next_db_process_time:
-                c_message.make(back_web_queue, 
-                               'bw:db_process_time',
-                               bvars.cfg_token)
-                next_db_process_time += 24*3600
-
-                # for wrong start-up time
-                if next_db_process_time <= now_time:
-                    next_db_process_time = get_db_process_seconds()
 
             # 检查发送队列
             if not back_web_queue.empty():
@@ -302,10 +269,7 @@ def main_process(version, web_port, https, tmpfs_path,
             c_message.make(back_web_queue, 
                            'bw:send_config_users',
                            cfg_token,
-                           [cfg_token, gcfg, user_list])
-
-            # database process timer
-            next_db_process_time = get_db_process_seconds()       
+                           [cfg_token, gcfg, user_list])    
 
         else:
             print('无法处理的web->back消息:', msg.command)

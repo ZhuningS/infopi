@@ -26,11 +26,6 @@ class c_running_unit:
         self.source_id = source_id
         self.timeout_time = timeout_time
 
-    def __lt__(self, other):
-        if self.timeout_time < other.timeout_time:
-            return True
-        return False
-
 class c_task_controller:
     def __init__(self):
         self.gcfg = None
@@ -92,7 +87,6 @@ class c_task_controller:
                                   now_time+self.gcfg.task_timeout
                                   )
             self.running_sorted_list.append(item)
-            self.running_sorted_list.sort()
 
             # start thread
             worker_manage.worker_starter(self.gcfg.runcfg, source_id)
@@ -119,7 +113,6 @@ class c_task_controller:
                                       now_time+self.gcfg.task_timeout
                                       )
                 self.running_sorted_list.append(item)
-                self.running_sorted_list.sort()
 
                 worker_manage.worker_starter(self.gcfg.runcfg, source_id)
             # no slots, add to deque

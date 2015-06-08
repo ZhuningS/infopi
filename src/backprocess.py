@@ -246,18 +246,9 @@ def main_process(version, web_port, https, tmpfs_path,
     next_db_process_time = sys.maxsize
     while True:
         msg = bb_queue.get()
-        # if msg.command != 'bb:timer':
-        #     print('back端循环', msg.command)
 
         # timer
         if msg.command == 'bb:timer':
-            # 检查发送队列
-            if not back_web_queue.empty():
-                try:
-                    request_web_check()
-                except:
-                    pass
-
             now_time = int(time.time())
 
             ctrl.timer(now_time)
@@ -274,6 +265,13 @@ def main_process(version, web_port, https, tmpfs_path,
                 # for wrong start-up time
                 if next_db_process_time <= now_time:
                     next_db_process_time = get_db_process_seconds()
+
+            # 检查发送队列
+            if not back_web_queue.empty():
+                try:
+                    request_web_check()
+                except:
+                    pass
 
         # source执行完毕
         elif msg.command == 'bb:source_return':

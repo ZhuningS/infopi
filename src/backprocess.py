@@ -5,7 +5,6 @@ import threading
 import queue  
 import heapq
 import os
-import sys
 
 import bvars
 
@@ -269,7 +268,7 @@ def main_process(version, web_port, https, tmpfs_path,
             c_message.make(back_web_queue, 
                            'bw:send_config_users',
                            cfg_token,
-                           [cfg_token, gcfg, user_list])    
+                           [cfg_token, gcfg, user_list])
 
         else:
             print('无法处理的web->back消息:', msg.command)

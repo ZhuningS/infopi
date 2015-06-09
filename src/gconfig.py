@@ -175,8 +175,8 @@ def load_config(version, web_port, https, tmpfs_path):
                 
         elif k == 'tasks_suspend':
             v = get_value(string, VALUE_TYPE.INT)
-            if v == 1:
-                cfg.tasks_suspend = True
+            if v == 1 or v == 0:
+                cfg.tasks_suspend = bool(v)
             else:
                 print('tasks_suspend', string)
 
@@ -227,7 +227,7 @@ def load_config(version, web_port, https, tmpfs_path):
                 
         elif k == 'db_process_interval':
             v = get_value(string, VALUE_TYPE.INT)
-            if v != None and v > 0:
+            if v != None:
                 cfg.db_process_interval = v
             else:
                 print('db_process_interval', string)

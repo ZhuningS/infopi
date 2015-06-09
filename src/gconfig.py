@@ -177,6 +177,8 @@ def load_config(version, web_port, https, tmpfs_path):
             v = get_value(string, VALUE_TYPE.INT)
             if v == 1:
                 cfg.tasks_suspend = True
+            else:
+                print('tasks_suspend', string)
 
         # fetch setting
         elif k == 'fetch_max_entries':

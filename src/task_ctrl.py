@@ -38,7 +38,7 @@ def get_db_process_time(gcfg):
     # db_process_interval enabled
     if gcfg.db_process_interval > 0:
         interval = gcfg.db_process_interval*3600
-        return now_int + 600 + interval, interval
+        return now_int + 900 + interval, interval
     
     nowdt = datetime.datetime.now()
 

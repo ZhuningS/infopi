@@ -9,6 +9,11 @@ __all__ = ('get_info_list', 'get_python_process')
 
 def get_info_list(cfg, usertype, db_file='', db_size=''):
     lst = list()
+    
+    # suspend?
+    if cfg.tasks_suspend:
+        one = ('挂起', '已挂起，后端进程的定时器不再执行任务。')
+        lst.append(one)
 
     # cpu temperature
     temp_float = get_cpu_temperature()
@@ -32,10 +37,7 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
         lst.append(one)
 
         # config start time
-        s = cfg.start_time
-        if cfg.tasks_suspend:
-            s += ' 已挂起'
-        one = ('配置加载时间', s)
+        one = ('配置加载时间', cfg.start_time)
         lst.append(one)
 
     # web port

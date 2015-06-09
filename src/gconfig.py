@@ -46,6 +46,7 @@ class c_config:
 
         # database auto maintance
         self.db_process_at = (4, 00)
+        self.db_process_interval = 0
         self.db_process_del_entries = 300
         self.db_process_del_days = 30
         self.db_process_rm_ghost = 1
@@ -220,7 +221,14 @@ def load_config(version, web_port, https, tmpfs_path):
             if v and 0 <= v[0] <= 24 and 0 <= v[1] <= 60:
                 cfg.db_process_at = v
             else:
-                print('db_process_at', string) 
+                print('db_process_at', string)
+                
+        elif k == 'db_process_interval':
+            v = get_value(string, VALUE_TYPE.INT)
+            if v != None and v > 0:
+                cfg.db_process_interval = v
+            else:
+                print('db_process_interval', string)
 
         elif k == 'db_process_del_entries':
             v = get_value(string, VALUE_TYPE.INT)

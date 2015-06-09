@@ -31,7 +31,15 @@ class c_running_unit:
         self.timeout_time = timeout_time
         
 # database process timer
-def get_db_process_seconds(gcfg):
+# return (next_time, interval)
+def get_db_process_time(gcfg):
+    now_int = int(time.time())
+    
+    # db_process_interval enabled
+    if gcfg.db_process_interval > 0:
+        interval = gcfg.db_process_interval*3600
+        return now_int + 600 + interval, interval
+    
     nowdt = datetime.datetime.now()
 
     one_day = datetime.timedelta(days=1)
@@ -39,13 +47,12 @@ def get_db_process_seconds(gcfg):
                                gcfg.db_process_at[0], 
                                gcfg.db_process_at[1]) + one_day
 
-    dtime = (nextdt - nowdt).total_seconds()
+    dtime = int((nextdt - nowdt).total_seconds())
 
-    ret = dtime if dtime < 24*3600 else dtime - 24*3600
-    print('database process after %d seconds' % ret)
+    dvalue = dtime if dtime < 24*3600 else dtime - 24*3600
+    print('database process after %d seconds' % dvalue)
 
-    ret += int(time.time())
-    return ret
+    return now_int + dvalue, 24*3600
 
 class c_task_controller:
     def __init__(self, back_web_queue):
@@ -74,10 +81,10 @@ class c_task_controller:
 
         # database process timer
         if self.timer_heap != None:
-            next_db_process_time = get_db_process_seconds(gcfg)
+            dbnext, dbinterval = get_db_process_time(gcfg)
             db_unit = c_run_heap_unit('db_process',
-                                      3600*24,
-                                      next_db_process_time)
+                                      dbinterval,
+                                      dbnext)
             heapq.heappush(self.timer_heap, db_unit)
 
         # clear
@@ -169,7 +176,8 @@ class c_task_controller:
             # for wrong start-up time
             if temp.next_time <= now_time:
                 if temp.source_id == 'db_process':
-                    temp.next_time = get_db_process_seconds()
+                    dbnext, dbinterval = get_db_process_time(self.gcfg)
+                    temp.next_time = dbnext
                 else:
                     temp.next_time = now_time + temp.interval
 

@@ -164,11 +164,8 @@ class c_task_controller:
         
         now_time = int(time.time())
 
-        # 检查到时的source
-        self.temp_fetch_list.clear()
-
         # timer of source
-        while self.timer_heap and now_time >= self.timer_heap[0].next_time:
+        while now_time >= self.timer_heap[0].next_time:
             # timer heap
             temp = heapq.heappop(self.timer_heap)
             temp.next_time += temp.interval
@@ -195,6 +192,7 @@ class c_task_controller:
         # 运行source
         if self.temp_fetch_list:
             self.fetch(self.temp_fetch_list)
+            self.temp_fetch_list.clear()
 
         # timer of running timeout
         mark = False

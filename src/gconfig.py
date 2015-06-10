@@ -263,7 +263,7 @@ def load_config(version, web_port, https, tmpfs_path):
         else:
             print('无法识别的config.ini设置', k)
 
-    cfg.db_process_del_entries = max(cfg.runcfg.max_entries,
+    cfg.db_process_del_entries = max(cfg.runcfg.max_entries + 1,
                                     cfg.db_process_del_entries)
 
     return cfg

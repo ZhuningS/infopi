@@ -247,7 +247,8 @@ def main_process(version, web_port, https, tmpfs_path,
                     pass
 
         # source执行完毕
-        elif msg.command == 'bb:source_return':
+        elif msg.command == 'bb:source_return' and \
+             msg.token == bvars.cfg_token:
             # msg.data is sourcd_id
             ctrl.task_finished(msg.data)
 
@@ -286,7 +287,7 @@ def main_process(version, web_port, https, tmpfs_path,
                            [cfg_token, gcfg, user_list])
 
         else:
-            print('无法处理的web->back消息:', msg.command)
+            print('back can not handle:', msg.command, msg.token)
 
 
 def fun_request_web_check(port, https):

@@ -856,8 +856,7 @@ def check_bw_queue():
                 db.add_users(cfg, users)
                 
         else:
-            print('can not handle back->web message:', 
-                  msg.command, msg.token)
+            print('web can not handle:', msg.command, msg.token)
 
     return ''
 

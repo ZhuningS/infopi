@@ -192,7 +192,7 @@ class c_db_wrapper:
                     )
 
         if beep:
-            print(time.ctime(), 'database was added or updated')
+            print('database was added or updated')
             # 发出响声
             if has_winsound:
                 try:

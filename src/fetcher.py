@@ -24,9 +24,8 @@ from worker_manage import c_worker_exception
 
 class FetcherInfo:
     def __init__(self):
-        self.ua = ('Mozilla/5.0 (Windows NT 6.1; rv:32.0)'
-                   ' Gecko/20100101 Firefox/32.0'
-                   )
+        self.ua = ('Mozilla/5.0 (Windows NT 6.1; rv:38.0)'
+                   ' Gecko/20100101 Firefox/38.0')
         self.referer = ''
         self.open_timeout = 120
         self.retry_count = 4
@@ -169,6 +168,18 @@ class Fetcher:
                         except:
                             # second try: raw deflate
                             ret_data = zlib.decompress(ret_data, -15)
+                
+                # get encoding from bytes content
+                if not encoding:
+                    meta_encoding = (br'''^.{0,500}<meta[^>]*?'''
+                                     br'''charset\s*=\s*["']?([^"'>;\s]*)'''
+                                    )
+                    pattern = red.d(meta_encoding, red.A|red.S|red.I)
+                    matcher = pattern.search(ret_data)
+        
+                    if matcher:
+                        extract = matcher.group(1).decode('ascii')
+                        encoding = Fetcher.lookup_encoding(extract)
 
                 return ret_data, encoding
 

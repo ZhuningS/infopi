@@ -171,8 +171,8 @@ class Fetcher:
                 
                 # get encoding from bytes content
                 if not encoding:
-                    meta_encoding = (br'''^.{0,500}<meta[^>]*?'''
-                                     br'''charset\s*=\s*["']?([^"'>;\s]*)'''
+                    meta_encoding = (br'''<(?:meta|\?xml)[^>]*?'''
+                                     br'''(?:charset|encoding)\s*=\s*["']?([^"'>;\s]*)'''
                                     )
                     pattern = red.d(meta_encoding, red.A|red.S|red.I)
                     matcher = pattern.search(ret_data)

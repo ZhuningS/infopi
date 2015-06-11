@@ -199,8 +199,20 @@ class c_task_controller:
         while self.running_sorted_list and \
               now_time > self.running_sorted_list[0].timeout_time:
                 temp_source_id = self.running_sorted_list[0].source_id
-                del self.running_map[temp_source_id]
+                temp_start_time = self.running_map[temp_source_id]
                 del self.running_sorted_list[0]
+                del self.running_map[temp_source_id]
+
+                # (source_id, start_time, time_out)
+                temp_tuple = (temp_source_id, 
+                              temp_start_time,
+                              self.gcfg.task_timeout
+                              )
+                c_message.make(self.back_web_queue, 
+                               'bw:source_timeout',
+                               bvars.cfg_token,
+                               [temp_tuple]
+                               )
 
                 mark = True
                 print('任务%s超时' % temp_source_id)

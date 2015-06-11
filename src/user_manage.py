@@ -77,7 +77,7 @@ class c_user_cfg:
 
         # compiled re
         re_category = red.d(r"^\s*'(.*?)'\s*(?:#.*)?$")
-        re_source = red.d(r"^\s*'(.*?)'\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:#.*)?$")
+        re_source = red.d(r"^\s*'(.*?)'\s*,\s*(\d+)\s*,\s*((?:\d*\.)?\d+)\s*(?:#.*)?$")
 
         orgnise_started = False
         current_category = None
@@ -131,7 +131,7 @@ class c_user_cfg:
                         level = int(m.group(2))
                         if level not in (0, 1, 2):
                             level = 0
-                        interval = int(m.group(3))
+                        interval = float(m.group(3))
 
                         if current_category != None:
                             current_category.append([sid, level, interval,

@@ -782,12 +782,7 @@ def page_not_found(e):
          )
     return s
 
-@web.errorhandler(500)
-def internal_error(exception):
-    # beep
-    if has_winsound:
-        winsound.Beep(600, 1000)
-
+def write_weberr(exception):
     # del weberr.txt if size > 1M
     fpath = os.path.join(wvars.upload_forlder, 'weberr.txt')
     try:
@@ -803,11 +798,19 @@ def internal_error(exception):
 
     # write to weberr.txt
     with open(fpath, 'a') as f:
-        print(time.ctime(), file=f)
-        print(str(type(exception)), str(exception), '\n', file=f)
+        f.write(time.ctime())
+        f.write(str(type(exception)), str(exception), '\n')
 
     # print to console
     print('web-side exception:', str(exception))
+
+@web.errorhandler(500)
+def internal_error(exception):
+    # beep
+    if has_winsound:
+        winsound.Beep(600, 1000)
+        
+    write_weberr(exception)
     return str(exception)
 
 @web.route('/check')
@@ -834,6 +837,12 @@ def check_bw_queue():
             elif msg.command == 'bw:db_process_time':
                 db.db_process()
                 login_manager.maintenace()
+                
+            elif msg.command == 'bw:source_timeout':
+                for sid, stime, ttime in msg.data:
+                    start = str(datetime.datetime.fromtimestamp(stime))
+                    s = '%s超时，始于%s，超时限制%d秒' % (sid,start,ttime)
+                    write_weberr(s)
 
         elif msg.command == 'bw:send_config_users':
                 # token

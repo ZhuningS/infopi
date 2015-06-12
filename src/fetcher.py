@@ -31,6 +31,16 @@ class FetcherInfo:
         self.retry_count = 4
         self.retry_interval = 3
 
+
+# compiled re
+re_contenttype = red.d(r'charset\s*=\s*([^;\s]*)', red.I)
+
+meta_encoding = (br'''<(?:meta|\?xml)[^>]*?'''
+                 br'''(?:charset|encoding)\s*=\s*["']?([^"'>;\s]*)'''
+                )
+re_meta = red.d(meta_encoding, red.A|red.S|red.I)
+
+
 class Fetcher:
     '''web获取器'''
     #------------------
@@ -130,9 +140,7 @@ class Fetcher:
             if not contenttype:
                 return ''
             
-            pattern = red.d(r'charset\s*=\s*([^;\s]*)', red.I)
-            matcher = pattern.search(contenttype)
-
+            matcher = re_contenttype.search(contenttype)
             if matcher:
                 return Fetcher.lookup_encoding(matcher.group(1))
             else:
@@ -171,12 +179,7 @@ class Fetcher:
                 
                 # get encoding from bytes content
                 if not encoding:
-                    meta_encoding = (br'''<(?:meta|\?xml)[^>]*?'''
-                                     br'''(?:charset|encoding)\s*=\s*["']?([^"'>;\s]*)'''
-                                    )
-                    pattern = red.d(meta_encoding, red.A|red.S|red.I)
-                    matcher = pattern.search(ret_data)
-        
+                    matcher = re_meta.search(ret_data)
                     if matcher:
                         extract = matcher.group(1).decode('ascii')
                         encoding = Fetcher.lookup_encoding(extract)

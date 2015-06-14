@@ -22,7 +22,7 @@ def main():
         
         # global config
         from gconfig import load_config
-        load_config('test_source', 0, '')
+        load_config('test_source', 0, True, '')
         
         print()
         

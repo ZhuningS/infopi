@@ -255,13 +255,13 @@ def main_process(version, web_port, https, tmpfs_path,
         # 运行sources
         elif msg.command == 'wb:request_fetch':
             print('web side request fetch')
+            
+            # 挂起 或 无信息源
             if not fetch_all:
                 continue
 
-            l = fetch_all if msg.data == None else msg.data
-            
             # 运行source
-            ctrl.fetch(l)
+            ctrl.fetch(fetch_all if msg.data == None else msg.data)
 
         # load config, users
         elif msg.command == 'wb:request_load':

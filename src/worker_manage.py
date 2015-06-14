@@ -76,10 +76,11 @@ def worker_starter(runcfg, source_id):
             # callback函数
             if source.callback != None:
                 local_d = dict()
-                for i in lst:
-                    local_d['info'] = i
+                for i, info in enumerate(lst):
+                    local_d['posi'] = i
+                    local_d['info'] = info
                     exec(source.callback, None, local_d)
-                    i = local_d['info']
+                    info = local_d['info']
 
                 # remove info
                 lst = [one for one in lst if one.temp != 'del']
@@ -87,18 +88,17 @@ def worker_starter(runcfg, source_id):
             # remove duplicate suid, only keep the first one
             # (escape special suid inside this code)
             suid_set = set()
-            del_set = set()
-            for i, one in enumerate(lst):              
+            newlst = list()
+            for one in lst:              
                 # escape special suid
                 if one.suid == '<exception>':
                     one.suid = '#<exception>#'
 
                 if one.suid not in suid_set:
                     suid_set.add(one.suid)
-                else:
-                    del_set.add(i)
-            
-            lst = [one for i, one in enumerate(lst) if i not in del_set]
+                    newlst.append(one)
+
+            lst = newlst
 
             # remove existing exception
             fetch_date_str = datetime.datetime.\
@@ -201,10 +201,11 @@ def test_source(source_id):
         # callback函数
         if source.callback != None: 
             local_d = dict()
-            for i in lst:
-                local_d['info'] = i
+            for i, info in enumerate(lst):
+                local_d['posi'] = i
+                local_d['info'] = info
                 exec(source.callback, None, local_d)
-                i = local_d['info']
+                info = local_d['info']
 
             # remove info
             lst = [one for one in lst if one.temp != 'del']

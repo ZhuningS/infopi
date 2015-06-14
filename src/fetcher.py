@@ -181,8 +181,12 @@ class Fetcher:
                 if not encoding:
                     matcher = re_meta.search(ret_data)
                     if matcher:
-                        extract = matcher.group(1).decode('ascii')
-                        encoding = Fetcher.lookup_encoding(extract)
+                        try:
+                            extract = matcher.group(1).decode('ascii')
+                        except:
+                            encoding = ''
+                        else:
+                            encoding = Fetcher.lookup_encoding(extract)
 
                 return ret_data, encoding
 

@@ -772,8 +772,10 @@ def listall():
         return '请使用管理员帐号查看此页面'
     
     listall = db.get_listall()
-    return render_template('listall.html',
-                           items=listall, source_num=len(listall))
+    return render_template('listall.html', items=listall,
+                           user_num=db.get_user_number(),
+                           source_num=len(listall)
+                           )
 
 @web.errorhandler(404)
 def page_not_found(e):

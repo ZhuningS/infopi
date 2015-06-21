@@ -38,7 +38,6 @@ def worker_starter(runcfg, source_id):
         #print('线程开始：%s' % source.source_id)
 
         int_time = int(time.time())
-        lst = None
 
         try:
             lst = worker(source.data, worker_dict)
@@ -75,15 +74,17 @@ def worker_starter(runcfg, source_id):
 
             # callback函数
             if source.callback != None:
+                newlst = list()
                 local_d = dict()
                 for i, info in enumerate(lst):
                     local_d['posi'] = i
                     local_d['info'] = info
                     exec(source.callback, None, local_d)
-                    info = local_d['info']
+                    
+                    if info.temp != 'del':
+                        newlst.append(info)
 
-                # remove info
-                lst = [one for one in lst if one.temp != 'del']
+                lst = newlst
 
             # remove duplicate suid, only keep the first one
             # (escape special suid inside this code)
@@ -117,10 +118,6 @@ def worker_starter(runcfg, source_id):
                            cfg_token,
                            source.source_id
                            )
-            
-            if not lst:
-                print(source.source_id, '得到的列表为空')
-                return
 
             # 处理内容
             for i in lst:
@@ -188,7 +185,6 @@ def test_source(source_id):
 
     int_time = int(time.time())
 
-
     # run
     try:
         lst = worker(source.data, worker_dict)
@@ -199,16 +195,18 @@ def test_source(source_id):
 
     else:
         # callback函数
-        if source.callback != None: 
+        if source.callback != None:
+            newlst = list()
             local_d = dict()
             for i, info in enumerate(lst):
                 local_d['posi'] = i
                 local_d['info'] = info
                 exec(source.callback, None, local_d)
-                info = local_d['info']
+                
+                if info.temp != 'del':
+                    newlst.append(info)
 
-            # remove info
-            lst = [one for one in lst if one.temp != 'del']
+            lst = newlst
 
         for i in lst:
             i.source_id = source.source_id

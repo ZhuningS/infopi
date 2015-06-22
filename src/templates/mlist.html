@@ -12,11 +12,9 @@ td{border:1px solid black; padding:2px;}
 </head>
 
 <body bgcolor="#FFCC99">
-<div>
 <a href="/m">返回</a>&nbsp;&nbsp;
 <b>{{listname}}</b><br>
 {{htmlpage|safe}}
-</div>
 <table bgcolor="#ccffcc" width="100%">
 {%- for entry in entries -%}
 <tr>
@@ -35,8 +33,6 @@ td{border:1px solid black; padding:2px;}
 	</td>
 </tr>{%- endfor -%}
 </table>
-<div>
 {{htmlpage|safe}}<br>
 页面生成时间{{nowtime}}&nbsp;&nbsp;<a href="/m">返回</a>
-</div>
 </body></html>

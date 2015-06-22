@@ -468,8 +468,6 @@ def general_list(username, category, pagenum, p_type, sid=''):
         page = 'mlist.html'
     elif p_type in (PG_TYPE.P_GATHER, PG_TYPE.P_CATEGORY):
         page = 'plist.html'
-    elif p_type == PG_TYPE.SOURCE:
-        page = 'slist.html'
     else:
         page = 'list.html'
         
@@ -478,7 +476,7 @@ def general_list(username, category, pagenum, p_type, sid=''):
 
     return render_template(page, 
                            entries=lst, listname=category, 
-                           htmlpage=page_html,
+                           count=all_count, htmlpage=page_html,
                            nowtime=now_time, time=during)  
 
 @web.route('/ml/<category>')

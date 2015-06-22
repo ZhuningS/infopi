@@ -54,12 +54,19 @@ class PG_TYPE(IntEnum):
     P_GATHER = 5
     P_CATEGORY = 6
 
+class DV_TYPE(IntEnum):
+    COMPUTER = 0
+    PAD = 1
+    MOBILE = 2
+
 wrong_key_html = ('在当前的用户配置中，没有找到相应版块。<br>'
                   '请刷新整个页面，以更新左侧的版块目录。')
 
 zero_user_loaded = ('尚未载入任何用户，请在3秒后刷新此页面。<br>'
                    '如问题依旧，请检查用户配置、后端进程的状态。'
                    )
+
+jump_to_login = r'<script>top.location.href="/login";</script>'
 
 #-------------------------------
 #         page part
@@ -304,11 +311,10 @@ def check_cookie():
 
 @web.route('/')
 def index():
-    if check_cookie():
-        return render_template('main.html')
-    else:
-        print('to login')
-        return redirect('/login')
+    if not check_cookie():
+        return jump_to_login
+
+    return render_template('main.html')
 
 @web.route('/login', methods=['GET', 'POST'])
 def login():
@@ -317,6 +323,8 @@ def login():
     allow, message = login_manager.login_check(ip)
     if not allow:
         return message
+    
+    print('/login')
 
     # load 0 user
     if db.get_user_number() == 0:
@@ -349,29 +357,22 @@ def login():
 
     return render_template('login.html')
 
-@web.route('/left', methods=['GET', 'POST'])
-def left():
+user_type_str = ('公共帐号', '普通帐号', '管理员')
+def general_index(page_type):
     username = check_cookie()
     if not username:
-        return r'<script>top.location.href="/";</script>'
+        return jump_to_login
     
     # user type
     usertype = db.get_usertype(username)
-
     allow = True if usertype > 0 else False
-    if usertype == 0:
-        type_str = '公共帐号'
-    elif usertype == 1:
-        type_str = '普通帐号'
-    elif usertype == 2:
-        type_str = '管理员'
 
     if request.method == 'POST':
         name = request.form.get('name')
 
         # logout
         if name == 'logout':
-            html = r'<script>top.location.href="/";</script>'
+            html = jump_to_login
             response = make_response(html)
             response.set_cookie('user', expires=0)
             return response
@@ -381,81 +382,42 @@ def left():
             lst = db.get_fetch_list_by_user(username)
             c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
 
-
+    # category list
     category_list = db.get_category_list_by_username(username)
-    return render_template('left.html', 
-                           usertype=type_str,
+    
+    # render template
+    if page_type == DV_TYPE.COMPUTER:
+        page = 'left.html'
+    elif page_type == DV_TYPE.PAD:
+        page = 'pad.html'
+    else:
+        page = 'm.html'
+    
+    return render_template(page, 
+                           usertype=user_type_str[usertype],
                            username=username,
                            allowfetch=allow,
                            categories=category_list)
+
+@web.route('/left', methods=['GET', 'POST'])
+def left():
+    return general_index(DV_TYPE.COMPUTER)
 
 @web.route('/m', methods=['GET', 'POST'])
 def mobile():
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/login";</script>'
-    
-    # user type
-    usertype = db.get_usertype(username)
-    allow = True if usertype > 0 else False
-
-    if request.method == 'POST':
-        name = request.form.get('name')
-
-        # logout
-        if name == 'logout':
-            html = r'<script>top.location.href="/m";</script>'
-            response = make_response(html)
-            response.set_cookie('user', expires=0)
-            return response
-
-        # fetch my sources
-        elif usertype > 0 and name == 'fetch_mine':
-            lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
-
-
-    category_list = db.get_category_list_by_username(username)
-    return render_template('m.html', 
-                           username=username,
-                           allowfetch=allow,
-                           categories=category_list)
+    return general_index(DV_TYPE.MOBILE)
     
 @web.route('/p', methods=['GET', 'POST'])
 def pad():
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/login";</script>'    
-
-    # user type
-    usertype = db.get_usertype(username)
-    allow = True if usertype > 0 else False
-
-    if request.method == 'POST':
-        name = request.form.get('name')
-
-        # logout
-        if name == 'logout':
-            html = r'<script>top.location.href="/login";</script>'
-            response = make_response(html)
-            response.set_cookie('user', expires=0)
-            return response
-
-        # fetch my sources
-        elif usertype > 0 and name == 'fetch_mine':
-            lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
-
-
-    category_list = db.get_category_list_by_username(username)
-    return render_template('pad.html', 
-                           username=username,
-                           allowfetch=allow,
-                           categories=category_list)
+    return general_index(DV_TYPE.PAD)
 
 # 各页面通用的列表生成
-def general_list(username, category, pagenum, p_type, sid=''):
+def general_list(category, pagenum, p_type, sid=''):
     t1 = time.perf_counter()
+    
+    username = check_cookie()
+    if not username:
+        return jump_to_login
 
     lst, all_count, page_html, now_time, category = \
             generate_list(username, category, 
@@ -481,79 +443,50 @@ def general_list(username, category, pagenum, p_type, sid=''):
 
 @web.route('/ml/<category>')
 @web.route('/ml/<category>/<int:pagenum>')
-def mobile_list(category, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/m";</script>'
-    
-    return general_list(username, category, pagenum, PG_TYPE.M_CATEGORY)
+def mobile_list(category, pagenum=1):   
+    return general_list(category, pagenum, PG_TYPE.M_CATEGORY)
 
 @web.route('/ml<int:level>')
 @web.route('/ml<int:level>/<int:pagenum>')
 def mobile_default(level, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/m";</script>'
-
-    return general_list(username, level, pagenum, PG_TYPE.M_GATHER)
+    return general_list(level, pagenum, PG_TYPE.M_GATHER)
 
 @web.route('/list/<category>')
 @web.route('/list/<category>/<int:pagenum>')
 def computer_list(category, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/";</script>'
-    
-    return general_list(username, category, pagenum, PG_TYPE.CATEGORY)
+    return general_list(category, pagenum, PG_TYPE.CATEGORY)
 
 @web.route('/list<int:level>')
 @web.route('/list<int:level>/<int:pagenum>')
 def computer_default(level, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/";</script>'
-
-    return general_list(username, level, pagenum, PG_TYPE.GATHER)
+    return general_list(level, pagenum, PG_TYPE.GATHER)
 
 @web.route('/plist/<category>')
 @web.route('/plist/<category>/<int:pagenum>')
 def pad_list(category, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/";</script>'
-    
-    return general_list(username, category, pagenum, PG_TYPE.P_CATEGORY)
+    return general_list(category, pagenum, PG_TYPE.P_CATEGORY)
 
 @web.route('/plist<int:level>')
 @web.route('/plist<int:level>/<int:pagenum>')
 def pad_default(level, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/";</script>'
-
-    return general_list(username, level, pagenum, PG_TYPE.P_GATHER)
+    return general_list(level, pagenum, PG_TYPE.P_GATHER)
 
 @web.route('/slist/<encoded_url>')
 @web.route('/slist/<encoded_url>/<int:pagenum>')
 def slist(encoded_url='', pagenum = 1):
-    username = check_cookie()
-    if not username:
-        return r'<script>top.location.href="/";</script>'
-
     try:
         sid = base64.urlsafe_b64decode(encoded_url).decode('utf-8')
     except:
         return '请求的信息源列表url有误:<br>' + encoded_url
 
-    return general_list(username,
-                        encoded_url, pagenum,
+    return general_list(encoded_url, pagenum,
                         PG_TYPE.SOURCE, sid)
 
 @web.route('/cateinfo')
 def cate_info():
     username = check_cookie()
     if not username:
-        return r'<script>top.location.href="/";</script>'
+        return jump_to_login
 
     show_list = db.get_forshow_by_user(username)
     all_s_num, set_s_num = db.get_sourcenum_by_user(username)
@@ -619,7 +552,7 @@ def prepare_db_for_download():
 def panel():
     username = check_cookie()
     if not username:
-        return r'<script>top.location.href="/";</script>'
+        return jump_to_login
 
     usertype = db.get_usertype(username)
     
@@ -750,7 +683,7 @@ def panel():
 def listall():
     username = check_cookie()
     if not username:
-        return r'<script>top.location.href="/";</script>'
+        return jump_to_login
 
     usertype = db.get_usertype(username)
     if usertype != 2:
@@ -765,7 +698,7 @@ def listall():
 @web.errorhandler(404)
 def page_not_found(e):
     s = ('无效网址<br>'
-         '<a href="/">点击此处返回首页</a>'
+         '<a href="/" target="_top">点击此处返回首页</a>'
          )
     return s
 

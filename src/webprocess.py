@@ -51,6 +51,8 @@ class PG_TYPE(IntEnum):
     SOURCE = 2
     M_GATHER = 3
     M_CATEGORY = 4
+    P_GATHER = 5
+    P_CATEGORY = 6
 
 wrong_key_html = ('在当前的用户配置中，没有找到相应版块。<br>'
                   '请刷新整个页面，以更新左侧的版块目录。')
@@ -69,22 +71,32 @@ def generate_page(all_count, now_pg,
                   p_type, category):
 
     def make_pattern(p_type, category):
+        # computer
         if p_type == PG_TYPE.GATHER:
             template_tuple = ('<a href="/list', str(category), 
-                              '/%d" target="_self">%s</a>')  
+                              '/%d" target="_self">%s</a>')
         elif p_type == PG_TYPE.CATEGORY:
             template_tuple = ('<a href="/list/', category,
                               '/%d" target="_self">%s</a>')
         elif p_type == PG_TYPE.SOURCE:
             template_tuple = ('<a href="/slist/', category,
-                              '/%d" target="_self">%s</a>') 
+                              '/%d" target="_self">%s</a>')
+        # mobile
         elif p_type == PG_TYPE.M_GATHER:
             template_tuple = ('<a href="/ml', str(category), 
-                              '/%d" target="_self">%s</a>')   
+                              '/%d" target="_self">%s</a>')
         elif p_type == PG_TYPE.M_CATEGORY:
             template_tuple = ('<a href="/ml/', category,
                               '/%d" target="_self">%s</a>')
-        return ''.join(template_tuple)   
+        # pad
+        elif p_type == PG_TYPE.P_GATHER:
+            template_tuple = ('<a href="/plist', str(category), 
+                              '/%d" target="_self">%s</a>')
+        elif p_type == PG_TYPE.P_CATEGORY:
+            template_tuple = ('<a href="/plist/', category,
+                              '/%d" target="_self">%s</a>')
+
+        return ''.join(template_tuple)
 
 
     last_pg = (all_count // col_per_page) + \
@@ -96,10 +108,10 @@ def generate_page(all_count, now_pg,
         now_pg = last_pg
 
     # numbers width
-    if p_type in (PG_TYPE.GATHER, PG_TYPE.CATEGORY, PG_TYPE.SOURCE):
-        sides = 5
-    else:
+    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
         sides = 3
+    else:
+        sides = 5
     begin_pg = now_pg - sides
     end_pg = now_pg + sides
 
@@ -119,52 +131,9 @@ def generate_page(all_count, now_pg,
         template = make_pattern(p_type, category)
         template_cache[(p_type, category)] = template
 
-    # pc
-    if p_type in (PG_TYPE.GATHER, PG_TYPE.CATEGORY, PG_TYPE.SOURCE):
-        lst = list()
-
-        lst.append('共%d页' % last_pg)
-
-        # 首页
-        if now_pg > 1:
-            s = template % (1, '首页')
-            lst.append(s)
-        else:
-            lst.append('已到')
-
-        # 末页
-        if now_pg < last_pg:
-            s = template % (last_pg, '末页')
-            lst.append(s)
-        else:
-            lst.append('已到')
-
-        # numbers
-        for i in range(begin_pg, end_pg+1):
-            if i == now_pg:
-                ts = '<strong>%d</strong>' % i
-            else:
-                ts = template % (i, str(i))
-            lst.append(ts)
-
-        # 上页
-        if now_pg > 1:
-            s = template % (now_pg-1, '上页')
-            lst.append(s)
-        else:
-            lst.append('已到')
-
-        # 下页
-        if now_pg < last_pg:
-            s = template % (now_pg+1, '下页')
-            lst.append(s)  
-        else:
-            lst.append('已到')
-
-        return '&nbsp;'.join(lst)
-
     # mobile
-    else:
+    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+        
         # nag
         lst1 = list()
         # 首页
@@ -209,6 +178,49 @@ def generate_page(all_count, now_pg,
                '<br>' + \
                '&nbsp;&nbsp;'.join(lst1)
 
+    # pc & pad
+    else:
+        lst = list()
+
+        lst.append('共%d页' % last_pg)
+
+        # 首页
+        if now_pg > 1:
+            s = template % (1, '首页')
+            lst.append(s)
+        else:
+            lst.append('已到')
+
+        # 末页
+        if now_pg < last_pg:
+            s = template % (last_pg, '末页')
+            lst.append(s)
+        else:
+            lst.append('已到')
+
+        # numbers
+        for i in range(begin_pg, end_pg+1):
+            if i == now_pg:
+                ts = '<strong>%d</strong>' % i
+            else:
+                ts = template % (i, str(i))
+            lst.append(ts)
+
+        # 上页
+        if now_pg > 1:
+            s = template % (now_pg-1, '上页')
+            lst.append(s)
+        else:
+            lst.append('已到')
+
+        # 下页
+        if now_pg < last_pg:
+            s = template % (now_pg+1, '下页')
+            lst.append(s)  
+        else:
+            lst.append('已到')
+
+        return '&nbsp;'.join(lst)
 
 #-------------------------------
 #           generate_list
@@ -269,7 +281,7 @@ def generate_list(username, category, pagenum, p_type, sid=''):
                        fromtimestamp(i.fetch_date).\
                        strftime('%m-%d %H:%M')
 
-    if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER):
+    if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER, PG_TYPE.P_GATHER):
         if category == 0:
             category = '普通、关注、重要'
         elif category == 1:
@@ -311,11 +323,20 @@ def login():
         return render_template('login.html', msg=zero_user_loaded)
 
     if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         ha = db.login(username, password)
+
         if ha:
-            response = make_response(redirect('/'))
+            subname = request.form.get('name')
+            if subname == 'toc':
+                target = '/'
+            elif subname == 'top':
+                target = '/p'
+            else:
+                target = '/m'
+            response = make_response(redirect(target))
+
             # 失效期2038年
             response.set_cookie('user', 
                                 value=ha, 
@@ -327,37 +348,6 @@ def login():
                                     msg='无此用户或密码错误')
 
     return render_template('login.html')
-
-@web.route('/mlogin', methods=['GET', 'POST'])
-def mlogin():
-    # check hacker
-    ip = request.remote_addr
-    allow, message = login_manager.login_check(ip)
-    if not allow:
-        return message
-
-    # load 0 user
-    if db.get_user_number() == 0:
-        return render_template('login.html', msg=zero_user_loaded)
-
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        ha = db.login(username, password)
-        if ha:
-            response = make_response(redirect('/m'))
-            # 失效期2038年
-            response.set_cookie('user', 
-                                value=ha, 
-                                expires=2147483640)
-            return response
-        else:
-            login_manager.login_fall(ip)
-            return render_template('login.html',
-                                    m='m',
-                                    msg='无此用户或密码错误')
-
-    return render_template('login.html', m='m')
 
 @web.route('/left', methods=['GET', 'POST'])
 def left():
@@ -377,7 +367,7 @@ def left():
         type_str = '管理员'
 
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form.get('name')
 
         # logout
         if name == 'logout':
@@ -403,14 +393,14 @@ def left():
 def mobile():
     username = check_cookie()
     if not username:
-        return r'<script>top.location.href="/mlogin";</script>'
+        return r'<script>top.location.href="/login";</script>'
     
     # user type
     usertype = db.get_usertype(username)
     allow = True if usertype > 0 else False
 
     if request.method == 'POST':
-        name = request.form['name']
+        name = request.form.get('name')
 
         # logout
         if name == 'logout':
@@ -430,6 +420,66 @@ def mobile():
                            username=username,
                            allowfetch=allow,
                            categories=category_list)
+    
+@web.route('/p', methods=['GET', 'POST'])
+def pad():
+    username = check_cookie()
+    if not username:
+        return r'<script>top.location.href="/login";</script>'    
+
+    # user type
+    usertype = db.get_usertype(username)
+    allow = True if usertype > 0 else False
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+
+        # logout
+        if name == 'logout':
+            html = r'<script>top.location.href="/login";</script>'
+            response = make_response(html)
+            response.set_cookie('user', expires=0)
+            return response
+
+        # fetch my sources
+        elif usertype > 0 and name == 'fetch_mine':
+            lst = db.get_fetch_list_by_user(username)
+            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
+
+
+    category_list = db.get_category_list_by_username(username)
+    return render_template('pad.html', 
+                           username=username,
+                           allowfetch=allow,
+                           categories=category_list)
+
+# 各页面通用的列表生成
+def general_list(username, category, pagenum, p_type, sid=''):
+    t1 = time.perf_counter()
+
+    lst, all_count, page_html, now_time, category = \
+            generate_list(username, category, 
+                          pagenum, p_type, sid)
+    
+    if lst == None:
+        return wrong_key_html
+    
+    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+        page = 'mlist.html'
+    elif p_type in (PG_TYPE.P_GATHER, PG_TYPE.P_CATEGORY):
+        page = 'plist.html'
+    elif p_type == PG_TYPE.SOURCE:
+        page = 'slist.html'
+    else:
+        page = 'list.html'
+        
+    t2 = time.perf_counter()
+    during = '%.5f' % (t2-t1)
+
+    return render_template(page, 
+                           entries=lst, listname=category, 
+                           htmlpage=page_html,
+                           nowtime=now_time, time=during)  
 
 @web.route('/ml/<category>')
 @web.route('/ml/<category>/<int:pagenum>')
@@ -437,100 +487,53 @@ def mobile_list(category, pagenum=1):
     username = check_cookie()
     if not username:
         return r'<script>top.location.href="/m";</script>'
-
-    t1 = time.perf_counter()
-
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, category, 
-                          pagenum, PG_TYPE.M_CATEGORY)
     
-    if lst == None:
-        return wrong_key_html
-
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
-
-    return render_template('mlist.html', 
-                           entries=lst, 
-                           listname=category, 
-                           htmlpage=page_html,
-                           nowtime=now_time)
+    return general_list(username, category, pagenum, PG_TYPE.M_CATEGORY)
 
 @web.route('/ml<int:level>')
 @web.route('/ml<int:level>/<int:pagenum>')
-def default_mobile(level, pagenum=1):
+def mobile_default(level, pagenum=1):
     username = check_cookie()
     if not username:
         return r'<script>top.location.href="/m";</script>'
 
-    t1 = time.perf_counter()
-
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, level, 
-                          pagenum, PG_TYPE.M_GATHER)
-            
-    if lst == None:
-        return wrong_key_html
-
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
-
-    return render_template('mlist.html', 
-                           entries=lst, 
-                           listname=category,
-                           htmlpage=page_html,
-                           nowtime=now_time)
-
+    return general_list(username, level, pagenum, PG_TYPE.M_GATHER)
 
 @web.route('/list/<category>')
 @web.route('/list/<category>/<int:pagenum>')
-def right_list(category, pagenum=1):
+def computer_list(category, pagenum=1):
     username = check_cookie()
     if not username:
         return r'<script>top.location.href="/";</script>'
-
-    t1 = time.perf_counter()
-
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, category, 
-                          pagenum, PG_TYPE.CATEGORY)
-            
-    if lst == None:
-        return wrong_key_html
-
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
-
-    return render_template('list.html', 
-                           entries=lst, 
-                           listname=category,
-                           count=all_count, htmlpage=page_html,
-                           time=during, nowtime=now_time)
+    
+    return general_list(username, category, pagenum, PG_TYPE.CATEGORY)
 
 @web.route('/list<int:level>')
 @web.route('/list<int:level>/<int:pagenum>')
-def default_page(level, pagenum=1):
+def computer_default(level, pagenum=1):
     username = check_cookie()
     if not username:
         return r'<script>top.location.href="/";</script>'
 
-    t1 = time.perf_counter()
+    return general_list(username, level, pagenum, PG_TYPE.GATHER)
 
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, level, 
-                          pagenum, PG_TYPE.GATHER)
-            
-    if lst == None:
-        return wrong_key_html
+@web.route('/plist/<category>')
+@web.route('/plist/<category>/<int:pagenum>')
+def pad_list(category, pagenum=1):
+    username = check_cookie()
+    if not username:
+        return r'<script>top.location.href="/";</script>'
+    
+    return general_list(username, category, pagenum, PG_TYPE.P_CATEGORY)
 
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
+@web.route('/plist<int:level>')
+@web.route('/plist<int:level>/<int:pagenum>')
+def pad_default(level, pagenum=1):
+    username = check_cookie()
+    if not username:
+        return r'<script>top.location.href="/";</script>'
 
-    return render_template('list.html', 
-                           entries=lst, 
-                           listname=category,
-                           count=all_count, htmlpage=page_html,
-                           time=during, nowtime=now_time)
+    return general_list(username, level, pagenum, PG_TYPE.P_GATHER)
 
 @web.route('/slist/<encoded_url>')
 @web.route('/slist/<encoded_url>/<int:pagenum>')
@@ -539,30 +542,14 @@ def slist(encoded_url='', pagenum = 1):
     if not username:
         return r'<script>top.location.href="/";</script>'
 
-    t1 = time.perf_counter()
-
     try:
         sid = base64.urlsafe_b64decode(encoded_url).decode('utf-8')
     except:
         return '请求的信息源列表url有误:<br>' + encoded_url
 
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, 
-                          encoded_url, pagenum, 
-                          PG_TYPE.SOURCE, sid
-                          )
-            
-    if lst == None:
-        return wrong_key_html
- 
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
-
-    return render_template('slist.html', 
-                           listname=category,
-                           entries=lst, 
-                           count=all_count, htmlpage=page_html,
-                           time=during, nowtime=now_time)
+    return general_list(username,
+                        encoded_url, pagenum,
+                        PG_TYPE.SOURCE, sid)
 
 @web.route('/cateinfo')
 def cate_info():

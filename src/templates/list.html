@@ -11,12 +11,8 @@ td{padding:2px}
 
 <body bgcolor="#FFCC99">
 <script type="text/javascript" src="/static/wz_tooltip.js"></script> 
-
-<div>
 <span style="float:left"><b>{{listname}}</b>，共有{{count}}条数据。</span>
-<span style="float:right">{{htmlpage|safe}}</span>
-</div>
-<br>
+<span style="float:right">{{htmlpage|safe}}</span><br>
 <table bgcolor="#ccffcc" width="100%">
 	<tr bgcolor="lightgray">
 		<td align="center">来自</td>
@@ -44,8 +40,6 @@ td{padding:2px}
 {%- endif -%}
 </tr>{% endfor %}
 </table>
-<div>
 <span style="float:left">页面生成时间{{nowtime}}，生成页面数据历时{{time}}秒</span>
 <span style="float:right">{{htmlpage|safe}}</span>
-</div>
 </body></html>

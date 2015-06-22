@@ -11,13 +11,10 @@ td{border:1px solid black; padding:2px;}
 body{-webkit-text-size-adjust:180%}
     </style>
 </head>
-
 <body bgcolor="#FFCC99">
-<div>
-<a href="/p">返回</a>&nbsp;&nbsp;
-<b>{{listname}}</b>，共有{{count}}条数据<br>
+<span style="float:left"><b>{{listname}}</b></span>
+<span style="float:right"><a href="/p">返回</a></span><br>
 {{htmlpage|safe}}
-</div>
 <table bgcolor="#ccffd6" width="100%">
 {%- for entry in entries -%}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
@@ -39,8 +36,7 @@ body{-webkit-text-size-adjust:180%}
 {%- endif -%}
 {%- endfor -%}
 </table>
-<div>
 {{htmlpage|safe}}<br>
-页面生成时间{{nowtime}}&nbsp;&nbsp;<a href="/p">返回</a>
-</div>
+<span style="float:left">页面生成时间{{nowtime}}，共{{count}}条数据</span>
+<span style="float:right"><a href="/p">返回</a></span>
 </body></html>

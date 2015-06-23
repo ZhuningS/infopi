@@ -752,21 +752,10 @@ def panel():
     else:
         exceptions = db.get_exceptions_by_username(username)
         
-    if exceptions:
-        # current time
-        int_now_time = int(time.time())
-        recent_8h = int_now_time - 3600*8
-        recent_24h = int_now_time - 3600*24
-
-        for i in exceptions:
-            if i.fetch_date > recent_8h:
-                i.temp = 1
-            elif i.fetch_date > recent_24h:
-                i.temp = 2
-    
-            i.fetch_date = datetime.datetime.\
-                           fromtimestamp(i.fetch_date).\
-                           strftime('%m-%d %H:%M')
+    for i in exceptions:
+        i.fetch_date = datetime.datetime.\
+                       fromtimestamp(i.fetch_date).\
+                       strftime('%m-%d %H:%M')
     
     return render_template('panel.html', type = usertype,
                            info_list=info_lst, proc_list=proc_lst,

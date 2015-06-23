@@ -6,8 +6,6 @@ th{overflow:hidden;white-space:nowrap}
 .s{color:#cc3300}
 .p{color:#3333ff}
 .nb{white-space:nowrap}
-.h8{background-color:#FF99CC;white-space:nowrap}
-.d1{background-color:#FFCC99;white-space:nowrap}
 </style></head>
 <body bgcolor="#ccccff">
 	<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
@@ -91,9 +89,9 @@ th{overflow:hidden;white-space:nowrap}
 {%- endif -%}
 		</td>
 {%- if entry.pub_date -%}
-<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"><span class="p">p</span>{{entry.fetch_date}}</td>
+<td class="nb" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"><span class="p">p</span>{{entry.fetch_date}}</td>
 {%- else -%}
-<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>&nbsp;&nbsp;{{entry.fetch_date}}</td>
+<td class="nb">&nbsp;&nbsp;{{entry.fetch_date}}</td>
 {%- endif -%}
 	</tr>{%- endfor -%}
 </table>

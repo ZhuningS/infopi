@@ -333,8 +333,6 @@ def login():
     allow, message = login_manager.login_check(ip)
     if not allow:
         return message
-    
-    print('/login')
 
     # load 0 user
     if db.get_user_number() == 0:
@@ -492,16 +490,14 @@ def slist(encoded_url='', pagenum = 1):
     return general_list(encoded_url, pagenum,
                         PG_TYPE.SOURCE, sid)
     
-@web.route('/pad<int:level>', methods=['GET', 'POST'])
-@web.route('/pad<int:level>/<int:pagenum>', methods=['GET', 'POST'])
-def pad2_default(level, pagenum=1):
+def general_pad2(category, pagenum):
     username = check_cookie()
     if not username:
         return jump_to_login
 
     t1 = time.perf_counter()
     
-    # 横竖屏
+    # 横竖屏，默认竖屏
     orientation = request.cookies.get('orientation')
     landscape = True if orientation == 'landscape' else False
 
@@ -519,10 +515,10 @@ def pad2_default(level, pagenum=1):
             response.set_cookie('user', expires=0)
             return response
         
-        # 横竖屏
+        # 横竖屏，默认竖屏
         elif name == 'switch':
             response = make_response(redirect('/pad0'))
-            v = 'landscape' if orientation == 'portrait' else 'portrait'
+            v = 'portrait' if orientation == 'landscape' else 'landscape'
             response.set_cookie('orientation', 
                                 value=v, 
                                 expires=2147483640)
@@ -538,7 +534,7 @@ def pad2_default(level, pagenum=1):
     
     # list  
     lst, all_count, page_html, now_time, category = \
-            generate_list(username, level, 
+            generate_list(username, category, 
                           pagenum, PG_TYPE.P2_GATHER)
     
     if lst == None:
@@ -557,72 +553,16 @@ def pad2_default(level, pagenum=1):
                            count=all_count, htmlpage=page_html,
                            nowtime=now_time, time=during
                            )
+
+@web.route('/pad<int:level>', methods=['GET', 'POST'])
+@web.route('/pad<int:level>/<int:pagenum>', methods=['GET', 'POST'])
+def pad2_default(level, pagenum=1):
+    return general_pad2(level, pagenum)
     
 @web.route('/pad/<category>', methods=['GET', 'POST'])
 @web.route('/pad/<category>/<int:pagenum>', methods=['GET', 'POST'])
 def pad2_list(category, pagenum=1):
-    username = check_cookie()
-    if not username:
-        return jump_to_login
-
-    t1 = time.perf_counter()
-    
-    # 横竖屏
-    orientation = request.cookies.get('orientation')
-    landscape = True if orientation == 'landscape' else False
-
-    # user type
-    usertype = db.get_usertype(username)
-    allow = True if usertype > 0 else False
-
-    if request.method == 'POST':
-        name = request.form.get('name')
-
-        # logout
-        if name == 'logout':
-            html = jump_to_login
-            response = make_response(html)
-            response.set_cookie('user', expires=0)
-            return response
-        
-        # 横竖屏
-        elif name == 'switch':
-            response = make_response(redirect('/pad0'))
-            v = 'landscape' if orientation == 'portrait' else 'portrait'
-            response.set_cookie('orientation', 
-                                value=v, 
-                                expires=2147483640)
-            return response
-
-        # fetch my sources
-        elif usertype > 0 and name == 'fetch_mine':
-            lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
-
-    # category list
-    category_list = db.get_category_list_by_username(username)
-    
-    # list  
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, category, 
-                          pagenum, PG_TYPE.P2_CATEGORY)
-    
-    if lst == None:
-        return wrong_key_html
-        
-    t2 = time.perf_counter()
-    during = '%.5f' % (t2-t1)
-
-    return render_template('pad.html',
-                           landscape=landscape,
-                           usertype=user_type_str[usertype],
-                           username=username,
-                           allowfetch=allow,
-                           categories=category_list,
-                           entries=lst, listname=category,
-                           count=all_count, htmlpage=page_html,
-                           nowtime=now_time, time=during
-                           )
+    return general_pad2(category, pagenum)
 
 @web.route('/cateinfo')
 def cate_info():
@@ -860,8 +800,9 @@ def write_weberr(exception):
 
     # write to weberr.txt
     with open(fpath, 'a') as f:
-        f.write(time.ctime())
-        f.write(str(type(exception)), str(exception), '\n')
+        f.write(time.ctime() + '\n' + \
+                str(type(exception)) + ' ' + \
+                str(exception) + '\n\n')
 
     # print to console
     print('web-side exception:', str(exception))

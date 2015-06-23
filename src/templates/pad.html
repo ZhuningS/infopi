@@ -3,28 +3,104 @@
 	<title>InfoPi</title>
 	<meta content="width=device-width" name="viewport">
 	<style>
-		a{text-decoration:none; color:#FFFFEF}
-		a:hover{color: #FFFF00}
-		body{-webkit-text-size-adjust:220%}
+body{-webkit-text-size-adjust:
+{%- if landscape -%}
+125%
+{%- else -%}
+175%
+{%- endif -%}
+;margin:0px} 
+a{TEXT-DECORATION:none}
+table{border-collapse:collapse;border-spacing:0;border-top:1px solid}
+tr{border-bottom:1px solid}
+.hd{background-color:#336633}
+.a{TEXT-DECORATION:none;color:#FFFFEF}
+.bd{background-color:#FFCC99}
+.nb{white-space:nowrap}
 	</style>
 </head>
-<body bgcolor="#336633">
-		<a href='/plist0'>所有级别</a>&nbsp;&nbsp;
-		<a href='/plist1'>关注级别</a>&nbsp;&nbsp;
-		<a href='/plist2'>重要级别</a>
-<hr>
-{% for category in categories %}<a href='/plist/{{category|urlencode}}'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}
-<hr>
-	<form action="/p" method="post">
+<body>
+<div class='hd'>
+<form action="/pad0" method="post">
 <span style="float:left">
-		<font color=#99FFFF>{{username}}</font>
-		<button name="name" value="logout">退出登录</button>
+	<font color=#FFFFFF>{{usertype}}</font>
+	<font color=#99FFFF>{{username}}</font>
+	<button name="name" value="logout">退出登录</button>
 </span>
 <span style="float:right">
-{% if allowfetch %}
-		<button name="name" value="fetch_mine">更新我的源</button>{% endif %}
-		<a href='/'>电脑版</a>&nbsp;&nbsp;<a href='/m'>手机版</a>
+{%- if allowfetch -%}
+	<button name="name" value="fetch_mine">更新我的源</button>
+{%- endif %}
+	<button name="name" value="switch">
+{%- if landscape -%}
+切换到竖屏版
+{%- else -%}
+切换到横屏版
+{%- endif -%}
+	</button>
+	<a href='/' class='a'>电脑版</a>
 </span>
-	</form>
-</body>
-</html>
+</form>
+<br><hr>
+{%- for category in categories -%}
+<a href='/pad/{{category|urlencode}}#bd' class='a'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+{%- endfor -%}<br><hr>
+<span style="float:right">
+<a href='/pad0#bd' class='a'>所有级别</a>&nbsp;&nbsp;
+<a href='/pad1#bd' class='a'>关注级别</a>&nbsp;&nbsp;
+<a href='/pad2#bd' class='a'>重要级别</a>&nbsp;&nbsp;
+</span><br>
+</div>
+
+<div class='bd'>
+<a name="bd"></a>
+<span style="float:left"><b>{{listname}}</b>，共{{count}}条数据</span>
+<span style="float:right">↑上面有目录</span><br>
+<span style="float:right">{{htmlpage|safe}}</span>
+<table bgcolor="#ccffd6" width="100%">
+
+{%- if landscape -%}
+{%- for entry in entries -%}
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}>
+	<td>{{entry.author}}</td>
+	<td>
+{%- if entry.url -%}
+<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
+{%- else -%}
+{{entry.title}}
+{%- endif -%}
+	</td>
+	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+</tr>
+{%- if entry.summary -%}
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=3>{{entry.summary}}</td>
+</tr>
+{%- endif -%}
+{%- endfor -%}
+
+{%- else -%}
+{%- for entry in entries -%}
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}>
+	<td>{{entry.author}}</td>
+	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+</tr><tr>
+	<td colspan=2{{ loop.cycle(' bgColor=Lavender', '') }}>
+{%- if entry.url -%}
+<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
+{%- else -%}
+{{entry.title}}
+{%- endif -%}
+	</td>
+</tr>
+{%- if entry.summary -%}
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2>{{entry.summary}}</td>
+</tr>
+{%- endif -%}
+{%- endfor -%}
+{%- endif -%}
+
+</table>
+<span style="float:right">{{htmlpage|safe}}</span><br>
+页面生成时间{{nowtime}}，历时{{time}}秒
+</div>
+</body></html>

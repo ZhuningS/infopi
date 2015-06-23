@@ -53,6 +53,8 @@ class PG_TYPE(IntEnum):
     M_CATEGORY = 4
     P_GATHER = 5
     P_CATEGORY = 6
+    P2_GATHER = 7
+    P2_CATEGORY = 8
 
 class DV_TYPE(IntEnum):
     COMPUTER = 0
@@ -102,6 +104,13 @@ def generate_page(all_count, now_pg,
         elif p_type == PG_TYPE.P_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
                               '/%d" target="_self">%s</a>')
+            
+        elif p_type == PG_TYPE.P2_GATHER:
+            template_tuple = ('<a href="/pad', str(category), 
+                              '/%d#bd" target="_self">%s</a>')
+        elif p_type == PG_TYPE.P2_CATEGORY:
+            template_tuple = ('<a href="/pad/', category,
+                              '/%d#bd" target="_self">%s</a>')
 
         return ''.join(template_tuple)
 
@@ -288,7 +297,8 @@ def generate_list(username, category, pagenum, p_type, sid=''):
                        fromtimestamp(i.fetch_date).\
                        strftime('%m-%d %H:%M')
 
-    if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER, PG_TYPE.P_GATHER):
+    if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER,
+                  PG_TYPE.P2_GATHER, PG_TYPE.P_GATHER):
         if category == 0:
             category = '普通、关注、重要'
         elif category == 1:
@@ -340,7 +350,7 @@ def login():
             if subname == 'toc':
                 target = '/'
             elif subname == 'top':
-                target = '/p'
+                target = '/pad0'
             else:
                 target = '/m'
             response = make_response(redirect(target))
@@ -389,7 +399,7 @@ def general_index(page_type):
     if page_type == DV_TYPE.COMPUTER:
         page = 'left.html'
     elif page_type == DV_TYPE.PAD:
-        page = 'pad.html'
+        page = 'p.html'
     else:
         page = 'm.html'
     
@@ -412,12 +422,12 @@ def pad():
     return general_index(DV_TYPE.PAD)
 
 # 各页面通用的列表生成
-def general_list(category, pagenum, p_type, sid=''):
-    t1 = time.perf_counter()
-    
+def general_list(category, pagenum, p_type, sid=''):   
     username = check_cookie()
     if not username:
         return jump_to_login
+    
+    t1 = time.perf_counter()
 
     lst, all_count, page_html, now_time, category = \
             generate_list(username, category, 
@@ -481,6 +491,138 @@ def slist(encoded_url='', pagenum = 1):
 
     return general_list(encoded_url, pagenum,
                         PG_TYPE.SOURCE, sid)
+    
+@web.route('/pad<int:level>', methods=['GET', 'POST'])
+@web.route('/pad<int:level>/<int:pagenum>', methods=['GET', 'POST'])
+def pad2_default(level, pagenum=1):
+    username = check_cookie()
+    if not username:
+        return jump_to_login
+
+    t1 = time.perf_counter()
+    
+    # 横竖屏
+    orientation = request.cookies.get('orientation')
+    landscape = True if orientation == 'landscape' else False
+
+    # user type
+    usertype = db.get_usertype(username)
+    allow = True if usertype > 0 else False
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+
+        # logout
+        if name == 'logout':
+            html = jump_to_login
+            response = make_response(html)
+            response.set_cookie('user', expires=0)
+            return response
+        
+        # 横竖屏
+        elif name == 'switch':
+            response = make_response(redirect('/pad0'))
+            v = 'landscape' if orientation == 'portrait' else 'portrait'
+            response.set_cookie('orientation', 
+                                value=v, 
+                                expires=2147483640)
+            return response
+
+        # fetch my sources
+        elif usertype > 0 and name == 'fetch_mine':
+            lst = db.get_fetch_list_by_user(username)
+            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
+
+    # category list
+    category_list = db.get_category_list_by_username(username)
+    
+    # list  
+    lst, all_count, page_html, now_time, category = \
+            generate_list(username, level, 
+                          pagenum, PG_TYPE.P2_GATHER)
+    
+    if lst == None:
+        return wrong_key_html
+        
+    t2 = time.perf_counter()
+    during = '%.5f' % (t2-t1)
+
+    return render_template('pad.html',
+                           landscape=landscape,
+                           usertype=user_type_str[usertype],
+                           username=username,
+                           allowfetch=allow,
+                           categories=category_list,
+                           entries=lst, listname=category,
+                           count=all_count, htmlpage=page_html,
+                           nowtime=now_time, time=during
+                           )
+    
+@web.route('/pad/<category>', methods=['GET', 'POST'])
+@web.route('/pad/<category>/<int:pagenum>', methods=['GET', 'POST'])
+def pad2_list(category, pagenum=1):
+    username = check_cookie()
+    if not username:
+        return jump_to_login
+
+    t1 = time.perf_counter()
+    
+    # 横竖屏
+    orientation = request.cookies.get('orientation')
+    landscape = True if orientation == 'landscape' else False
+
+    # user type
+    usertype = db.get_usertype(username)
+    allow = True if usertype > 0 else False
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+
+        # logout
+        if name == 'logout':
+            html = jump_to_login
+            response = make_response(html)
+            response.set_cookie('user', expires=0)
+            return response
+        
+        # 横竖屏
+        elif name == 'switch':
+            response = make_response(redirect('/pad0'))
+            v = 'landscape' if orientation == 'portrait' else 'portrait'
+            response.set_cookie('orientation', 
+                                value=v, 
+                                expires=2147483640)
+            return response
+
+        # fetch my sources
+        elif usertype > 0 and name == 'fetch_mine':
+            lst = db.get_fetch_list_by_user(username)
+            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
+
+    # category list
+    category_list = db.get_category_list_by_username(username)
+    
+    # list  
+    lst, all_count, page_html, now_time, category = \
+            generate_list(username, category, 
+                          pagenum, PG_TYPE.P2_CATEGORY)
+    
+    if lst == None:
+        return wrong_key_html
+        
+    t2 = time.perf_counter()
+    during = '%.5f' % (t2-t1)
+
+    return render_template('pad.html',
+                           landscape=landscape,
+                           usertype=user_type_str[usertype],
+                           username=username,
+                           allowfetch=allow,
+                           categories=category_list,
+                           entries=lst, listname=category,
+                           count=all_count, htmlpage=page_html,
+                           nowtime=now_time, time=during
+                           )
 
 @web.route('/cateinfo')
 def cate_info():

@@ -1,0 +1,30 @@
+<!DOCTYPE html><html>
+<head>
+	<title>InfoPi</title>
+	<meta content="width=device-width" name="viewport">
+	<style>
+		a{text-decoration:none; color:#FFFFEF}
+		a:hover{color: #FFFF00}
+		body{-webkit-text-size-adjust:220%}
+	</style>
+</head>
+<body bgcolor="#336633">
+		<a href='/plist0'>所有级别</a>&nbsp;&nbsp;
+		<a href='/plist1'>关注级别</a>&nbsp;&nbsp;
+		<a href='/plist2'>重要级别</a>
+<hr>
+{% for category in categories %}<a href='/plist/{{category|urlencode}}'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}
+<hr>
+	<form action="/p" method="post">
+<span style="float:left">
+		<font color=#99FFFF>{{username}}</font>
+		<button name="name" value="logout">退出登录</button>
+</span>
+<span style="float:right">
+{% if allowfetch %}
+		<button name="name" value="fetch_mine">更新我的源</button>{% endif %}
+		<a href='/'>电脑版</a>
+</span>
+	</form>
+</body>
+</html>

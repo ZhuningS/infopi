@@ -490,7 +490,7 @@ def slist(encoded_url='', pagenum = 1):
     return general_list(encoded_url, pagenum,
                         PG_TYPE.SOURCE, sid)
     
-def general_pad2(category, pagenum):
+def general_pad2(category, pagenum, p_type):
     username = check_cookie()
     if not username:
         return jump_to_login
@@ -535,7 +535,7 @@ def general_pad2(category, pagenum):
     # list  
     lst, all_count, page_html, now_time, category = \
             generate_list(username, category, 
-                          pagenum, PG_TYPE.P2_GATHER)
+                          pagenum, p_type)
     
     if lst == None:
         return wrong_key_html
@@ -557,12 +557,12 @@ def general_pad2(category, pagenum):
 @web.route('/pad<int:level>', methods=['GET', 'POST'])
 @web.route('/pad<int:level>/<int:pagenum>', methods=['GET', 'POST'])
 def pad2_default(level, pagenum=1):
-    return general_pad2(level, pagenum)
+    return general_pad2(level, pagenum, PG_TYPE.P2_GATHER)
     
 @web.route('/pad/<category>', methods=['GET', 'POST'])
 @web.route('/pad/<category>/<int:pagenum>', methods=['GET', 'POST'])
 def pad2_list(category, pagenum=1):
-    return general_pad2(category, pagenum)
+    return general_pad2(category, pagenum, PG_TYPE.P2_CATEGORY)
 
 @web.route('/cateinfo')
 def cate_info():

@@ -17,6 +17,8 @@ tr{border-bottom:1px solid}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
 .bd{background-color:#FFCC99}
 .nb{white-space:nowrap}
+.h8{background-color:#FF99CC;white-space:nowrap}
+.d1{background-color:#FFCC99;white-space:nowrap}
 	</style>
 </head>
 <body>
@@ -55,7 +57,7 @@ tr{border-bottom:1px solid}
 <div class='bd'>
 <a name="bd"></a>
 <span style="float:left"><b>{{listname}}</b>，共{{count}}条数据</span>
-<span style="float:right">↑上面有目录</span><br>
+<span style="float:right">↑上面有版块目录</span><br>
 <span style="float:right">{{htmlpage|safe}}</span>
 <table bgcolor="#ccffd6" width="100%">
 
@@ -70,7 +72,7 @@ tr{border-bottom:1px solid}
 {{entry.title}}
 {%- endif -%}
 	</td>
-	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr>
 {%- if entry.summary -%}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=3>{{entry.summary}}</td>
@@ -82,7 +84,7 @@ tr{border-bottom:1px solid}
 {%- for entry in entries -%}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td>{{entry.author}}</td>
-	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td colspan=2>
 {%- if entry.url -%}

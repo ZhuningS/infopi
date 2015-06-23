@@ -2,10 +2,11 @@
 	<style>
 a{TEXT-DECORATION:none}
 table{border-spacing:1px}
-td{padding:2px}
 .s{color:#cc3300}
 .p{color:#3333ff}
 .nb{white-space:nowrap}
+.h8{background-color:#FF99CC;white-space:nowrap}
+.d1{background-color:#FFCC99;white-space:nowrap}
     </style>
 </head>
 
@@ -34,9 +35,9 @@ td{padding:2px}
 {%- endif -%}
 	</td>
 {%- if entry.pub_date -%}
-<td class="nb" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}><span class="p">p</span>{{entry.fetch_date}}</td>
+<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %} onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"><span class="p">p</span>{{entry.fetch_date}}</td>
 {%- else -%}
-<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>&nbsp;&nbsp;{{entry.fetch_date}}</td>
+<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>&nbsp;&nbsp;{{entry.fetch_date}}</td>
 {%- endif -%}
 </tr>{% endfor %}
 </table>

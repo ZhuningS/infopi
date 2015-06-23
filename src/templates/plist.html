@@ -2,13 +2,15 @@
 	<title>InfoPi</title>
 	<meta content="width=device-width" name="viewport">
 	<style>
+body{-webkit-text-size-adjust:180%}
 a{TEXT-DECORATION:none}
-a:link{color:#0000DD;} 
-table{border:1px solid black; border-collapse:collapse;}
-td{border:1px solid black; padding:2px;}
+a:link{color:#0000DD} 
+table{border:1px solid black; border-collapse:collapse}
+td{border:1px solid black}
 .s{color:#cc3300}
 .nb{white-space:nowrap}
-body{-webkit-text-size-adjust:180%}
+.h8{background-color:#FF99CC;white-space:nowrap}
+.d1{background-color:#FFCC99;white-space:nowrap}
     </style>
 </head>
 <body bgcolor="#FFCC99">
@@ -19,7 +21,7 @@ body{-webkit-text-size-adjust:180%}
 {%- for entry in entries -%}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td>{{entry.author}}</td>
-	<td class="nb"{% if entry.temp == 1 %} bgcolor=#FF99CC{% elif entry.temp == 2 %} bgcolor=#FFCC99{% endif %}>{{entry.fetch_date}}</td>
+	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr>
 	<td colspan=2{{ loop.cycle(' bgColor=Lavender', '') }}>
 {%- if entry.url -%}

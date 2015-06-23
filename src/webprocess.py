@@ -98,19 +98,19 @@ def generate_page(all_count, now_pg,
             template_tuple = ('<a href="/ml/', category,
                               '/%d" target="_self">%s</a>')
         # pad
-        elif p_type == PG_TYPE.P_GATHER:
-            template_tuple = ('<a href="/plist', str(category), 
-                              '/%d" target="_self">%s</a>')
-        elif p_type == PG_TYPE.P_CATEGORY:
-            template_tuple = ('<a href="/plist/', category,
-                              '/%d" target="_self">%s</a>')
-            
         elif p_type == PG_TYPE.P2_GATHER:
             template_tuple = ('<a href="/pad', str(category), 
                               '/%d#bd" target="_self">%s</a>')
         elif p_type == PG_TYPE.P2_CATEGORY:
             template_tuple = ('<a href="/pad/', category,
                               '/%d#bd" target="_self">%s</a>')
+
+        elif p_type == PG_TYPE.P_GATHER:
+            template_tuple = ('<a href="/plist', str(category), 
+                              '/%d" target="_self">%s</a>')
+        elif p_type == PG_TYPE.P_CATEGORY:
+            template_tuple = ('<a href="/plist/', category,
+                              '/%d" target="_self">%s</a>')
 
         return ''.join(template_tuple)
 

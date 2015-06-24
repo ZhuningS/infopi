@@ -15,14 +15,14 @@ table{border-collapse:collapse;border:1px solid}
 td{border:1px solid}
 .hd{background-color:#336633}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
-.bd{background-color:#FFCC99}
 .nb{white-space:nowrap}
 .h8{background-color:#FF99CC;white-space:nowrap}
 .d1{background-color:#FFCC99;white-space:nowrap}
 	</style>
 </head>
-<body>
-<div class='hd'>
+<body bgcolor="#FFCC99">
+<a name="top"></a>
+<div class="hd">
 <form action="/pad0" method="post">
 <span style="float:left">
 	<font color=#FFFFFF>{{usertype}}</font>
@@ -54,7 +54,6 @@ td{border:1px solid}
 </span><br>
 </div>
 
-<div class='bd'>
 <a name="bd"></a>
 <span style="float:left"><b>{{listname}}</b>，共{{count}}条数据</span>
 <span style="float:right">↑上面有版块目录</span><br>
@@ -103,6 +102,6 @@ td{border:1px solid}
 
 </table>
 <span style="float:right">{{htmlpage|safe}}</span><br>
-页面生成时间{{nowtime}}，历时{{time}}秒
-</div>
+<span style="float:left">页面生成时间{{nowtime}}，历时{{time}}秒</span>
+<span style="float:right"><a href="#top">返回页面顶端</a></span><br>
 </body></html>

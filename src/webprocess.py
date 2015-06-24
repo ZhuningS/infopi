@@ -288,17 +288,24 @@ def generate_list(username, category, pagenum, p_type, sid=''):
 
     recent_8h = int_now_time - 3600*8
     recent_24h = int_now_time - 3600*24
+    recent_6m = int_now_time - 3600*24*180
 
     for i in lst:
-        if i.fetch_date > recent_8h:
-            i.temp = 1
-        elif i.fetch_date > recent_24h:
-            i.temp = 2
-        
-        # 月-日 时:分
-        i.fetch_date = datetime.datetime.\
-                       fromtimestamp(i.fetch_date).\
-                       strftime('%m-%d %H:%M')
+        if i.fetch_date > recent_6m:
+            if i.fetch_date > recent_8h:
+                i.temp = 1
+            elif i.fetch_date > recent_24h:
+                i.temp = 2
+            
+            # 月-日 时:分
+            i.fetch_date = datetime.datetime.\
+                           fromtimestamp(i.fetch_date).\
+                           strftime('%m-%d %H:%M')
+        else:
+            # 年-月-日
+            i.fetch_date = datetime.datetime.\
+                           fromtimestamp(i.fetch_date).\
+                           strftime('%Y-%m-%d')            
 
     if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER,
                   PG_TYPE.P2_GATHER, PG_TYPE.P_GATHER):
@@ -758,7 +765,7 @@ def panel():
     for i in exceptions:
         i.fetch_date = datetime.datetime.\
                        fromtimestamp(i.fetch_date).\
-                       strftime('%m-%d %H:%M')
+                       strftime('%y-%m-%d %H:%M')
     
     return render_template('panel.html', type = usertype,
                            info_list=info_lst, proc_list=proc_lst,

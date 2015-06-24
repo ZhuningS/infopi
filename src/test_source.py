@@ -18,8 +18,7 @@ def main():
         else:
             print('没有加载信息源%s' % arg1)
     elif len(sys.argv) == 1:
-        print('正在尝试加载全局配置文件、用户配置文件...')
-        print('以下是尝试结果：')
+        print('正在尝试加载全局配置文件、用户配置文件，以下是尝试结果：')
         
         # global config
         from gconfig import load_config

@@ -247,10 +247,13 @@ def generate_list(username, category, pagenum, p_type, sid=''):
         pagenum = 1
 
     # limit and offset
+    # 手机版、电脑版、PAD版
     if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
-        limit = 10
-    else:
+        limit = db.get_colperpagemobile()
+    elif p_type in (PG_TYPE.GATHER, PG_TYPE.CATEGORY, PG_TYPE.SOURCE):
         limit = db.get_colperpage_by_user(username)
+    else:
+        limit = db.get_colperpagepad_by_user(username)
     offset = limit * (pagenum-1)
 
     # content list

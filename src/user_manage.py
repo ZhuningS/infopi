@@ -8,13 +8,14 @@ import bvars
 
 class c_user_cfg:
     __slots__ = ('username', 'password', 
-                 'col_per_page', 'usertype',
-                 'category_list')
+                 'col_per_page', 'col_per_page_pad',
+                 'usertype', 'category_list')
 
     def __init__(self):
         self.username = ''
         self.password = ''
-        self.col_per_page = 18
+        self.col_per_page = -1
+        self.col_per_page_pad = -1
 
         # 0:public, 1:normal, 2:admin
         self.usertype = 1
@@ -26,7 +27,7 @@ class c_user_cfg:
         self.category_list = list()
 
     @staticmethod
-    def load_users():
+    def load_users(cfg=None):
         users_path = os.path.join(bvars.root_path, 'cfg')
 
         user_cfg_list = list()
@@ -35,7 +36,7 @@ class c_user_cfg:
             fpath = os.path.join(users_path, item)
             if os.path.isfile(fpath) and \
                item.lower().endswith('.txt'):
-                    user_cfg = c_user_cfg.parse_cfg(fpath, item)
+                    user_cfg = c_user_cfg.parse_cfg(cfg, fpath, item)
                     if user_cfg:
                         user_cfg_list.append(user_cfg)
 
@@ -43,7 +44,7 @@ class c_user_cfg:
         return user_cfg_list
                  
     @staticmethod
-    def parse_cfg(f_fullpath, f_filename):
+    def parse_cfg(cfg, f_fullpath, f_filename):
 
         # load file
         try:
@@ -103,6 +104,11 @@ class c_user_cfg:
                         user.col_per_page = int(v)
                     except:
                         pass
+                elif k == 'col_per_page_pad':
+                    try:
+                        user.col_per_page_pad = int(v)
+                    except:
+                        pass
                 elif k == 'usertype':
                     if v == 'public':
                         user.usertype = 0
@@ -143,5 +149,11 @@ class c_user_cfg:
                     else:
                         s = '\n文件%s出现错误，分类格式有误\n%s\n'
                         print(s % (f_filename, line))
+        
+        if cfg:
+            if user.col_per_page == -1:
+                user.col_per_page = cfg.default_colperpage
+            if user.col_per_page_pad == -1:
+                user.col_per_page_pad = cfg.default_pad_colperpage
 
         return user

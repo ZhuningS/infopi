@@ -36,7 +36,9 @@ class c_config:
         self.boot_time = c_config.s_boot_time
 
         # default values
-        self.default_colperpage = 15      
+        self.default_colperpage = 15
+        self.default_pad_colperpage = 12
+        self.mobile_colperpage = 10
 
         # task controller
         self.task_pipes = 3
@@ -69,7 +71,8 @@ class c_config:
         self.runcfg = c_runcfg()
 
 
-def load_config(version, web_port, https, tmpfs_path):
+def load_config(version='test', web_port=0,
+                https=False, tmpfs_path=''):
     def get_value(string, t):
 
         if t == VALUE_TYPE.INT:
@@ -142,13 +145,29 @@ def load_config(version, web_port, https, tmpfs_path):
         k = split_lst[0].strip()
         string = split_lst[1].strip()
 
-        # col_per_page
+        # default_colperpage
         if k == 'default_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
             if v:
                 cfg.default_colperpage = v
             else:
                 print('default_colperpage', string)
+                
+        # default_pad_colperpage
+        elif k == 'default_pad_colperpage':
+            v = get_value(string, VALUE_TYPE.INT)
+            if v:
+                cfg.default_pad_colperpage = v
+            else:
+                print('default_pad_colperpage', string)
+                
+        # mobile_colperpage
+        elif k == 'mobile_colperpage':
+            v = get_value(string, VALUE_TYPE.INT)
+            if v:
+                cfg.mobile_colperpage = v
+            else:
+                print('mobile_colperpage', string)            
 
         # task control
 

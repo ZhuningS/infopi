@@ -160,7 +160,7 @@ def main_process(version, web_port, https, tmpfs_path,
         m_source_manage.load_sources()
 
         # load users
-        user_list = m_user_manage.c_user_cfg.load_users()
+        user_list = m_user_manage.c_user_cfg.load_users(cfg)
         print('back-side loaded %d users' % len(user_list))
 
         # pre process

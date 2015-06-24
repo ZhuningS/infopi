@@ -50,7 +50,7 @@ class c_index_unit:
 
 class c_user_table:
     __slots__ = ('username', 'password', 'up_hash', 
-                 'col_per_page', 'usertype',
+                 'col_per_page', 'col_per_page_pad', 'usertype',
                  'sid_level_dict', 'sid_list',
                  'cate_list', 'cate_indexlist_dict',
                  'show_list', 'appeared_source_num')
@@ -59,7 +59,8 @@ class c_user_table:
         self.username = ''
         self.password = ''
         self.up_hash = ''
-        self.col_per_page = 20
+        self.col_per_page = 18
+        self.col_per_page_pad = 12
         self.usertype = 1
 
         # source_id -> level
@@ -209,6 +210,7 @@ class c_db_wrapper:
         ut.password = user.password
         ut.usertype = user.usertype
         ut.col_per_page = user.col_per_page
+        ut.col_per_page_pad = user.col_per_page_pad
 
         # cate_indexlist_dict, for level 0, 1, 2
         ut.cate_indexlist_dict[0] = list()
@@ -519,8 +521,13 @@ class c_db_wrapper:
 
     # return col_per_page
     def get_colperpage_by_user(self, username):
-        ret = self.users[username].col_per_page
-        return ret
+        return self.users[username].col_per_page
+    
+    def get_colperpagepad_by_user(self, username):
+        return self.users[username].col_per_page_pad
+    
+    def get_colperpagemobile(self):
+        return self.cfg.mobile_colperpage
 
     # len of a username.category
     def get_count_by_user_cate(self, username, category):

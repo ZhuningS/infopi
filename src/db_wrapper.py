@@ -59,7 +59,7 @@ class c_user_table:
         self.username = ''
         self.password = ''
         self.up_hash = ''
-        self.col_per_page = 18
+        self.col_per_page = 15
         self.col_per_page_pad = 12
         self.usertype = 1
 

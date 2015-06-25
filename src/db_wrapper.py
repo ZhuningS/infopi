@@ -529,15 +529,6 @@ class c_db_wrapper:
     def get_colperpagemobile(self):
         return self.cfg.mobile_colperpage
 
-    # len of a username.category
-    def get_count_by_user_cate(self, username, category):
-        try:
-            lst = self.users[username].cate_indexlist_dict[category]
-        except:
-            return -1
-        
-        return len(lst)
-
     # for show
     def get_name_by_sid(self, sid):
         return self.sources[sid].name
@@ -557,8 +548,7 @@ class c_db_wrapper:
 
     # get fetch list (sid)
     def get_fetch_list_by_user(self, username):
-        ret = self.users[username].sid_list
-        return ret
+        return self.users[username].sid_list
 
     def get_usertype(self, username):
         return self.users[username].usertype

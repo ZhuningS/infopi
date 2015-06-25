@@ -2,6 +2,7 @@
 	<style>
 a{TEXT-DECORATION:none}
 table{border-spacing:1px}
+.e{color:#cc33ff}
 .s{color:#cc3300}
 .p{color:#3333ff}
 .nb{white-space:nowrap}
@@ -24,6 +25,9 @@ table{border-spacing:1px}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td width="18%">{{entry.author}}</td>
 	<td>
+{%- if entry.suid == '<exception>' -%}
+<span class="e">e</span>
+{%- endif -%}
 {%- if entry.summary and entry.url -%}
 <span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
 {%- elif not entry.summary and entry.url -%}

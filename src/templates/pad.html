@@ -15,6 +15,7 @@ table{border-collapse:collapse;border:1px solid}
 td{border:1px solid}
 .hd{background-color:#336633}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
+.e{color:#cc33ff}
 .nb{white-space:nowrap}
 .h8{background-color:#FF99CC;white-space:nowrap}
 .d1{background-color:#FFCC99;white-space:nowrap}
@@ -65,6 +66,9 @@ td{border:1px solid}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td>{{entry.author}}</td>
 	<td>
+{%- if entry.suid == '<exception>' -%}
+<span class="e">e</span>
+{%- endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- else -%}
@@ -86,6 +90,9 @@ td{border:1px solid}
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td colspan=2>
+{%- if entry.suid == '<exception>' -%}
+<span class="e">e</span>
+{%- endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- else -%}

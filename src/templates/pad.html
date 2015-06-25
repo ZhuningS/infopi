@@ -67,8 +67,7 @@ td{border:1px solid}
 	<td>{{entry.author}}</td>
 	<td>
 {%- if entry.suid == '<exception>' -%}
-<span class="e">e</span>
-{%- endif -%}
+<span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- else -%}
@@ -91,8 +90,7 @@ td{border:1px solid}
 </tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td colspan=2>
 {%- if entry.suid == '<exception>' -%}
-<span class="e">e</span>
-{%- endif -%}
+<span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- else -%}

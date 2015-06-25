@@ -26,8 +26,7 @@ td{border:1px solid}
 </tr><tr>
 	<td colspan=2{{ loop.cycle(' bgColor=Lavender', '') }}>
 {%- if entry.suid == '<exception>' -%}
-<span class="e">e</span>
-{%- endif -%}
+<span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
 <a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
 {%- else -%}

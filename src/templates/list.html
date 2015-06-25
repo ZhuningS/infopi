@@ -27,6 +27,7 @@ table{border-spacing:1px}
 	<td>
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span>
+{%- if not entry.summary %} {% endif -%}
 {%- endif -%}
 {%- if entry.summary and entry.url -%}
 <span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>

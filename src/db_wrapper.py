@@ -555,15 +555,6 @@ class c_db_wrapper:
         return self.users[username].appeared_source_num, \
                len(self.users[username].sid_list)
 
-    # len of source.index_list
-    def get_count_by_sid(self, sid):
-        try:
-            lst = self.sources[sid].index_list
-        except:
-            return -1
-        
-        return len(lst)
-
     # get fetch list (sid)
     def get_fetch_list_by_user(self, username):
         ret = self.users[username].sid_list
@@ -576,7 +567,12 @@ class c_db_wrapper:
     def get_infos_by_user_category(self, 
                                    username, category, 
                                    offset, limit):
-        index = self.users[username].cate_indexlist_dict[category]
+        try:
+            index = self.users[username].cate_indexlist_dict[category]
+        except:
+            return None, None
+
+        allcount = len(index)
         end = min(offset+limit, len(index))
 
         ret_list = list()
@@ -586,14 +582,15 @@ class c_db_wrapper:
             
             ret_list.append(info)
 
-        return ret_list
+        return allcount, ret_list
 
     # get infos of a source
     def get_infos_by_sid(self, username, sid, offset, limit):
         if sid not in self.users[username].sid_level_dict:
-            return None
+            return None, None
         
         index = self.sources[sid].index_list
+        allcount = len(index)
         end = min(offset+limit, len(index))
 
         ret_list = list()
@@ -603,7 +600,7 @@ class c_db_wrapper:
             
             ret_list.append(info)
 
-        return ret_list
+        return allcount, ret_list
 
     # get all exceptions
     def get_all_exceptions(self):

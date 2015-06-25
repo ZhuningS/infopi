@@ -258,20 +258,15 @@ def generate_list(username, category, pagenum, p_type, sid=''):
 
     # content list
     if p_type == PG_TYPE.SOURCE:
-        all_count = db.get_count_by_sid(sid)
-        if all_count == -1:
-            return None, None, None, None, None
-        
-        lst = db.get_infos_by_sid(username, sid, offset, limit)
-        if lst == None:
+        all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
+        if all_count == None:
             return None, None, None, None, None
     else:
-        all_count = db.get_count_by_user_cate(username, category)
-        if all_count == -1:
-            return None, None, None, None, None
-        
-        lst = db.get_infos_by_user_category(username, category, 
+        all_count, lst = db.get_infos_by_user_category(
+                                            username, category, 
                                             offset, limit)
+        if all_count == None:
+            return None, None, None, None, None       
 
     # nag part
     page_html = generate_page(all_count, pagenum,

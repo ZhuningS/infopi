@@ -61,8 +61,8 @@ class DV_TYPE(IntEnum):
     PAD = 1
     MOBILE = 2
 
-wrong_key_html = ('在当前的用户配置中，没有找到相应版块。<br>'
-                  '请刷新整个页面，以更新左侧的版块目录。')
+wrong_key_html = ('在当前的用户配置中，没有找到这个版块。<br>'
+                  '请刷新 整个页面（或上一级目录页面），以得到最新的版块目录。')
 
 zero_user_loaded = ('尚未载入任何用户，请在3秒后刷新此页面。<br>'
                    '如问题依旧，请检查用户配置、后端进程的状态。'
@@ -490,7 +490,7 @@ def slist(encoded_url='', pagenum = 1):
     try:
         sid = base64.urlsafe_b64decode(encoded_url).decode('utf-8')
     except:
-        return '请求的信息源列表url有误:<br>' + encoded_url
+        return '请求的信息源列表url有误：<br>' + encoded_url
 
     return general_list(encoded_url, pagenum,
                         PG_TYPE.SOURCE, sid)

@@ -71,6 +71,8 @@ zero_user_loaded = ('尚未载入任何用户，请在3秒后刷新此页面。<
 
 jump_to_login = r'<script>top.location.href="/login";</script>'
 
+user_type_str = ('公共帐号', '普通帐号', '管理员')
+
 #-------------------------------
 #         page part
 #-------------------------------
@@ -371,7 +373,6 @@ def login():
 
     return render_template('login.html')
 
-user_type_str = ('公共帐号', '普通帐号', '管理员')
 def general_index(page_type):
     username = check_cookie()
     if not username:

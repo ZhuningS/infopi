@@ -55,6 +55,7 @@ class PG_TYPE(IntEnum):
     P_CATEGORY = 6
     P2_GATHER = 7
     P2_CATEGORY = 8
+    P2_EXCEPTION = 9
 
 class DV_TYPE(IntEnum):
     COMPUTER = 0
@@ -537,14 +538,32 @@ def general_pad2(category, pagenum, p_type):
     # category list
     category_list = db.get_category_list_by_username(username)
     
-    # list  
-    lst, all_count, page_html, now_time, category = \
-            generate_list(username, category, 
-                          pagenum, p_type)
+    # number of exceptions
+    exception_num = db.get_exceptions_num_by_username(username)
     
-    if lst == None:
-        return wrong_key_html
+    if p_type == PG_TYPE.P2_EXCEPTION:
+        lst = db.get_exceptions_by_username(username)
+        all_count = len(lst)
+        page_html = '在问题消失或被解决后，程序会自动删除异常信息'
+        # 时:分:秒
+        now_time = datetime.datetime.\
+                   fromtimestamp(time.time()).\
+                   strftime('%H:%M:%S')
+        category = '当前用户的异常信息'
         
+        for i in lst:
+            i.fetch_date = datetime.datetime.\
+                           fromtimestamp(i.fetch_date).\
+                           strftime('%y-%m-%d %H:%M')
+    else:
+        # list  
+        lst, all_count, page_html, now_time, category = \
+                generate_list(username, category, 
+                              pagenum, p_type)
+    
+        if lst == None:
+            return wrong_key_html
+
     t2 = time.perf_counter()
     during = '%.5f' % (t2-t1)
 
@@ -556,7 +575,8 @@ def general_pad2(category, pagenum, p_type):
                            categories=category_list,
                            entries=lst, listname=category,
                            count=all_count, htmlpage=page_html,
-                           nowtime=now_time, time=during
+                           nowtime=now_time, time=during,
+                           exception_num=exception_num
                            )
 
 @web.route('/pad<int:level>', methods=['GET', 'POST'])
@@ -568,6 +588,10 @@ def pad2_default(level, pagenum=1):
 @web.route('/pad/<category>/<int:pagenum>', methods=['GET', 'POST'])
 def pad2_list(category, pagenum=1):
     return general_pad2(category, pagenum, PG_TYPE.P2_CATEGORY)
+
+@web.route('/pade', methods=['GET', 'POST'])
+def pad_exceptions():
+    return general_pad2('Exception', 1, PG_TYPE.P2_EXCEPTION)
 
 @web.route('/cateinfo')
 def cate_info():

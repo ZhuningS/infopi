@@ -609,6 +609,9 @@ class c_db_wrapper:
             lst.append(info)
 
         return lst
+    
+    def get_exceptions_num_by_username(self, username):
+        return len(self.users[username].cate_indexlist_dict[-1])
 
     # ----------- for login --------------
 

@@ -15,6 +15,7 @@ table{border-collapse:collapse;border:1px solid}
 td{border:1px solid}
 .hd{background-color:#336633}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
+.ea{color:#ccccff}
 .e{color:#cc33ff}
 .nb{white-space:nowrap}
 .h8{background-color:#FF99CC;white-space:nowrap}
@@ -48,6 +49,9 @@ td{border:1px solid}
 {%- for category in categories -%}
 <a href='/pad/{{category|urlencode}}#bd' class='a'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;
 {%- endfor -%}<br><hr>
+{% if exception_num > 0 -%}
+<span style="float:left"><a href="/pade" class="ea">有{{exception_num}}条异常信息</a></span>
+{%- endif -%}
 <span style="float:right">
 <a href='/pad0#bd' class='a'>所有级别</a>&nbsp;&nbsp;
 <a href='/pad1#bd' class='a'>关注级别</a>&nbsp;&nbsp;

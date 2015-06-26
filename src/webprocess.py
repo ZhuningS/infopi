@@ -543,7 +543,7 @@ def general_pad2(category, pagenum, p_type):
     
     if p_type == PG_TYPE.P2_EXCEPTION:
         lst = db.get_exceptions_by_username(username)
-        all_count = exception_num
+        all_count = len(lst)
         page_html = '在问题消失或被解决后，程序会自动删除异常信息'
         # 时:分:秒
         now_time = datetime.datetime.\

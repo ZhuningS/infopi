@@ -275,6 +275,7 @@ def worker(worker_id):
             bvars.workers[worker_id] = (func, dict())
         else:
             print('worker_id: %s already exist in workers' % worker_id)
+        return func
     
     return worker_decorator
 
@@ -289,5 +290,6 @@ def dataparser(worker_id):
             bvars.dataparsers[worker_id] = func
         else:
             print('worker_id: %s already exist in dataparsers' % worker_id)
+        return func
     
     return dataparser_decorator

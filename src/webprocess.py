@@ -732,10 +732,11 @@ def panel():
                 zftmp = os.path.join(wvars.upload_forlder,'tmp')
 
                 # remove & make tmp dir
-                try:
-                    shutil.rmtree(zftmp)
-                except Exception as e:
-                    print('删除/temp/tmp时出现异常，这可能是正常现象。')
+                if os.path.isdir(zftmp):
+                    try:
+                        shutil.rmtree(zftmp)
+                    except Exception as e:
+                        print('删除/temp/tmp时出现异常。', e)
 
                 try:
                     os.mkdir(zftmp)

@@ -115,9 +115,13 @@ def load_xml(sources_path, path, filename):
 
     # use father data
     if father:
+        # data
         father_data = copy.deepcopy(temp_dict[father].data)
         father_data.update(s.data)
         s.data = father_data
+        # callback
+        if s.callback == None:
+            s.callback = temp_dict[father].callback
 
     # add to dict
     temp_dict[short_fn] = s

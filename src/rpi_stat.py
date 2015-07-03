@@ -31,7 +31,7 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
     one = ('程序版本', cfg.version)
     lst.append(one)
 
-    if usertype > 0:
+    if usertype == 2:
         # programe start time
         one = ('程序启动时间', cfg.boot_time)
         lst.append(one)

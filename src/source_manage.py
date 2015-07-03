@@ -55,7 +55,7 @@ def load_xml(sources_path, path, filename):
 
     # decode
     try:
-        if len(byte_data) >= 3 and byte_data[:3] == codecs.BOM_UTF8:
+        if byte_data[:3] == codecs.BOM_UTF8:
             byte_data = byte_data[3:]
 
         string = byte_data.decode('utf-8')

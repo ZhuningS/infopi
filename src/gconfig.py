@@ -122,7 +122,7 @@ def load_config(version='test', web_port=0,
 
     # decode
     try:
-        if len(byte_data) >= 3 and byte_data[:3] == codecs.BOM_UTF8:
+        if byte_data[:3] == codecs.BOM_UTF8:
             byte_data = byte_data[3:]
 
         text = byte_data.decode('utf-8')

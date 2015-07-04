@@ -31,15 +31,6 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
     one = ('程序版本', cfg.version)
     lst.append(one)
 
-    if usertype == 2:
-        # programe start time
-        one = ('程序启动时间', cfg.boot_time)
-        lst.append(one)
-
-        # config start time
-        one = ('配置加载时间', cfg.start_time)
-        lst.append(one)
-
     # web port
     s = '端口:%d https:%s' % (cfg.web_port, 
                                '启用' if cfg.https else '未启用'
@@ -67,6 +58,15 @@ def get_info_list(cfg, usertype, db_file='', db_size=''):
 
     one = ('web进程异常记录文件大小', size)
     lst.append(one)
+    
+    if usertype == 2:
+        # programe start time
+        one = ('程序启动时间', cfg.boot_time)
+        lst.append(one)
+
+        # config start time
+        one = ('配置加载时间', cfg.start_time)
+        lst.append(one)
 
     return lst
 

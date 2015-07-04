@@ -71,7 +71,7 @@ zero_user_loaded = ('尚未载入任何用户，请在3秒后刷新此页面。<
 
 jump_to_login = r'<script>top.location.href="/login";</script>'
 
-user_type_str = ('公共帐号', '普通帐号', '管理员')
+user_type_str = ('公共账号', '普通账号', '管理员')
 
 #-------------------------------
 #         page part
@@ -801,7 +801,7 @@ def listall():
 
     usertype = db.get_usertype(username)
     if usertype != 2:
-        return '请使用管理员帐号查看此页面'
+        return '请使用管理员账号查看此页面'
     
     listall = db.get_listall()
     return render_template('listall.html', items=listall,

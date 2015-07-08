@@ -86,34 +86,34 @@ def generate_page(all_count, now_pg,
         # computer
         if p_type == PG_TYPE.GATHER:
             template_tuple = ('<a href="/list', str(category), 
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         elif p_type == PG_TYPE.CATEGORY:
             template_tuple = ('<a href="/list/', category,
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         elif p_type == PG_TYPE.SOURCE:
             template_tuple = ('<a href="/slist/', category,
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         # mobile
         elif p_type == PG_TYPE.M_GATHER:
             template_tuple = ('<a href="/ml', str(category), 
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         elif p_type == PG_TYPE.M_CATEGORY:
             template_tuple = ('<a href="/ml/', category,
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         # pad
         elif p_type == PG_TYPE.P2_GATHER:
             template_tuple = ('<a href="/pad', str(category), 
-                              '/%d#bd" target="_self">%s</a>')
+                              '/%d#bd">%s</a>')
         elif p_type == PG_TYPE.P2_CATEGORY:
             template_tuple = ('<a href="/pad/', category,
-                              '/%d#bd" target="_self">%s</a>')
+                              '/%d#bd">%s</a>')
 
         elif p_type == PG_TYPE.P_GATHER:
             template_tuple = ('<a href="/plist', str(category), 
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
         elif p_type == PG_TYPE.P_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
-                              '/%d" target="_self">%s</a>')
+                              '/%d">%s</a>')
 
         return ''.join(template_tuple)
 

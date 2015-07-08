@@ -239,7 +239,7 @@ def generate_page(all_count, now_pg,
         else:
             lst.append('已到')
 
-        return '&nbsp;'.join(lst)
+        return ' '.join(lst) # 一个空格
 
 #-------------------------------
 #           generate_list

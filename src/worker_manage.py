@@ -4,12 +4,18 @@ import threading
 import time
 import datetime
 import heapq
+import hashlib
 
 import bvars
 from datadefine import *
 
 # translate for wz_tooltip.js (web tooltip show)
 translate_dict = str.maketrans("<>'", '[]"', '\n\r')
+
+def hasher(string):
+    hashobj = hashlib.md5()
+    hashobj.update(string.encode('utf-8'))
+    return hashobj.hexdigest()
 
 class c_worker_exception(Exception):
 
@@ -76,6 +82,8 @@ def worker_starter(runcfg, source_id):
             if source.callback != None:
                 newlst = list()
                 local_d = dict()
+                local_d['hasher'] = hasher
+                
                 for i, info in enumerate(lst):
                     local_d['posi'] = i
                     local_d['info'] = info
@@ -202,6 +210,8 @@ def test_source(source_id):
         if source.callback != None:
             newlst = list()
             local_d = dict()
+            local_d['hasher'] = hasher
+
             for i, info in enumerate(lst):
                 local_d['posi'] = i
                 local_d['info'] = info

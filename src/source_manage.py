@@ -144,7 +144,7 @@ def load_sources():
         l1_path = os.path.join(sources_path, l1_item)
         temp_dict.clear()
 
-        if not os.path.isfile(l1_path):
+        if os.path.isdir(l1_path):
             for l2_item in os.listdir(l1_path):
                 l2_path = os.path.join(l1_path, l2_item)
                 if os.path.isfile(l2_path):

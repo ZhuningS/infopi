@@ -76,22 +76,26 @@ def parse_html(data_dict, base_url, html):
         path = block[0]
         temp_j = j
         
+        # path必定为tuple
         for ii, one in enumerate(path):
-            if type(one) == str or type(one) == int:
-                try:
-                    temp_j = temp_j[one]
-                except:
-                    s = '第%d个block, block_path的第%d个路径元素%s无效'
-                    raise c_worker_exception(
-                            s % (i+1, ii+1, str(one)), 
-                            data_dict['url'], 
-                            '可能是网站改变了json的设计结构')    
-            else:
-                print('path元素的类型有误:', type(one))
+            try:
+                temp_j = temp_j[one]
+            except:
+                s = '第%d个block, block_path的第%d个路径元素%s无效'
+                raise c_worker_exception(
+                        s % (i+1, ii+1, str(one)), 
+                        data_dict['url'], 
+                        '可能是网站改变了json的设计结构')
 
         # extract
         if type(temp_j) == dict:
             temp_j = temp_j.values()
+        elif type(temp_j) != list:
+            s = '第%d个block, block_path找到的不是列表或字典'
+            raise c_worker_exception(
+                    s % i+1, 
+                    data_dict['url'], 
+                    '可能是网站改变了json的设计结构')    
 
         for o in temp_j:
             info = c_info()
@@ -101,7 +105,7 @@ def parse_html(data_dict, base_url, html):
                     ss = map_attrs(o, v)
                 except Exception as e:
                     s1 = '处理第%d个block的映射时异常' % (i+1)
-                    s2 = str(k) + ', ' + str(e)
+                    s2 = 'path:' + str(path) + ', 无法找到指定元素。'
                     raise c_worker_exception(s1, '', s2)
 
                 if k == 'title':
@@ -196,9 +200,6 @@ def html_json_parser(xml_string):
         str_errors = url_tag.attrib.get('errors', '').strip()
         d['errors'] = str_errors
         
-        str_type = url_tag.attrib.get('type', 'pure').strip()
-        d['type'] = str_type
-        
     re_tag = data.find('re')
     if re_tag != None:
         d['re_pattern'] = process_multiline(re_tag.text)
@@ -210,7 +211,7 @@ def html_json_parser(xml_string):
 
         for block in blocks:
             path = block.find('block_path')
-            path_value = eval('(' + path.text.strip() + ')')
+            path_value = eval('(' + path.text.strip() + ',)')
             
             map_dict = dict()
             for r in block.iter():

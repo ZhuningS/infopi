@@ -83,9 +83,10 @@ def parse_html(data_dict, base_url, html):
             except:
                 s = '第%d个block, block_path的第%d个路径元素%s无效'
                 raise c_worker_exception(
-                        s % (i+1, ii+1, str(one)), 
-                        data_dict['url'], 
-                        '可能是网站改变了json的设计结构')
+                    s % (i+1, ii+1, str(one)), 
+                    data_dict['url'], 
+                    'path:%s 可能是网站改变了json的设计结构' % str(path)
+                    )
 
         # extract
         if type(temp_j) == dict:
@@ -93,9 +94,10 @@ def parse_html(data_dict, base_url, html):
         elif type(temp_j) != list:
             s = '第%d个block, block_path找到的不是列表或字典'
             raise c_worker_exception(
-                    s % i+1, 
+                    s % (i+1), 
                     data_dict['url'], 
-                    '可能是网站改变了json的设计结构')    
+                    'path:%s 可能是网站改变了json的设计结构' % str(path)
+                    )    
 
         for o in temp_j:
             info = c_info()
@@ -105,7 +107,7 @@ def parse_html(data_dict, base_url, html):
                     ss = map_attrs(o, v)
                 except Exception as e:
                     s1 = '处理第%d个block的映射时异常' % (i+1)
-                    s2 = 'path:' + str(path) + ', 无法找到指定元素。'
+                    s2 = 'path:%s, 无法找到指定元素%s。' % (str(path), str(v))
                     raise c_worker_exception(s1, '', s2)
 
                 if k == 'title':

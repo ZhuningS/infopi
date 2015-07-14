@@ -24,7 +24,7 @@ def hasher(string):
 def unixtime(string, fmt='%m-%d %H:%M'):
     try:
         return datetime.datetime.\
-               fromtimestamp(int(string)).\
+               fromtimestamp(float(string)).\
                strftime(fmt)
     except Exception as e:
         print('unixtime函数异常', e)

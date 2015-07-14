@@ -18,7 +18,16 @@ def hasher(string):
         hashobj.update(string.encode('utf-8'))
         return hashobj.hexdigest()
     except Exception as e:
-        print(e)
+        print('hasher函数异常', e)
+        return ''
+
+def unixtime(string, fmt='%m-%d %H:%M'):
+    try:
+        return datetime.datetime.\
+               fromtimestamp(int(string)).\
+               strftime(fmt)
+    except Exception as e:
+        print('unixtime函数异常', e)
         return ''
 
 class c_worker_exception(Exception):
@@ -87,11 +96,17 @@ def worker_starter(runcfg, source_id):
                 newlst = list()
                 local_d = dict()
                 local_d['hasher'] = hasher
+                local_d['unixtime'] = unixtime
                 
                 for i, info in enumerate(lst):
                     local_d['posi'] = i
                     local_d['info'] = info
-                    exec(source.callback, None, local_d)
+                    try:
+                        exec(source.callback, None, local_d)
+                    except Exception as e:
+                        print('callback异常:', e)
+                        info.title = 'callback代码异常'
+                        info.summary = str(e)
                     
                     if info.temp != 'del':
                         newlst.append(info)
@@ -215,11 +230,17 @@ def test_source(source_id):
             newlst = list()
             local_d = dict()
             local_d['hasher'] = hasher
+            local_d['unixtime'] = unixtime
 
             for i, info in enumerate(lst):
                 local_d['posi'] = i
                 local_d['info'] = info
-                exec(source.callback, None, local_d)
+                try:
+                    exec(source.callback, None, local_d)
+                except Exception as e:
+                    print('callback异常:', e)
+                    info.title = 'callback代码异常'
+                    info.summary = str(e)
                 
                 if info.temp != 'del':
                     newlst.append(info)

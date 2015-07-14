@@ -13,9 +13,13 @@ from datadefine import *
 translate_dict = str.maketrans("<>'", '[]"', '\n\r')
 
 def hasher(string):
-    hashobj = hashlib.md5()
-    hashobj.update(string.encode('utf-8'))
-    return hashobj.hexdigest()
+    try:
+        hashobj = hashlib.md5()
+        hashobj.update(string.encode('utf-8'))
+        return hashobj.hexdigest()
+    except Exception as e:
+        print(e)
+        return ''
 
 class c_worker_exception(Exception):
 

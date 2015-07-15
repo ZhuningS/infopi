@@ -254,7 +254,7 @@ def main_process(version, web_port, https, tmpfs_path,
 
         # 运行sources
         elif msg.command == 'wb:request_fetch':
-            print('web side request fetch')
+            #print('web side request fetch')
             
             # 挂起 或 无信息源
             if not fetch_all:

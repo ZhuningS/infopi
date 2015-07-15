@@ -28,19 +28,6 @@ def item_process(text):
 
     return text
 
-# 处理映射规则
-def map_attrs(obj, one):
-    t = type(one)
-    if t == str or t == int:
-        return item_process(obj[one])
-    elif t == tuple:
-        s = ''
-        for i in one:
-            s += item_process(obj[i])
-        return s
-    else:
-        print('html_json的映射定义出现错误')
-
 def parse_html(data_dict, base_url, html):
     if not html:
         raise c_worker_exception('html为空字符串', data_dict['url'], '')
@@ -60,7 +47,7 @@ def parse_html(data_dict, base_url, html):
 
     # parse json
     try:
-        j = json.loads(json_str)
+        json_obj = json.loads(json_str)
     except Exception as e:
         raise c_worker_exception('解析json时出错', 
                                  data_dict['url'], 
@@ -74,24 +61,24 @@ def parse_html(data_dict, base_url, html):
 
         # travel path
         path = block[0]
-        temp_j = j
+        block_j = json_obj
         
         # path必定为tuple
-        for ii, one in enumerate(path):
+        for ii, path_item in enumerate(path):
             try:
-                temp_j = temp_j[one]
+                block_j = block_j[path_item]
             except:
                 s = '第%d个block, block_path的第%d个路径元素%s无效'
                 raise c_worker_exception(
-                    s % (i+1, ii+1, str(one)), 
+                    s % (i+1, ii+1, str(path_item)), 
                     data_dict['url'], 
                     'path:%s 可能是网站改变了json的设计结构' % str(path)
                     )
 
         # extract
-        if type(temp_j) == dict:
-            temp_j = temp_j.values()
-        elif type(temp_j) != list:
+        if type(block_j) == dict:
+            block_j = block_j.values()
+        elif type(block_j) != list:
             s = '第%d个block, block_path找到的不是列表或字典'
             raise c_worker_exception(
                     s % (i+1), 
@@ -99,31 +86,38 @@ def parse_html(data_dict, base_url, html):
                     'path:%s 可能是网站改变了json的设计结构' % str(path)
                     )    
 
-        for o in temp_j:
+        for o in block_j:
             info = c_info()
 
-            for k, v in block[1].items():
-                try:
-                    ss = map_attrs(o, v)
-                except Exception as e:
-                    s1 = '处理第%d个block的映射时异常' % (i+1)
-                    s2 = 'path:%s, 无法找到指定元素%s。' % (str(path), str(v))
-                    raise c_worker_exception(s1, '', s2)
+            for key, sub_path in block[1].items():
+                
+                temp_jj = o
+                for sub_path_item in sub_path:
+                    try:
+                        temp_jj = temp_jj[sub_path_item]
+                    except:
+                        s1 = '处理第%d个block的映射时异常' % (i+1)
+                        s2 = 'path:%s,key:%s,map:%s,无法找到指定元素%s.' % \
+                             (str(path), key, str(sub_path), str(sub_path_item))
+                        raise c_worker_exception(s1, '', s2)
+                ss = item_process(temp_jj)
 
-                if k == 'title':
+                if key == 'title':
                     info.title = ss
-                elif k == 'url':
+                elif key == 'url':
                     info.url = ss
-                elif k == 'summary':
+                elif key == 'summary':
                     info.summary = ss
-                elif k == 'author':
+                elif key == 'author':
                     info.author = ss
-                elif k == 'pub_date':
+                elif key == 'pub_date':
                     info.pub_date = ss
-                elif k == 'suid':
+                elif key == 'suid':
                     info.suid = ss
+                elif key == 'temp':
+                    info.temp = ss
                 else:
-                    print('无法处理map_rule', k, v)
+                    print('无法处理map_rule', key, sub_path)
 
                 if not info.suid:
                     info.suid = info.url
@@ -144,7 +138,6 @@ def download_process(data_dict, worker_dict):
     string = f.fetch_html(url, encoding, errors)
 
     return parse_html(data_dict, url, string)
-
 
 def process_multiline(string):
     ret = ''
@@ -218,7 +211,7 @@ def html_json_parser(xml_string):
             map_dict = dict()
             for r in block.iter():
                 if r.tag != 'block' and r.tag != 'block_path':
-                    value = eval('(' + r.text.strip() + ')')
+                    value = eval('(' + r.text.strip() + ',)')
                     map_dict[r.tag] = value
 
             tu = (path_value, map_dict)

@@ -8,6 +8,32 @@ a{TEXT-DECORATION:none}
 <body bgcolor="#ccccff">
 <script type="text/javascript" src="/static/wz_tooltip.js"></script>
 共有{{cate_num}}个版块，信息源出现{{allnum}}次，其中有{{setnum}}个不重复的信息源：
+{% if usertype > 0 -%}
+<form action="/cateinfo" method="post">
+<table border="1" width="100%">
+	<tr>
+		<td align="center">版块/信息源</td>
+		<td align="center">备注</td>
+		<td class="hd">级别</td>
+		<td class="hd">刷新间隔</td>
+		<td class="hd">最近有效刷新</td>
+		<td class="hd">立即刷新</td>
+		<td class="hd">查看列表</td>
+	</tr>
+{% for cate, lst in show_list %}
+	<tr bgcolor="#cc99cc"><td>{{cate}}</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+{%- for one in lst %}
+	<tr>
+		<td>{% if one.source.link %}<a href='{{one.source.link}}' target='_blank'>{{one.source.name}}</a>{% else %}{{one.source.name}}{% endif %}</td>
+		<td>{{one.source.comment}}</td>
+		<td>{{one.level_str}}</td>
+		<td class="nb">{{one.interval_str}}</td>
+		<td class="nb">{{one.source.last_fetch_date}}</td>
+		<td><button name="name" value="{{one.encoded_url}}">刷新</button></td>
+		<td><a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a></td>
+	</tr>{% endfor %}{% endfor %}
+</table></form>
+{% else -%}
 <table border="1" width="100%">
 	<tr>
 		<td align="center">版块/信息源</td>
@@ -28,6 +54,7 @@ a{TEXT-DECORATION:none}
 		<td class="nb">{{one.source.last_fetch_date}}</td>
 		<td><a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a></td>
 	</tr>{% endfor %}{% endfor %}
-</table><br>
+</table>
+{%- endif -%}<br>
 </body>
 </html>

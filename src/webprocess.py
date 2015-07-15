@@ -7,7 +7,6 @@ import queue
 import html
 from zipfile import ZipFile, is_zipfile
 import shutil
-import base64
 from enum import IntEnum
 
 try:
@@ -489,9 +488,8 @@ def pad_default(level, pagenum=1):
 @web.route('/slist/<encoded_url>')
 @web.route('/slist/<encoded_url>/<int:pagenum>')
 def slist(encoded_url='', pagenum = 1):
-    try:
-        sid = base64.urlsafe_b64decode(encoded_url).decode('utf-8')
-    except:
+    sid = db.get_sid_by_encoded(encoded_url)
+    if not sid:
         return '请求的信息源列表url有误：<br>' + encoded_url
 
     return general_list(encoded_url, pagenum,
@@ -594,18 +592,28 @@ def pad2_list(category, pagenum=1):
 def pad_exceptions():
     return general_pad2('Exception', 1, PG_TYPE.P2_EXCEPTION)
 
-@web.route('/cateinfo')
+@web.route('/cateinfo', methods=['GET', 'POST'])
 def cate_info():
     username = check_cookie()
     if not username:
         return jump_to_login
+    
+    usertype = db.get_usertype(username)
+    
+    if request.method == 'POST' and usertype > 0:
+        name = request.form.get('name')
+        sid = db.get_sid_by_encoded(name)
+        if not sid:
+            return '请求的信息源列表url有误：<br>' + name
+        c_message.make(web_back_queue, 'wb:request_fetch', 0, [sid])
 
     show_list = db.get_forshow_by_user(username)
     all_s_num, set_s_num = db.get_sourcenum_by_user(username)
 
     return render_template('cateinfo.html', show_list=show_list,
                             cate_num=len(show_list),
-                            allnum=all_s_num, setnum=set_s_num)
+                            allnum=all_s_num, setnum=set_s_num,
+                            usertype=usertype)
 
 def zip_cfg():
     # del .zip files in temp directory first

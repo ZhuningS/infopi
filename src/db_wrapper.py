@@ -5,7 +5,8 @@ import collections
 import time
 import datetime
 import hashlib
-import base64
+import random
+from itertools import cycle
 
 try:
     import winsound
@@ -153,11 +154,23 @@ def get_interval_str(interval):
     
     return interval_str
 
+def hasher(string):
+    hashobj = hashlib.md5()
+    hashobj.update(string.encode('utf-8'))
+    return hashobj.hexdigest()
+
+def xor_crypt(string, bytekey):
+    string = string.encode('utf-8')
+
+    xored = (x ^ y for x, y in zip(string, cycle(bytekey)))
+    return "".join("%02x" % b for b in xored)
+
 class c_db_wrapper:
     __slots__ = ('sqldb', 
-                 'users', 'sources', 'hash_user', 
+                 'users', 'sources', 'hash_user', 'encoded_sid',
                  'ghost_sources', 'exceptions_index', 
-                 'cfg', 'listall')
+                 'cfg', 'listall',
+                 'random_bytekey')
 
     def __init__(self, tmpfs_path):
         self.sqldb = c_sqldb(tmpfs_path)
@@ -169,6 +182,7 @@ class c_db_wrapper:
         self.sources = dict()
 
         self.hash_user = dict()
+        self.encoded_sid = dict()
 
         # sid
         self.ghost_sources = set()
@@ -178,6 +192,9 @@ class c_db_wrapper:
 
         self.cfg = None
         self.listall = None
+        
+        self.random_bytekey = \
+        b''.join((bytes([random.randrange(256)])) for i in range(32))
 
     def add_infos(self, lst):
         if not lst:
@@ -277,7 +294,7 @@ class c_db_wrapper:
 
         # hash->user dict
         s = user.username + ' (^.^) ' + user.password
-        up_hash = hashlib.md5(s.encode('utf-8')).hexdigest()
+        up_hash = hasher(s)
 
         self.hash_user[up_hash] = user.username
         ut.up_hash = up_hash
@@ -297,8 +314,8 @@ class c_db_wrapper:
                 one.source = source
 
                 # encoded url
-                b64 = base64.urlsafe_b64encode(sid.encode('utf-8'))
-                one.encoded_url = b64.decode('ascii')
+                one.encoded_url = xor_crypt(sid, self.random_bytekey)
+                self.encoded_sid[one.encoded_url] = sid
 
                 # level
                 temp_level = ut.sid_level_dict[sid]
@@ -327,6 +344,7 @@ class c_db_wrapper:
         self.users.clear()
         self.sources.clear()
         self.hash_user.clear()
+        self.encoded_sid.clear()
         self.ghost_sources.clear()
         self.exceptions_index.clear()
 
@@ -536,6 +554,13 @@ class c_db_wrapper:
     # for show
     def get_forshow_by_user(self, username):
         return self.users[username].show_list
+    
+    # for show
+    def get_sid_by_encoded(self, encoded):
+        try:
+            return self.encoded_sid[encoded]
+        except:
+            return ''
     
     # listall
     def get_listall(self):

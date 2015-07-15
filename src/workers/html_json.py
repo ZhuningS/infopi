@@ -76,22 +76,24 @@ def parse_html(data_dict, base_url, html):
                     )
 
         # extract
-        if type(block_j) == dict:
+        if type(block_j) == list:
+            pass
+        elif type(block_j) == dict:
             block_j = block_j.values()
-        elif type(block_j) != list:
+        else:
             s = '第%d个block, block_path找到的不是列表或字典'
             raise c_worker_exception(
                     s % (i+1), 
                     data_dict['url'], 
                     'path:%s 可能是网站改变了json的设计结构' % str(path)
-                    )    
+                    )
 
-        for o in block_j:
+        for block_item_j in block_j:
             info = c_info()
 
             for key, sub_path in block[1].items():
                 
-                temp_jj = o
+                temp_jj = block_item_j
                 for sub_path_item in sub_path:
                     try:
                         temp_jj = temp_jj[sub_path_item]

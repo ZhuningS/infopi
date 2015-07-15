@@ -159,12 +159,6 @@ def hasher(string):
     hashobj.update(string.encode('utf-8'))
     return hashobj.hexdigest()
 
-def xor_crypt(string, bytekey):
-    string = string.encode('utf-8')
-
-    xored = (x ^ y for x, y in zip(string, cycle(bytekey)))
-    return "".join("%02x" % b for b in xored)
-
 class c_db_wrapper:
     __slots__ = ('sqldb', 
                  'users', 'sources', 'hash_user', 'encoded_sid',
@@ -235,6 +229,9 @@ class c_db_wrapper:
         ut.cate_indexlist_dict[2] = list()
         # exception infos
         ut.cate_indexlist_dict[-1] = list()
+        
+        # temp dict for encoded_sid
+        temp_sid_int_dic = dict()
 
         for cate_tuple in user.category_list:
             now_cate = cate_tuple[0]
@@ -314,8 +311,12 @@ class c_db_wrapper:
                 one.source = source
 
                 # encoded url
-                one.encoded_url = xor_crypt(sid, self.random_bytekey)
-                self.encoded_sid[one.encoded_url] = sid
+                if sid not in temp_sid_int_dic:
+                    one.encoded_url = str(len(temp_sid_int_dic) + 1)
+                    temp_sid_int_dic[sid] = one.encoded_url
+                    self.encoded_sid[(user.username, one.encoded_url)] = sid
+                else:
+                    one.encoded_url = temp_sid_int_dic[sid]
 
                 # level
                 temp_level = ut.sid_level_dict[sid]
@@ -556,9 +557,9 @@ class c_db_wrapper:
         return self.users[username].show_list
     
     # for show
-    def get_sid_by_encoded(self, encoded):
+    def get_sid_by_encoded(self, username, encoded):
         try:
-            return self.encoded_sid[encoded]
+            return self.encoded_sid[(username, encoded)]
         except:
             return ''
     

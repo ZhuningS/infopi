@@ -30,7 +30,7 @@ a{TEXT-DECORATION:none}
 		<td class="nb">{{one.interval_str}}</td>
 		<td class="nb">{{one.source.last_fetch_date}}</td>
 		<td><button name="name" value="{{one.encoded_url}}">刷新</button></td>
-		<td><a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a></td>
+		<td><a href='/slist{{one.encoded_url}}' target='_blank'>点击查看</a></td>
 	</tr>{% endfor %}{% endfor %}
 </table></form>
 {% else -%}
@@ -52,7 +52,7 @@ a{TEXT-DECORATION:none}
 		<td>{{one.level_str}}</td>
 		<td class="nb">{{one.interval_str}}</td>
 		<td class="nb">{{one.source.last_fetch_date}}</td>
-		<td><a href='/slist/{{one.encoded_url}}' target='_blank'>点击查看</a></td>
+		<td><a href='/slist{{one.encoded_url}}' target='_blank'>点击查看</a></td>
 	</tr>{% endfor %}{% endfor %}
 </table>
 {%- endif -%}<br>

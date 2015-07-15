@@ -90,7 +90,7 @@ def generate_page(all_count, now_pg,
             template_tuple = ('<a href="/list/', category,
                               '/%d">%s</a>')
         elif p_type == PG_TYPE.SOURCE:
-            template_tuple = ('<a href="/slist/', category,
+            template_tuple = ('<a href="/slist', category,
                               '/%d">%s</a>')
         # mobile
         elif p_type == PG_TYPE.M_GATHER:
@@ -244,7 +244,7 @@ def generate_page(all_count, now_pg,
 #           generate_list
 #-------------------------------
 # generate list
-def generate_list(username, category, pagenum, p_type, sid=''):
+def generate_list(username, category, pagenum, p_type, encoded_url=''):
     if pagenum < 1:
         pagenum = 1
 
@@ -260,6 +260,7 @@ def generate_list(username, category, pagenum, p_type, sid=''):
 
     # content list
     if p_type == PG_TYPE.SOURCE:
+        sid = db.get_sid_by_encoded(username, encoded_url)
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
         if all_count == None:
             return None, None, None, None, None
@@ -426,7 +427,7 @@ def pad():
     return general_index(DV_TYPE.PAD)
 
 # 各页面通用的列表生成
-def general_list(category, pagenum, p_type, sid=''):   
+def general_list(category, pagenum, p_type, encoded_url=''):   
     username = check_cookie()
     if not username:
         return jump_to_login
@@ -435,7 +436,7 @@ def general_list(category, pagenum, p_type, sid=''):
 
     lst, all_count, page_html, now_time, category = \
             generate_list(username, category, 
-                          pagenum, p_type, sid)
+                          pagenum, p_type, encoded_url)
     
     if lst == None:
         return wrong_key_html
@@ -485,15 +486,11 @@ def pad_list(category, pagenum=1):
 def pad_default(level, pagenum=1):
     return general_list(level, pagenum, PG_TYPE.P_GATHER)
 
-@web.route('/slist/<encoded_url>')
-@web.route('/slist/<encoded_url>/<int:pagenum>')
+@web.route('/slist<encoded_url>')
+@web.route('/slist<encoded_url>/<int:pagenum>')
 def slist(encoded_url='', pagenum = 1):
-    sid = db.get_sid_by_encoded(encoded_url)
-    if not sid:
-        return '请求的信息源列表url有误：<br>' + encoded_url
-
     return general_list(encoded_url, pagenum,
-                        PG_TYPE.SOURCE, sid)
+                        PG_TYPE.SOURCE, encoded_url)
     
 def general_pad2(category, pagenum, p_type):
     username = check_cookie()
@@ -602,7 +599,7 @@ def cate_info():
     
     if request.method == 'POST' and usertype > 0:
         name = request.form.get('name')
-        sid = db.get_sid_by_encoded(name)
+        sid = db.get_sid_by_encoded(username, name)
         if not sid:
             return '请求的信息源列表url有误：<br>' + name
         c_message.make(web_back_queue, 'wb:request_fetch', 0, [sid])

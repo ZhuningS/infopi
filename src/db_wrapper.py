@@ -32,16 +32,12 @@ class c_index_unit:
         return self.iid > other.iid
 
     def __eq__(self, other):
-        if self.iid == other.iid and \
-           self.fetch_date == other.fetch_date:
-            return True
-        return False
+        return self.iid == other.iid and \
+               self.fetch_date == other.fetch_date
 
     def __ne__(self, other):
-        if self.iid != other.iid or \
-           self.fetch_date != other.fetch_date:
-            return True
-        return False
+        return self.iid != other.iid or \
+               self.fetch_date != other.fetch_date
 
     def __str__(self):
         return str(self.iid) + ',' + str(self.fetch_date)

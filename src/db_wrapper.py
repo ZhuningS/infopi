@@ -26,13 +26,10 @@ class c_index_unit:
         self.fetch_date = fetch_date
 
     def __lt__(self, other):
-        if self.fetch_date > other.fetch_date:
-            return True
-        elif self.fetch_date == other.fetch_date and \
-             self.iid > other.iid:
-            return True
-        else:
-            return False
+        if self.fetch_date != other.fetch_date:
+            return self.fetch_date > other.fetch_date
+        
+        return self.iid > other.iid
 
     def __eq__(self, other):
         if self.iid == other.iid and \

@@ -7,6 +7,7 @@ a{TEXT-DECORATION:none}
 a:link{color:#0000DD} 
 table{border:1px solid;border-collapse:collapse}
 td{border:1px solid}
+.h{border-top:2px solid}
 .e{color:#cc33ff}
 .s{color:#cc3300}
 .nb{white-space:nowrap}
@@ -21,11 +22,11 @@ td{border:1px solid}
 {{htmlpage|safe}}
 <table bgcolor="#ccffd6" width="100%">
 {%- for entry in entries -%}
-<tr{{ loop.cycle(' bgColor=Lavender', '') }}>
+<tr class="h"{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
-</tr><tr>
-	<td colspan=2{{ loop.cycle(' bgColor=Lavender', '') }}>
+</tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
+	<td colspan=2>
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
@@ -36,7 +37,7 @@ td{border:1px solid}
 	</td>
 </tr>
 {%- if entry.summary -%}
-<tr><td colspan=2{{ loop.cycle(' bgColor=Lavender', '') }}>
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2>
 {{entry.summary}}
 </td></tr>
 {%- endif -%}

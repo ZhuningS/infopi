@@ -22,12 +22,10 @@ class c_info:
         self.temp = 0
 
     def __lt__(self, other):
-        if self.fetch_date > other.fetch_date:
-            return True
-        elif self.fetch_date == other.fetch_date and self.id > other.id:
-            return True
-        else:
-            return False
+        if self.fetch_date != other.fetch_date:
+            return self.fetch_date > other.fetch_date
+        
+        return self.id > other.id
 
     def __str__(self):
         def make_str(name, attr):

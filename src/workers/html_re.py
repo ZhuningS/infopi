@@ -47,6 +47,16 @@ def map_attrs(m, one):
         return one
     else:
         print('map_rule的定义出现错误')
+        
+def pattern_error(blocknum, isblock=True):
+    if isblock:
+        s = '第%d个block的blockre编译失败' % (blocknum+1)
+    else:
+        s = '第%d个block的itemre编译失败' % (blocknum+1)
+    
+    raise c_worker_exception('正则表达式编译失败',
+                             '',
+                             s)
 
 def parse_html(data_dict, base_url, html):
     if not html:
@@ -62,21 +72,24 @@ def parse_html(data_dict, base_url, html):
     for i, block in enumerate(re_lst):
 
         # block re
-        if block[0] == None:
-            subhtml = html
-        else:
-            block_prog = red.d(block[0][0], block[0][1])
-            itr = block_prog.finditer(html)
-            matches = list(itr)
-            if len(matches) != 1:
-                s = '第%d个block的block_re找到的结果为%d，应为1' % \
-                    (i+1, len(matches))
-                raise c_worker_exception(s, '', 
-                                         '可能是网页改版、服务器显示错误信息')
-            subhtml = matches[0].group(1)
+        block_prog = red.d(block[0][0], block[0][1])
+        if block_prog == None:
+            pattern_error(i)
+        
+        itr = block_prog.finditer(html)
+        matches = list(itr)
+        if len(matches) != 1:
+            s = '第%d个block的block_re找到的结果为%d，应为1' % \
+                (i+1, len(matches))
+            raise c_worker_exception(s, '', 
+                                     '可能是网页改版、服务器显示错误信息')
+        subhtml = matches[0].group(1)
 
         # item re
         item_prog = red.d(block[1][0], block[1][1])
+        if item_prog == None:
+            pattern_error(i, False)        
+        
         itr = item_prog.finditer(subhtml)
         matches = list(itr)
         if not matches:

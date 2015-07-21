@@ -39,16 +39,16 @@ class red:
         '''compiled pattern cache'''
         red.lock.acquire()
 
-        compiled = red.regexs.get((re_str, flags))
-        if compiled == None:
+        compiled = red.regexs.get((re_str, flags), 0)
+        if compiled == 0:
             try:
                 compiled = re.compile(re_str, flags)
-                red.regexs[(re_str, flags)] = compiled
             except Exception as e:
                 print('编译正则表达式时出现异常:', e)
                 print('正则式:', re_str)
                 print('模式:', flags, '\n')
                 compiled = None
+            red.regexs[(re_str, flags)] = compiled
 
         red.lock.release()
 

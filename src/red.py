@@ -57,7 +57,10 @@ class red:
     @staticmethod
     def sub(pattern, repl, string, count=0, flags=0):
         prog = red.d(pattern, flags)
-        return prog.sub(repl, string, count=0)
+        if prog != None:
+            return prog.sub(repl, string, count=0)
+        else:
+            return ''
 
     @staticmethod
     def clear_cache():

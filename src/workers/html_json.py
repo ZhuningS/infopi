@@ -3,6 +3,7 @@
 import json
 import html
 import xml.etree.ElementTree as ET
+from urllib.parse import urljoin
 
 from red import *
 from worker_manage import worker, dataparser
@@ -49,6 +50,14 @@ def parse_html(data_dict, base_url, html):
                                  data_dict['url'], 
                                  '')
     json_str = m.group(1)
+    
+    # replace
+    if 'repl' in data_dict:
+        json_str = red.sub(data_dict['repl_pattern'],
+                           data_dict['repl'],
+                           json_str,
+                           0,
+                           data_dict['repl_flags'])
 
     # parse json
     try:
@@ -119,6 +128,8 @@ def parse_html(data_dict, base_url, html):
                     info.author = ss
                 elif key == 'pub_date':
                     info.pub_date = ss
+                elif key == 'urljoin':
+                    info.url = urljoin(base_url, ss)
                 elif key == 'suid':
                     info.suid = ss
                 elif key == 'temp':
@@ -201,11 +212,22 @@ def html_json_parser(xml_string):
         
         str_errors = url_tag.attrib.get('errors', '').strip()
         d['errors'] = str_errors
-        
+    
+    # extract json string
     re_tag = data.find('re')
     if re_tag != None:
         d['re_pattern'] = process_multiline(re_tag.text)
         d['re_flags'] = process_flags(re_tag.attrib.get('flags', ''))
+        
+    # replace
+    replace_tag = data.find('replace')
+    if replace_tag != None:
+        replace_re_tag = replace_tag.find('re')
+        d['repl_pattern'] = process_multiline(replace_re_tag.text)
+        d['repl_flags'] = process_flags(replace_re_tag.attrib.get('flags', ''))
+        
+        repl_tag = replace_tag.find('repl')
+        d['repl'] = process_multiline(repl_tag.text)
 
     blocks = data.findall('block')
     if blocks:
@@ -213,13 +235,28 @@ def html_json_parser(xml_string):
 
         for block in blocks:
             path = block.find('block_path')
-            path_value = eval('(' + path.text.strip() + ',)')
+            if not path.text or not path.text.strip():
+                s = '()'
+            else:
+                s = '(' + path.text.strip() + ',)'
+            path_value = eval(s)
             
             map_dict = dict()
             for r in block.iter():
                 if r.tag != 'block' and r.tag != 'block_path':
                     value = eval('(' + r.text.strip() + ',)')
-                    map_dict[r.tag] = value
+
+                    if r.tag == 'url':
+                        str_urljoin = r.attrib.get('urljoin', '')
+                        if not str_urljoin:
+                            map_dict['url'] = value
+                        elif (str_urljoin.isdigit() and int(str_urljoin)) or \
+                            str_urljoin.lower() == 'true':
+                            map_dict['urljoin'] = value
+                        else:
+                            map_dict['url'] = value
+                    else:
+                        map_dict[r.tag] = value
 
             tu = (path_value, map_dict)
             block_list.append(tu)

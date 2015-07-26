@@ -722,6 +722,15 @@ def panel():
                 
             elif name == 'maintain_db':
                 db.db_process()
+                
+        elif 'fetch' in request.form:
+            sid = request.form['fetch']
+            if db.is_valid_sid(sid):
+                c_message.make(web_back_queue,
+                               'wb:request_fetch',
+                               0, 
+                               [sid]
+                               )
 
         elif 'file' in request.files:
             f = request.files['file']

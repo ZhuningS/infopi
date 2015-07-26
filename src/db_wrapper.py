@@ -555,6 +555,9 @@ class c_db_wrapper:
             return self.encoded_sid[(username, encoded)]
         except:
             return ''
+        
+    def is_valid_sid(self, sid):
+        return sid in self.sources
     
     # listall
     def get_listall(self):

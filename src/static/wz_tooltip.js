@@ -56,7 +56,7 @@ var TagsToTip	= true		// false or true - if true, HTML elements to be converted 
 // Example: onmouseover="Tip('Tooltip text', LEFT, true, BGCOLOR, '#FF9900', FADEIN, 400)"
 
 config. Above			= false		// false or true - tooltip above mousepointer
-config. BgColor			= '#003399' //'#E2E7FF'	// Background colour (HTML colour value, in quotes)
+config. BgColor			= '#822D2C' //'#E2E7FF'	// Background colour (HTML colour value, in quotes)
 config. BgImg			= ''		// Path to background image, none if empty string ''
 config. BorderColor		= '#003099'
 config. BorderStyle		= 'solid'	// Any permitted CSS value, but I recommend 'solid', 'dotted' or 'dashed'
@@ -76,7 +76,7 @@ config. FadeOut			= 0
 config. FadeInterval	= 30		// Duration of each fade step in ms (recommended: 30) - shorter is smoother but causes more CPU-load
 config. Fix				= null		// Fixated position, two modes. Mode 1: x- an y-coordinates in brackets, e.g. [210, 480]. Mode 2: Show tooltip at a position related to an HTML element: [ID of HTML element, x-offset, y-offset from HTML element], e.g. ['SomeID', 10, 30]. Value null (default) for no fixated positioning.
 config. FollowMouse		= true		// false or true - tooltip follows the mouse
-config. FontColor		= '#ccffff' //'#000044'
+config. FontColor		= '#FFFFFF' //'#000044'
 config. FontFace		= 'Yahei'
 config. FontSize		= '13pt'		// E.g. '9pt' or '12px' - unit is mandatory
 config. FontWeight		= 'normal'	// 'normal' or 'bold';

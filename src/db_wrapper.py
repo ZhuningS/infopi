@@ -44,7 +44,8 @@ class c_index_unit:
 
 class c_user_table:
     __slots__ = ('username', 'password', 'up_hash', 
-                 'col_per_page', 'col_per_page_pad', 'usertype',
+                 'col_per_page', 'col_per_page_pad', 
+                 'col_per_page_bigmobile', 'usertype',
                  'sid_level_dict', 'sid_list',
                  'cate_list', 'cate_indexlist_dict',
                  'show_list', 'appeared_source_num')
@@ -215,6 +216,7 @@ class c_db_wrapper:
         ut.usertype = user.usertype
         ut.col_per_page = user.col_per_page
         ut.col_per_page_pad = user.col_per_page_pad
+        ut.col_per_page_bigmobile = user.col_per_page_bigmobile
 
         # cate_indexlist_dict, for level 0, 1, 2
         ut.cate_indexlist_dict[0] = list()
@@ -537,6 +539,9 @@ class c_db_wrapper:
     
     def get_colperpagepad_by_user(self, username):
         return self.users[username].col_per_page_pad
+    
+    def get_colperpagebm_by_user(self, username):
+        return self.users[username].col_per_page_bigmobile
     
     def get_colperpagemobile(self):
         return self.cfg.mobile_colperpage

@@ -9,6 +9,7 @@ import bvars
 class c_user_cfg:
     __slots__ = ('username', 'password', 
                  'col_per_page', 'col_per_page_pad',
+                 'col_per_page_bigmobile',
                  'usertype', 'category_list')
 
     def __init__(self):
@@ -16,6 +17,7 @@ class c_user_cfg:
         self.password = ''
         self.col_per_page = -1
         self.col_per_page_pad = -1
+        self.col_per_page_bigmobile = -1
 
         # 0:public, 1:normal, 2:admin
         self.usertype = 1
@@ -109,6 +111,11 @@ class c_user_cfg:
                         user.col_per_page_pad = int(v)
                     except:
                         pass
+                elif k == 'col_per_page_bigmobile':
+                    try:
+                        user.col_per_page_bigmobile = int(v)
+                    except:
+                        pass
                 elif k == 'usertype':
                     if v == 'public':
                         user.usertype = 0
@@ -155,5 +162,7 @@ class c_user_cfg:
                 user.col_per_page = cfg.default_colperpage
             if user.col_per_page_pad == -1:
                 user.col_per_page_pad = cfg.default_pad_colperpage
+            if user.col_per_page_bigmobile == -1:
+                user.col_per_page_bigmobile = cfg.default_bigmobile_colperpage
 
         return user

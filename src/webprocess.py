@@ -44,14 +44,16 @@ db = None
 template_cache = dict()
 login_manager = c_login_manager()
 
+# 在此源文件中，pad实际指大屏手机版，pad2实际指pad版
+
 class PG_TYPE(IntEnum):
     GATHER = 0
     CATEGORY = 1
     SOURCE = 2
     M_GATHER = 3
     M_CATEGORY = 4
-    P_GATHER = 5
-    P_CATEGORY = 6
+    BM_GATHER = 5
+    BM_CATEGORY = 6
     P2_GATHER = 7
     P2_CATEGORY = 8
     P2_EXCEPTION = 9
@@ -60,6 +62,7 @@ class DV_TYPE(IntEnum):
     COMPUTER = 0
     PAD = 1
     MOBILE = 2
+    BIGMOBILE = 3
 
 wrong_key_html = ('在当前的用户配置中，没有找到这个版块。<br>'
                   '请刷新 整个页面（或上一级目录页面），以得到最新的版块目录。')
@@ -107,10 +110,10 @@ def generate_page(all_count, now_pg,
             template_tuple = ('<a href="/pad/', category,
                               '/%d#bd">%s</a>')
 
-        elif p_type == PG_TYPE.P_GATHER:
+        elif p_type == PG_TYPE.BM_GATHER:
             template_tuple = ('<a href="/plist', str(category), 
                               '/%d">%s</a>')
-        elif p_type == PG_TYPE.P_CATEGORY:
+        elif p_type == PG_TYPE.BM_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
                               '/%d">%s</a>')
 
@@ -244,15 +247,19 @@ def generate_page(all_count, now_pg,
 #           generate_list
 #-------------------------------
 # generate list
-def generate_list(username, category, pagenum, p_type, encoded_url=''):
+def generate_list(username, category, pagenum,
+                   p_type, dv_type,
+                   encoded_url=''):
     if pagenum < 1:
         pagenum = 1
 
     # limit and offset
-    # 手机版、电脑版、PAD版
-    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+    # 手机版、大屏手机版、电脑版、PAD版
+    if dv_type == DV_TYPE.MOBILE:
         limit = db.get_colperpagemobile()
-    elif p_type in (PG_TYPE.GATHER, PG_TYPE.CATEGORY, PG_TYPE.SOURCE):
+    elif dv_type == DV_TYPE.BIGMOBILE:
+        limit = db.get_colperpagebm_by_user(username)
+    elif dv_type == DV_TYPE.COMPUTER:
         limit = db.get_colperpage_by_user(username)
     else:
         limit = db.get_colperpagepad_by_user(username)
@@ -306,7 +313,7 @@ def generate_list(username, category, pagenum, p_type, encoded_url=''):
                            strftime('%Y-%m-%d')            
 
     if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER,
-                  PG_TYPE.P2_GATHER, PG_TYPE.P_GATHER):
+                  PG_TYPE.P2_GATHER, PG_TYPE.BM_GATHER):
         if category == 0:
             category = '普通、关注、重要'
         elif category == 1:
@@ -403,7 +410,7 @@ def general_index(page_type):
     # render template
     if page_type == DV_TYPE.COMPUTER:
         page = 'left.html'
-    elif page_type == DV_TYPE.PAD:
+    elif page_type == DV_TYPE.BIGMOBILE:
         page = 'p.html'
     else:
         page = 'm.html'
@@ -424,10 +431,10 @@ def mobile():
     
 @web.route('/p', methods=['GET', 'POST'])
 def pad():
-    return general_index(DV_TYPE.PAD)
+    return general_index(DV_TYPE.BIGMOBILE)
 
 # 各页面通用的列表生成
-def general_list(category, pagenum, p_type, encoded_url=''):   
+def general_list(category, pagenum, p_type, dv_type, encoded_url=''):   
     username = check_cookie()
     if not username:
         return jump_to_login
@@ -436,14 +443,14 @@ def general_list(category, pagenum, p_type, encoded_url=''):
 
     lst, all_count, page_html, now_time, category = \
             generate_list(username, category, 
-                          pagenum, p_type, encoded_url)
+                          pagenum, p_type, dv_type, encoded_url)
     
     if lst == None:
         return wrong_key_html
     
-    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+    if dv_type == DV_TYPE.MOBILE:
         page = 'mlist.html'
-    elif p_type in (PG_TYPE.P_GATHER, PG_TYPE.P_CATEGORY):
+    elif dv_type == DV_TYPE.BIGMOBILE:
         page = 'plist.html'
     else:
         page = 'list.html'
@@ -459,38 +466,44 @@ def general_list(category, pagenum, p_type, encoded_url=''):
 @web.route('/ml/<category>')
 @web.route('/ml/<category>/<int:pagenum>')
 def mobile_list(category, pagenum=1):   
-    return general_list(category, pagenum, PG_TYPE.M_CATEGORY)
+    return general_list(category, pagenum,
+                        PG_TYPE.M_CATEGORY, DV_TYPE.MOBILE)
 
 @web.route('/ml<int:level>')
 @web.route('/ml<int:level>/<int:pagenum>')
 def mobile_default(level, pagenum=1):
-    return general_list(level, pagenum, PG_TYPE.M_GATHER)
+    return general_list(level, pagenum,
+                        PG_TYPE.M_GATHER, DV_TYPE.MOBILE)
 
 @web.route('/list/<category>')
 @web.route('/list/<category>/<int:pagenum>')
 def computer_list(category, pagenum=1):
-    return general_list(category, pagenum, PG_TYPE.CATEGORY)
+    return general_list(category, pagenum,
+                        PG_TYPE.CATEGORY, DV_TYPE.COMPUTER)
 
 @web.route('/list<int:level>')
 @web.route('/list<int:level>/<int:pagenum>')
 def computer_default(level, pagenum=1):
-    return general_list(level, pagenum, PG_TYPE.GATHER)
+    return general_list(level, pagenum,
+                        PG_TYPE.GATHER, DV_TYPE.COMPUTER)
 
 @web.route('/plist/<category>')
 @web.route('/plist/<category>/<int:pagenum>')
 def pad_list(category, pagenum=1):
-    return general_list(category, pagenum, PG_TYPE.P_CATEGORY)
+    return general_list(category, pagenum,
+                        PG_TYPE.BM_CATEGORY, DV_TYPE.BIGMOBILE)
 
 @web.route('/plist<int:level>')
 @web.route('/plist<int:level>/<int:pagenum>')
 def pad_default(level, pagenum=1):
-    return general_list(level, pagenum, PG_TYPE.P_GATHER)
+    return general_list(level, pagenum,
+                        PG_TYPE.BM_GATHER, DV_TYPE.BIGMOBILE)
 
 @web.route('/slist<encoded_url>')
 @web.route('/slist<encoded_url>/<int:pagenum>')
 def slist(encoded_url='', pagenum = 1):
     return general_list(encoded_url, pagenum,
-                        PG_TYPE.SOURCE, encoded_url)
+                        PG_TYPE.SOURCE, DV_TYPE.COMPUTER, encoded_url)
     
 def general_pad2(category, pagenum, p_type):
     username = check_cookie()
@@ -555,7 +568,7 @@ def general_pad2(category, pagenum, p_type):
         # list  
         lst, all_count, page_html, now_time, category = \
                 generate_list(username, category, 
-                              pagenum, p_type)
+                              pagenum, p_type, DV_TYPE.PAD)
     
         if lst == None:
             return wrong_key_html

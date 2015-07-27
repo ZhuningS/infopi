@@ -38,6 +38,7 @@ class c_config:
         # default values
         self.default_colperpage = 15
         self.default_pad_colperpage = 12
+        self.default_bigmobile_colperpage = 12
         self.mobile_colperpage = 10
 
         # task controller
@@ -79,15 +80,19 @@ def load_config(version='test', web_port=0,
             p = red.d(r'^(-?\d+)\s*(?:#.*)?$')
             m = p.search(string)
             if m:
-                v = int(m.group(1))
-                return v
+                try:
+                    return int(m.group(1))
+                except:
+                    return None
 
         elif t == VALUE_TYPE.INT_TUPLE_2:
             p = red.d(r'^(\d+)\D+(\d+)\s*(?:#.*)?$')
             m = p.search(string)
             if m:
-                v = (int(m.group(1)), int(m.group(2)))
-                return v
+                try:
+                    return (int(m.group(1)), int(m.group(2)))
+                except:
+                    return None
 
         elif t == VALUE_TYPE.STRING:
             return string
@@ -148,7 +153,7 @@ def load_config(version='test', web_port=0,
         # default_colperpage
         if k == 'default_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.default_colperpage = v
             else:
                 print('default_colperpage', string)
@@ -156,38 +161,46 @@ def load_config(version='test', web_port=0,
         # default_pad_colperpage
         elif k == 'default_pad_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.default_pad_colperpage = v
             else:
                 print('default_pad_colperpage', string)
                 
+        # default_bigmobile_colperpage
+        elif k == 'default_bigmobile_colperpage':
+            v = get_value(string, VALUE_TYPE.INT)
+            if v != None:
+                cfg.default_bigmobile_colperpage = v
+            else:
+                print('default_bigmobile_colperpage', string)
+                
         # mobile_colperpage
         elif k == 'mobile_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.mobile_colperpage = v
             else:
-                print('mobile_colperpage', string)            
+                print('mobile_colperpage', string)
 
         # task control
 
         elif k == 'task_pipes':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.task_pipes = v
             else:
                 print('task_pipes', string)
 
         elif k == 'task_timeout':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.task_timeout = v
             else:
                 print('task_timeout', string)
 
         elif k == 'default_source_interval':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.default_source_interval = v
             else:
                 print('default_source_interval', string)
@@ -202,35 +215,35 @@ def load_config(version='test', web_port=0,
         # fetch setting
         elif k == 'fetch_max_entries':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.runcfg.max_entries = v
             else:
                 print('fetch_max_entries', string)  
 
         elif k == 'fetch_title_len':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.runcfg.title_len = v
             else:
                 print('fetch_title_len', string)  
 
         elif k == 'fetch_summary_len':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.runcfg.summary_len = v
             else:
                 print('fetch_summary_len', string)  
 
         elif k == 'fetch_author_len':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.runcfg.author_len = v
             else:
                 print('fetch_author_len', string)  
 
         elif k == 'fetch_pub_date_len':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.runcfg.pub_date_len = v
             else:
                 print('fetch_pub_date_len', string)  
@@ -253,28 +266,28 @@ def load_config(version='test', web_port=0,
 
         elif k == 'db_process_del_entries':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.db_process_del_entries = v
             else:
                 print('db_process_del_entries', string)   
 
         elif k == 'db_process_del_days':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.db_process_del_days = v
             else:
                 print('db_process_del_days', string)    
 
         elif k == 'db_process_rm_ghost':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.db_process_rm_ghost = v
             else:
                 print('db_process_rm_ghost', string) 
 
         elif k == 'db_backup_maxfiles':
             v = get_value(string, VALUE_TYPE.INT)
-            if v:
+            if v != None:
                 cfg.db_backup_maxfiles = v
             else:
                 print('db_backup_maxfiles', string) 

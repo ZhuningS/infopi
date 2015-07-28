@@ -1,0 +1,33 @@
+-------- 手机版 mlist.html ----------
+.c{TABLE-LAYOUT:fixed;word-break:break-all}
+内容，防止内容过长撑开表格
+
+.e{color:#cc33ff}
+异常信息前面显示的e
+
+.s{color:#cc3300}
+有摘要信息前面显示的s
+
+.nb{white-space:nowrap}
+不换行
+
+.h8{background-color:#FF99CC;white-space:nowrap}
+8小时内获取的信息
+
+.d1{background-color:#FFCC99;white-space:nowrap}
+24小时内获取的信息
+
+-------- 大屏手机版 plist.html ----------
+.h{border-top:2px solid}
+大屏手机版，每条信息间粗线
+
+-------- PAD版 pad.html ----------
+.hd{background-color:#336633}
+上方版块目录区，设背景色
+
+.a{TEXT-DECORATION:none;color:#FFFFEF}
+上方版块目录区的链接样式
+
+.ea{color:#ccccff}
+显示有几条异常信息的样式
+

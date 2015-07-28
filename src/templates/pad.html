@@ -11,8 +11,9 @@ body{-webkit-text-size-adjust:
 {%- endif -%}
 ;margin:0px} 
 a{TEXT-DECORATION:none}
-table{border-collapse:collapse;border:1px solid;TABLE-LAYOUT:fixed;word-break:break-all}
+table{border-collapse:collapse;border:1px solid}
 td{border:1px solid}
+.c{TABLE-LAYOUT:fixed;word-break:break-all}
 .hd{background-color:#336633}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
 .ea{color:#ccccff}
@@ -69,7 +70,7 @@ td{border:1px solid}
 {%- for entry in entries -%}
 <tr{{ loop.cycle(' bgColor=Lavender', '') }}>
 	<td>{{entry.author}}</td>
-	<td>
+	<td class="c">
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
@@ -81,7 +82,7 @@ td{border:1px solid}
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr>
 {%- if entry.summary -%}
-<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=3>{{entry.summary}}</td>
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=3 class="c">{{entry.summary}}</td>
 </tr>
 {%- endif -%}
 {%- endfor -%}
@@ -92,7 +93,7 @@ td{border:1px solid}
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
-	<td colspan=2>
+	<td colspan=2 class="c">
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
@@ -103,7 +104,7 @@ td{border:1px solid}
 	</td>
 </tr>
 {%- if entry.summary -%}
-<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2>{{entry.summary}}</td>
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2 class="c">{{entry.summary}}</td>
 </tr>
 {%- endif -%}
 {%- endfor -%}

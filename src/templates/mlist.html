@@ -4,8 +4,9 @@
 	<style>
 a{TEXT-DECORATION:none}
 a:link{color:#0000DD} 
-table{border:1px solid;border-collapse:collapse;TABLE-LAYOUT:fixed;word-break:break-all}
+table{border:1px solid;border-collapse:collapse}
 td{border:1px solid}
+.c{TABLE-LAYOUT:fixed;word-break:break-all}
 .e{color:#cc33ff}
 .s{color:#cc3300}
 .nb{white-space:nowrap}
@@ -24,7 +25,7 @@ td{border:1px solid}
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr>
-	<td colspan=2>
+	<td colspan=2 class="c">
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span>
 {%- endif -%}

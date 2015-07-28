@@ -5,8 +5,9 @@
 body{-webkit-text-size-adjust:180%}
 a{TEXT-DECORATION:none}
 a:link{color:#0000DD} 
-table{border:1px solid;border-collapse:collapse;TABLE-LAYOUT:fixed;word-break:break-all}
+table{border:1px solid;border-collapse:collapse}
 td{border:1px solid}
+.c{TABLE-LAYOUT:fixed;word-break:break-all}
 .h{border-top:2px solid}
 .e{color:#cc33ff}
 .s{color:#cc3300}
@@ -26,7 +27,7 @@ td{border:1px solid}
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr{{ loop.cycle(' bgColor=Lavender', '') }}>
-	<td colspan=2>
+	<td colspan=2 class="c">
 {%- if entry.suid == '<exception>' -%}
 <span class="e">e</span> {% endif -%}
 {%- if entry.url -%}
@@ -37,7 +38,7 @@ td{border:1px solid}
 	</td>
 </tr>
 {%- if entry.summary -%}
-<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2>
+<tr{{ loop.cycle(' bgColor=Lavender', '') }}><td colspan=2 class="c">
 {{entry.summary}}
 </td></tr>
 {%- endif -%}

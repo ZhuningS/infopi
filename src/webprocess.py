@@ -364,6 +364,8 @@ def login():
                 target = '/'
             elif subname == 'top':
                 target = '/pad0'
+            elif subname == 'tob':
+                target = '/p'
             else:
                 target = '/m'
             response = make_response(redirect(target))

@@ -145,6 +145,9 @@ def get_interval_str(interval):
     if interval >= 60:
         interval_str += '%d分钟' % (interval//60)
         interval = interval % 60
+        
+    if interval > 0:
+        interval_str += '%d秒' % interval
     
     return interval_str
 

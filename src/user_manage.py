@@ -80,7 +80,9 @@ class c_user_cfg:
 
         # compiled re
         re_category = red.d(r"^\s*'(.*?)'\s*(?:#.*)?$")
-        re_source = red.d(r"^\s*'(.*?)'\s*,\s*(\d+)\s*,\s*((?:\d*\.)?\d+)\s*(?:#.*)?$")
+        pattern = (r"^\s*'(.*?)'\s*,\s*(\d+)\s*,"
+                   r"\s*([\d.](?:[\d .*/+-]*[\d.])?)\s*(?:#.*)?$")
+        re_source = red.d(pattern)
 
         orgnise_started = False
         current_category = None
@@ -144,7 +146,16 @@ class c_user_cfg:
                         level = int(m.group(2))
                         if level not in (0, 1, 2):
                             level = 0
-                        interval = float(m.group(3))
+                            
+                        try:
+                            interval = eval(m.group(3))
+                            if interval < 0:
+                                raise Exception()
+                        except:
+                            s = ('计算%s用户的%s信息源的刷新间隔时出错'
+                                 '：%s，使用默认值作为刷新间隔。')
+                            print(s % (user.username, sid, m.group(3)))
+                            interval = 0
 
                         if current_category != None:
                             current_category.append([sid, level, interval,
@@ -154,7 +165,7 @@ class c_user_cfg:
                             print(s % (f_filename, line))
 
                     else:
-                        s = '\n文件%s出现错误，分类格式有误\n%s\n'
+                        s = '\n文件%s出现错误，格式有误\n%s\n'
                         print(s % (f_filename, line))
         
         if cfg:

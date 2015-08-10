@@ -632,7 +632,7 @@ def zip_cfg():
     files = os.listdir(wvars.upload_forlder)
     for f in files:
         fpath = os.path.join(wvars.upload_forlder, f)
-        if os.path.isfile(fpath) and f.lower().endswith('.zip'):
+        if os.path.isfile(fpath) and f.endswith('.zip'):
             try:
                 os.remove(fpath)
             except:
@@ -657,7 +657,7 @@ def prepare_db_for_download():
     files = os.listdir(wvars.upload_forlder)
     for f in files:
         fpath = os.path.join(wvars.upload_forlder, f)
-        if os.path.isfile(fpath) and f.lower().endswith('.db'):
+        if os.path.isfile(fpath) and f.endswith('.db'):
             try:
                 os.remove(fpath)
             except:

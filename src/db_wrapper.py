@@ -160,8 +160,7 @@ class c_db_wrapper:
     __slots__ = ('sqldb', 
                  'users', 'sources', 'hash_user', 'encoded_sid',
                  'ghost_sources', 'exceptions_index', 
-                 'cfg', 'listall',
-                 'random_bytekey')
+                 'cfg', 'listall')
 
     def __init__(self, tmpfs_path):
         self.sqldb = c_sqldb(tmpfs_path)
@@ -184,9 +183,6 @@ class c_db_wrapper:
         self.cfg = None
         self.listall = None
         
-        self.random_bytekey = \
-        b''.join((bytes([random.randrange(256)])) for i in range(32))
-
     def add_infos(self, lst):
         if not lst:
             return

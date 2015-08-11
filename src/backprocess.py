@@ -52,7 +52,7 @@ def pre_process(users, all_source_dict):
                     interval = gcfg.default_source_interval \
                                if sinfo[2] == 0 \
                                else 3600*sinfo[2]
-                    interval = max(60, int(interval))
+                    interval = max(60, int(round(interval)))
 
                     if sid not in run_source_dict:
                         # souce_id, interval, next_time

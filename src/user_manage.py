@@ -81,7 +81,7 @@ class c_user_cfg:
         # compiled re
         re_category = red.d(r"^\s*'(.*?)'\s*(?:#.*)?$")
         pattern = (r"^\s*'(.*?)'\s*,\s*(\d+)\s*,"
-                   r"\s*([\d.](?:[\d .*/+-]*[\d.])?)\s*(?:#.*)?$")
+                   r"\s*([\d.](?:[\d. */+-]*[\d.])?)\s*(?:#.*)?$")
         re_source = red.d(pattern)
 
         orgnise_started = False

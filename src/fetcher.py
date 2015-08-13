@@ -2,7 +2,6 @@
 
 import codecs
 import urllib.request
-import os
 import time
 import gzip
 import zlib

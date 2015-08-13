@@ -4,7 +4,6 @@ import heapq
 import collections
 import time
 import datetime
-import sys
 
 from datadefine import c_message
 import bvars

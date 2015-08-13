@@ -1,9 +1,7 @@
 # coding=utf-8
-import sys
 import threading
 import time
 import datetime
-import heapq
 import hashlib
 
 import bvars

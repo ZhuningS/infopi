@@ -1,3 +1,4 @@
+#! /usr/bin/python3
 # coding=utf-8
 
 version = 'InfoPi v.2015-08-15a'

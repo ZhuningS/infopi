@@ -48,7 +48,7 @@ class c_config:
         self.tasks_suspend = False
 
         # database auto maintance
-        self.db_process_at = (4, 00)
+        self.db_process_at = (4, 0) # (hour, minute) 24小时制
         self.db_process_interval = 0
         self.db_process_del_entries = 300
         self.db_process_del_days = 30

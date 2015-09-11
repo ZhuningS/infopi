@@ -7,8 +7,18 @@ import hashlib
 import bvars
 from datadefine import *
 
-# translate for wz_tooltip.js (web tooltip show)
-translate_dict = str.maketrans("<>'", '[]"', '\n\r')
+# translate for wz_tooltip.js (web tooltip)
+def for_wz(s):
+    # for html
+    s = s.replace('<', '[')
+    s = s.replace('>', ']')
+    s = s.replace("'", '"') # this rely on html templates
+    
+    # no line break
+    s = s.replace('\n', '')
+    s = s.replace('\r', '')
+    
+    return s
 
 def hasher(string):
     try:
@@ -177,8 +187,8 @@ def worker_starter(runcfg, source_id):
                     i.pub_date = i.pub_date[:runcfg.pub_date_len-3] + '...'
                     
                 # for html show
-                i.summary = i.summary.translate(translate_dict)
-                i.pub_date = i.pub_date.translate(translate_dict)
+                i.summary = for_wz(i.summary)
+                i.pub_date = for_wz(i.pub_date)
 
             c_message.make(back_web_queue,
                            'bw:send_infos',

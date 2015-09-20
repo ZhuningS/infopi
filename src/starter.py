@@ -1,7 +1,7 @@
 #! /usr/bin/python3
 # coding=utf-8
 
-version = 'InfoPi v.2015-09-10'
+version = 'InfoPi v.2015-09-20'
 
 def main():
     # -------------------

@@ -8,11 +8,14 @@ import zlib
 import threading
 from http.cookiejar import CookieJar
 
-# import chardet or cchardet
+# import cchardet or chardet
 try:
-    import chardet as chardet
+    import cchardet as chardet
 except:
-    chardet = None
+    try:
+        import chardet
+    except:
+        chardet = None
 
 from red import *
 from worker_manage import c_worker_exception
@@ -50,7 +53,7 @@ class Fetcher:
 
     @staticmethod
     def d(url, bytes_data):
-        if not chardet:
+        if chardet == None:
             return ''
 
         Fetcher.lock.acquire()

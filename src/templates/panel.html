@@ -8,9 +8,48 @@ th{overflow:hidden;white-space:nowrap}
 .nb{white-space:nowrap}
 </style></head>
 <body bgcolor="#ccccff">
-	<script type="text/javascript" src="/static/wz_tooltip.js"></script> 
+	<script type="text/javascript" src="/static/wz_tooltip.js"></script>
+{%- if type == 2 %}
+所有用户的异常信息：<br>
+<form action="/panel" method="post" enctype="multipart/form-data">
+{%- else %}
+当前用户的异常信息：<br>
+{%- endif %}
 <table border="1" width="100%">
-{% for one in info_list %}
+	<tr bgcolor="lightgray">
+		<td align="center">author</td>
+		<td align="center">title/url</td>
+		<td align="center">fetch_date/pub_date</td>
+		{%- if type == 2 %}<td align="center">刷新</td>{% endif -%}
+	</tr>
+{%- for entry in entries %}
+	<tr>	
+		<td width="18%">{{entry.author}}</td>	
+		<td>
+{%- if entry.summary and entry.url -%}
+<span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
+{%- elif not entry.summary and entry.url -%}
+<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
+{%- elif entry.summary and not entry.url -%}
+<span class="s">s</span> <span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
+{%- else -%}
+{{entry.title}}
+{%- endif -%}
+		</td>
+{%- if entry.pub_date -%}
+<td class="nb" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"><span class="p">p</span>{{entry.fetch_date}}</td>
+{%- else -%}
+<td class="nb">&nbsp;&nbsp;{{entry.fetch_date}}</td>
+{%- endif -%}
+{%- if type == 2 -%}
+		<td><button name="fetch" value="{{entry.source_id}}">刷新</button></td>
+{%- endif -%}
+	</tr>{%- endfor -%}
+</table>
+在问题消失或被解决后，程序会自动删除以上异常信息。<br><br>
+
+<table border="1" width="100%">
+{%- for one in info_list %}
 <tr>
 	<td>{{one[0]}}</td>
 	<td>{{one[1]}}</td>
@@ -39,7 +78,7 @@ th{overflow:hidden;white-space:nowrap}
 	</tr>
 </table>{% endif %}
 {% if type == 2 %}
-<br><form action="/panel" method="post" enctype="multipart/form-data">
+<br>
 <table border="1" cellpadding="5">
     <tr>
         <td class="tb" bgcolor="#ff9999"><button name="name" value="fetch_all">更新所有信息源</button></td>
@@ -63,44 +102,7 @@ th{overflow:hidden;white-space:nowrap}
         <td class="tb" bgcolor="#cc6699"><input type="submit" value="上传并加载此配置"></td>
     </tr>
 </table>
-{% endif %}<br>
-{% if type == 2 %}
-所有用户的异常信息：<br>
-{% else %}
-当前用户的异常信息：<br>{% endif %}
-<table border="1" width="100%">
-	<tr bgcolor="lightgray">
-		<td align="center">author</td>
-		<td align="center">title</td>
-		<td align="center">fetch_date</td>
-		{%- if type == 2 %}<td align="center">刷新</td>{% endif -%}
-	</tr>
-{% for entry in entries %}
-	<tr>	
-		<td width="18%">{{entry.author}}</td>	
-		<td>
-{%- if entry.summary and entry.url -%}
-<span class="s">s</span> <a href="{{entry.url}}" target="_blank" onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</a>
-{%- elif not entry.summary and entry.url -%}
-<a href="{{entry.url}}" target="_blank">{{entry.title}}</a>
-{%- elif entry.summary and not entry.url -%}
-<span class="s">s</span> <span onmouseover="Tip('{{entry.summary}}')" onmouseout="UnTip()">{{entry.title}}</span>
-{%- else -%}
-{{entry.title}}
+</form>
 {%- endif -%}
-		</td>
-{%- if entry.pub_date -%}
-<td class="nb" onmouseover="Tip('{{entry.pub_date}}')" onmouseout="UnTip()"><span class="p">p</span>{{entry.fetch_date}}</td>
-{%- else -%}
-<td class="nb">&nbsp;&nbsp;{{entry.fetch_date}}</td>
-{%- endif -%}
-{%- if type == 2 -%}
-		<td><button name="fetch" value="{{entry.source_id}}">刷新</button></td>
-{%- endif -%}
-	</tr>{%- endfor -%}
-</table>
-{%- if type == 2 -%}</form>{%- endif -%}
-在问题消失或被解决后，程序会自动删除以上异常信息。
 </body>
 </html>
- 

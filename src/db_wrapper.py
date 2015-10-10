@@ -42,7 +42,7 @@ class c_index_unit:
 class c_user_table:
     __slots__ = ('username', 'password', 'up_hash', 
                  'col_per_page', 'col_per_page_pad', 
-                 'col_per_page_bigmobile', 'usertype',
+                 'col_per_page_bigmobile', 'usertype', 'show_exceptions',
                  'sid_level_dict', 'sid_list',
                  'cate_list', 'cate_indexlist_dict',
                  'show_list', 'appeared_source_num')
@@ -54,6 +54,7 @@ class c_user_table:
         self.col_per_page = 15
         self.col_per_page_pad = 12
         self.usertype = 1
+        self.show_exceptions = True
 
         # source_id -> level
         self.sid_level_dict = dict()
@@ -210,6 +211,7 @@ class c_db_wrapper:
         ut.username = user.username
         ut.password = user.password
         ut.usertype = user.usertype
+        ut.show_exceptions = user.show_exceptions
         ut.col_per_page = user.col_per_page
         ut.col_per_page_pad = user.col_per_page_pad
         ut.col_per_page_bigmobile = user.col_per_page_bigmobile
@@ -397,8 +399,9 @@ class c_db_wrapper:
         # category indexs
         ucd = self.sources[source_id].user_cateset_dict
         for user, cateset in ucd.items():
-            for cate in cateset:
-                self.users[user].cate_indexlist_dict[cate].append(unit)
+            if suid != '<exception>' or self.users[user].show_exceptions:
+                for cate in cateset:
+                    self.users[user].cate_indexlist_dict[cate].append(unit)
 
         # source index
         sindex = self.sources[source_id].index_list
@@ -417,11 +420,12 @@ class c_db_wrapper:
         # category indexs
         ucd = self.sources[source_id].user_cateset_dict
         for user, cate_set in ucd.items():
-            for cate in cate_set:
-                index = self.users[user].cate_indexlist_dict[cate]
-
-                p = bisect.bisect_left(index, unit)
-                del index[p]
+            if suid != '<exception>' or self.users[user].show_exceptions:
+                for cate in cate_set:
+                    index = self.users[user].cate_indexlist_dict[cate]
+    
+                    p = bisect.bisect_left(index, unit)
+                    del index[p]
 
         # source index
         sindex = self.sources[source_id].index_list
@@ -446,9 +450,10 @@ class c_db_wrapper:
         # category indexs
         ucd = self.sources[source_id].user_cateset_dict
         for user, cate_set in ucd.items():
-            for cate in cate_set:
-                index = self.users[user].cate_indexlist_dict[cate]
-                bisect.insort_left(index, unit)
+            if suid != '<exception>' or self.users[user].show_exceptions:
+                for cate in cate_set:
+                    index = self.users[user].cate_indexlist_dict[cate]
+                    bisect.insort_left(index, unit)
 
         # source index
         sindex = self.sources[source_id].index_list

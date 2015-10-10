@@ -10,7 +10,7 @@ class c_user_cfg:
     __slots__ = ('username', 'password', 
                  'col_per_page', 'col_per_page_pad',
                  'col_per_page_bigmobile',
-                 'usertype', 'category_list')
+                 'usertype', 'show_exceptions', 'category_list')
 
     def __init__(self):
         self.username = ''
@@ -21,6 +21,9 @@ class c_user_cfg:
 
         # 0:public, 1:normal, 2:admin
         self.usertype = 1
+        
+        # 是否显示异常信息
+        self.show_exceptions = True
 
         # 组织结构列表
         # 列表的元素为tuple: (category, <list>)
@@ -125,6 +128,11 @@ class c_user_cfg:
                         user.usertype = 1
                     elif v == 'admin':
                         user.usertype = 2
+                elif k == 'show_exceptions':
+                    try:
+                        user.show_exceptions = bool(int(v))
+                    except:
+                        pass
                 else:
                     s = '文件%s出现错误，未知键值:\n%s'
                     print(s % (f_filename, k))

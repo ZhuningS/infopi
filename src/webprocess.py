@@ -802,8 +802,10 @@ def panel():
                 print('.zip has been extracted')
                 c_message.make(web_back_queue, 'wb:request_load')
 
+    show_exceptions = db.should_show_exceptions(username)
     db_file, db_size = db.get_current_file()
-    info_lst = get_info_list(gcfg, usertype, db_file, db_size)
+    info_lst = get_info_list(gcfg, usertype, show_exceptions,
+                             db_file, db_size)
     proc_lst = get_python_process(gcfg)
 
     # exception infos

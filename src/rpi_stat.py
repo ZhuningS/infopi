@@ -7,13 +7,18 @@ import wvars
 
 __all__ = ('get_info_list', 'get_python_process')
 
-def get_info_list(cfg, usertype, db_file='', db_size=''):
+def get_info_list(cfg, usertype, show_exceptions,
+                   db_file='', db_size=''):
     lst = list()
     
     # suspend?
     if cfg.tasks_suspend:
         one = ('挂起', '已挂起，后端进程的定时器不再执行任务。')
         lst.append(one)
+        
+    # show_exceptions
+    one = ('此用户的列表显示异常信息', str(show_exceptions))
+    lst.append(one)
 
     # cpu temperature
     temp_float = get_cpu_temperature()

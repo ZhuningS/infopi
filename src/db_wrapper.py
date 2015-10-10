@@ -640,6 +640,10 @@ class c_db_wrapper:
     
     def get_exceptions_num_by_username(self, username):
         return len(self.users[username].cate_indexlist_dict[-1])
+    
+    # 此用户是否显示异常信息
+    def should_show_exceptions(self, username):
+        return self.users[username].show_exceptions
 
     # ----------- for login --------------
 

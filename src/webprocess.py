@@ -434,9 +434,17 @@ def general_index(page_type):
     
     # 异常信息
     if usertype == 2:
-        except_num = '所有用户有%d条异常信息' % db.get_all_exception_num()
+        except_num = db.get_all_exception_num()
+        if except_num > 0:
+            except_num = '所有用户有%d条异常信息' % except_num
+        else:
+            except_num = None
     else:
-        except_num = '当前用户有%d条异常信息' % db.get_exceptions_num_by_username(username)
+        except_num = db.get_exceptions_num_by_username(username)
+        if except_num > 0:
+            except_num = '当前用户有%d条异常信息' % except_num
+        else:
+            except_num = None
     
     # render template
     if page_type == DV_TYPE.COMPUTER:
@@ -600,11 +608,17 @@ def general_pad2(category, pagenum, p_type):
             
     # exceptions number
     if usertype == 2:
-        exception_num = '所有用户有%d条异常信息' % \
-                        db.get_all_exception_num()
+        exception_num = db.get_all_exception_num()
+        if exception_num > 0:
+            exception_num = '所有用户有%d条异常信息' % exception_num
+        else:
+            exception_num = None
     else:
-        exception_num = '当前用户有%d条异常信息' % \
-                        db.get_exceptions_num_by_username(username)
+        exception_num = db.get_exceptions_num_by_username(username)
+        if exception_num > 0:
+            exception_num = '当前用户有%d条异常信息' % exception_num
+        else:
+            exception_num = None
 
     t2 = time.perf_counter()
     during = '%.5f' % (t2-t1)

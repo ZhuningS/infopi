@@ -51,7 +51,9 @@ td{border:1px solid}
 {%- for category in categories -%}
 <a href='/pad/{{category|urlencode}}#bd' class='a'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;
 {%- endfor -%}<br><hr>
+{% if exception_num != None -%}
 <span style="float:left"><a href="/pade" class="ea">{{exception_num}}</a></span>
+{%- endif %}
 <span style="float:right">
 <a href='/pad0#bd' class='a'>所有级别</a>&nbsp;&nbsp;
 <a href='/pad1#bd' class='a'>关注级别</a>&nbsp;&nbsp;

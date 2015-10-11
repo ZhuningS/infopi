@@ -5,6 +5,7 @@
 		<style>
 			a{text-decoration:none; color:#FFFFEF}
 			a:hover{color: #FFFF00}
+			.ea{color:#ccccff}
 		</style>
 	</head>
 	<body bgcolor="#336633">
@@ -32,8 +33,9 @@
 	<a href='/p'>大屏手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
 </span>
 <div style="clear:both"></div>
-
-<a href='/me'>{{except_num}}</a>
+{% if except_num != None -%}
+<a href='/me' class="ea">{{except_num}}</a>
+{%- endif %}
 	</form>
 	</body>
 </html>

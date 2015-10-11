@@ -52,12 +52,13 @@ class PG_TYPE(IntEnum):
     SOURCE = 2
     M_GATHER = 3
     M_CATEGORY = 4
-    BM_GATHER = 5
-    BM_CATEGORY = 6
-    BM_EXCEPTION = 7
-    P2_GATHER = 8
-    P2_CATEGORY = 9
-    P2_EXCEPTION = 10
+    M_EXCEPTION = 5
+    BM_GATHER = 6
+    BM_CATEGORY = 7
+    BM_EXCEPTION = 8
+    P2_GATHER = 9
+    P2_CATEGORY = 10
+    P2_EXCEPTION = 11
 
 class DV_TYPE(IntEnum):
     COMPUTER = 0
@@ -117,6 +118,8 @@ def generate_page(all_count, now_pg,
         elif p_type == PG_TYPE.BM_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
                               '/%d">%s</a>')
+        elif p_type == PG_TYPE.M_EXCEPTION:
+            template_tuple = '<a href="/me/%d">%s</a>'
         elif p_type == PG_TYPE.BM_EXCEPTION:
             template_tuple = '<a href="/pe/%d">%s</a>'
 
@@ -284,7 +287,7 @@ def generate_list(username, category, pagenum,
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
         if all_count == None:
             return None, None, None, None, None
-    elif p_type == PG_TYPE.BM_EXCEPTION:
+    elif p_type in (PG_TYPE.BM_EXCEPTION, PG_TYPE.M_EXCEPTION):
         if usertype == 2:
             all_count, lst = db.get_infos_all_exceptions(offset, limit)
         else:
@@ -531,6 +534,12 @@ def pad_default(level, pagenum=1):
 def bm_exception(pagenum=1):
     return general_list(None, pagenum,
                         PG_TYPE.BM_EXCEPTION, DV_TYPE.BIGMOBILE)
+    
+@web.route('/me')
+@web.route('/me/<int:pagenum>')
+def m_exception(pagenum=1):
+    return general_list(None, pagenum,
+                        PG_TYPE.M_EXCEPTION, DV_TYPE.MOBILE)
 
 @web.route('/slist<encoded_url>')
 @web.route('/slist<encoded_url>/<int:pagenum>')

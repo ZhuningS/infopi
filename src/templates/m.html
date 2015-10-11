@@ -12,13 +12,28 @@
 			<a href='/ml1'>关注级别</a>&nbsp;&nbsp;
 			<a href='/ml2'>重要级别</a><hr>
 {% for category in categories %}<a href='/ml/{{category|urlencode}}'>{{category}}</a>&nbsp;&nbsp;&nbsp;&nbsp;{% endfor %}
-			<hr>
-		<form action="/m" method="post">
-			<font color=#99FFFF>{{username}}</font>
-			<button name="name" value="logout">退出登录</button><br>
-{% if allowfetch %}<br>
-			<button name="name" value="fetch_mine">更新我的源</button>{% endif %}
-			<a href='/p'>大屏手机版</a> <a href='/'>电脑版</a>
-		</form>
+
+<hr>
+	<form action="/m" method="post">
+<span style="float:left">
+	<font color=#FFFFFF>{{usertype}}</font>
+	<font color=#99FFFF>{{username}}</font>
+</span>
+<span style="float:right">
+	<button name="name" value="logout">退出登录</button>
+</span>
+<div style="clear:both"></div>
+
+{% if allowfetch -%}
+<span style="float:left">
+	<button name="name" value="fetch_mine">更新我的源</button>
+</span>{%- endif -%}
+<span style="float:right">
+	<a href='/p'>大屏手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
+</span>
+<div style="clear:both"></div>
+
+<a href='/me'>{{except_num}}</a>
+	</form>
 	</body>
 </html>

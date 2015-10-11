@@ -588,8 +588,7 @@ class c_db_wrapper:
 
         ret_list = list()
         for i in range(offset, end):
-            index_unit = index[i]
-            info = self.sqldb.get_info_by_iid(index_unit.iid)
+            info = self.sqldb.get_info_by_iid(index[i].iid)
             
             ret_list.append(info)
 

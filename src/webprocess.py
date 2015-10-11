@@ -112,12 +112,15 @@ def generate_page(all_count, now_pg,
             template_tuple = ('<a href="/pad/', category,
                               '/%d#bd">%s</a>')
 
+        # big mobile
         elif p_type == PG_TYPE.BM_GATHER:
             template_tuple = ('<a href="/plist', str(category), 
                               '/%d">%s</a>')
         elif p_type == PG_TYPE.BM_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
                               '/%d">%s</a>')
+        
+        # exceptions
         elif p_type == PG_TYPE.M_EXCEPTION:
             template_tuple = '<a href="/me/%d">%s</a>'
         elif p_type == PG_TYPE.BM_EXCEPTION:
@@ -275,14 +278,7 @@ def generate_list(username, category, pagenum,
 
     # usertype
     usertype = db.get_usertype(username)
-    
-    # 异常信息
-    if category == None:
-        if usertype == 2:
-            category = '所有用户的异常信息'
-        else:
-            category = '当前用户的异常信息'
-    
+      
     # content list
     if p_type == PG_TYPE.SOURCE:
         sid = db.get_sid_by_encoded(username, encoded_url)
@@ -293,8 +289,10 @@ def generate_list(username, category, pagenum,
                     PG_TYPE.BM_EXCEPTION, 
                     PG_TYPE.M_EXCEPTION):
         if usertype == 2:
+            category = '所有用户的异常信息'
             all_count, lst = db.get_infos_all_exceptions(offset, limit)
         else:
+            category = '当前用户的异常信息'
             all_count, lst = db.get_infos_user_exception(username, offset, limit)
     else:
         all_count, lst = db.get_infos_by_user_category(
@@ -602,12 +600,8 @@ def general_pad2(category, pagenum, p_type):
             
     # exceptions number
     if usertype == 2:
-        if p_type == PG_TYPE.P2_EXCEPTION:
-            category = '所有用户的异常信息'
         exception_num = db.get_all_exception_num()
     else:
-        if p_type == PG_TYPE.P2_EXCEPTION:
-            category = '当前用户的异常信息'
         exception_num = db.get_exceptions_num_by_username(username)
 
     t2 = time.perf_counter()

@@ -580,6 +580,20 @@ class c_db_wrapper:
 
     def get_usertype(self, username):
         return self.users[username].usertype
+    
+    # 从('iid', 'fetch_date')索引获得数据
+    def get_infos(self, index, offset, limit):
+        allcount = len(index)
+        end = min(offset+limit, len(index))
+
+        ret_list = list()
+        for i in range(offset, end):
+            index_unit = index[i]
+            info = self.sqldb.get_info_by_iid(index_unit.iid)
+            
+            ret_list.append(info)
+
+        return allcount, ret_list
 
     # get infos of a page
     def get_infos_by_user_category(self, 
@@ -589,18 +603,8 @@ class c_db_wrapper:
             index = self.users[username].cate_indexlist_dict[category]
         except:
             return None, None
-
-        allcount = len(index)
-        end = min(offset+limit, len(index))
-
-        ret_list = list()
-        for i in range(offset, end):
-            index_unit = index[i]
-            info = self.sqldb.get_info_by_iid(index_unit.iid)
-            
-            ret_list.append(info)
-
-        return allcount, ret_list
+        
+        return self.get_infos(index, offset, limit)
 
     # get infos of a source
     def get_infos_by_sid(self, username, sid, offset, limit):
@@ -608,17 +612,17 @@ class c_db_wrapper:
             return None, None
         
         index = self.sources[sid].index_list
-        allcount = len(index)
-        end = min(offset+limit, len(index))
-
-        ret_list = list()
-        for i in range(offset, end):
-            index_unit = index[i]
-            info = self.sqldb.get_info_by_iid(index_unit.iid)
-            
-            ret_list.append(info)
-
-        return allcount, ret_list
+        
+        return self.get_infos(index, offset, limit)
+    
+    # get all exceptions infos
+    def get_infos_all_exceptions(self, offset, limit):
+        return self.get_infos(self.exceptions_index, offset, limit)
+    
+    # get user exceptions infos
+    def get_infos_user_exception(self, username, offset, limit):
+        index = self.users[username].cate_indexlist_dict[-1]
+        return self.get_infos(index, offset, limit)
 
     # get all exceptions
     def get_all_exceptions(self):
@@ -628,6 +632,10 @@ class c_db_wrapper:
             lst.append(info)
 
         return lst
+    
+    # 所有异常信息的数目
+    def get_all_exception_num(self):
+        return len(self.exceptions_index)
     
     # get exceptions by username
     def get_exceptions_by_username(self, username):

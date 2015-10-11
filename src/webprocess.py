@@ -54,9 +54,10 @@ class PG_TYPE(IntEnum):
     M_CATEGORY = 4
     BM_GATHER = 5
     BM_CATEGORY = 6
-    P2_GATHER = 7
-    P2_CATEGORY = 8
-    P2_EXCEPTION = 9
+    BM_EXCEPTION = 7
+    P2_GATHER = 8
+    P2_CATEGORY = 9
+    P2_EXCEPTION = 10
 
 class DV_TYPE(IntEnum):
     COMPUTER = 0
@@ -116,6 +117,8 @@ def generate_page(all_count, now_pg,
         elif p_type == PG_TYPE.BM_CATEGORY:
             template_tuple = ('<a href="/plist/', category,
                               '/%d">%s</a>')
+        elif p_type == PG_TYPE.BM_EXCEPTION:
+            template_tuple = '<a href="/pe/%d">%s</a>'
 
         return ''.join(template_tuple)
 
@@ -265,18 +268,33 @@ def generate_list(username, category, pagenum,
         limit = db.get_colperpagepad_by_user(username)
     offset = limit * (pagenum-1)
 
+    # usertype
+    usertype = db.get_usertype(username)
+    
+    # 异常信息
+    if category == None:
+        if usertype == 2:
+            category = '所有用户的异常信息'
+        else:
+            category = '当前用户的异常信息'
+    
     # content list
     if p_type == PG_TYPE.SOURCE:
         sid = db.get_sid_by_encoded(username, encoded_url)
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
         if all_count == None:
             return None, None, None, None, None
+    elif p_type == PG_TYPE.BM_EXCEPTION:
+        if usertype == 2:
+            all_count, lst = db.get_infos_all_exceptions(offset, limit)
+        else:
+            all_count, lst = db.get_infos_user_exception(username, offset, limit)
     else:
         all_count, lst = db.get_infos_by_user_category(
                                             username, category, 
                                             offset, limit)
         if all_count == None:
-            return None, None, None, None, None       
+            return None, None, None, None, None
 
     # nag part
     page_html = generate_page(all_count, pagenum,
@@ -409,6 +427,12 @@ def general_index(page_type):
     # category list
     category_list = db.get_category_list_by_username(username)
     
+    # 异常信息
+    if usertype == 2:
+        except_num = '所有用户有%d条异常信息' % db.get_all_exception_num()
+    else:
+        except_num = '当前用户有%d条异常信息' % db.get_exceptions_num_by_username(username)
+    
     # render template
     if page_type == DV_TYPE.COMPUTER:
         page = 'left.html'
@@ -421,7 +445,8 @@ def general_index(page_type):
                            usertype=user_type_str[usertype],
                            username=username,
                            allowfetch=allow,
-                           categories=category_list)
+                           categories=category_list,
+                           except_num=except_num)
 
 @web.route('/left', methods=['GET', 'POST'])
 def left():
@@ -500,6 +525,12 @@ def pad_list(category, pagenum=1):
 def pad_default(level, pagenum=1):
     return general_list(level, pagenum,
                         PG_TYPE.BM_GATHER, DV_TYPE.BIGMOBILE)
+    
+@web.route('/pe')
+@web.route('/pe/<int:pagenum>')
+def bm_exception(pagenum=1):
+    return general_list(None, pagenum,
+                        PG_TYPE.BM_EXCEPTION, DV_TYPE.BIGMOBILE)
 
 @web.route('/slist<encoded_url>')
 @web.route('/slist<encoded_url>/<int:pagenum>')

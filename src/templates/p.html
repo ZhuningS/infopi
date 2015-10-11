@@ -17,15 +17,26 @@
 <hr>
 	<form action="/p" method="post">
 <span style="float:left">
-<font color=#FFFFFF>{{usertype}}</font>
-<font color=#99FFFF>{{username}}</font>
-		<button name="name" value="logout">退出登录</button>
+	<font color=#FFFFFF>{{usertype}}</font>
+	<font color=#99FFFF>{{username}}</font>
 </span>
 <span style="float:right">
-{% if allowfetch %}
-		<button name="name" value="fetch_mine">更新我的源</button>{% endif %}
-		<a href='/m'>手机版</a> <a href='/'>电脑版</a>
+	<button name="name" value="logout">退出登录</button>
 </span>
+<div style="clear:both"></div>
+
+{% if allowfetch -%}
+<span style="float:left">
+	<button name="name" value="fetch_mine">更新我的源</button>
+</span>
+<span style="float:right">
+	<a href='/m'>手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
+</span>
+{%- else %}
+<a href='/m'>手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
+{%- endif %}
+<div style="clear:both"></div>
+<a href='/pe'>{{except_num}}</a>
 	</form>
 </body>
 </html>

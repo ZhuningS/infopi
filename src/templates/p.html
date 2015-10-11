@@ -28,14 +28,12 @@
 {% if allowfetch -%}
 <span style="float:left">
 	<button name="name" value="fetch_mine">更新我的源</button>
-</span>
+</span>{%- endif -%}
 <span style="float:right">
 	<a href='/m'>手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
 </span>
-{%- else %}
-<a href='/m'>手机版</a>&nbsp;&nbsp;&nbsp;<a href='/'>电脑版</a>
-{%- endif %}
 <div style="clear:both"></div>
+
 <a href='/pe'>{{except_num}}</a>
 	</form>
 </body>

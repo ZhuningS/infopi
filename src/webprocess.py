@@ -122,6 +122,8 @@ def generate_page(all_count, now_pg,
             template_tuple = '<a href="/me/%d">%s</a>'
         elif p_type == PG_TYPE.BM_EXCEPTION:
             template_tuple = '<a href="/pe/%d">%s</a>'
+        elif p_type == PG_TYPE.P2_EXCEPTION:
+            template_tuple = '<a href="/pade/%d">%s</a>'
 
         return ''.join(template_tuple)
 
@@ -287,7 +289,9 @@ def generate_list(username, category, pagenum,
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
         if all_count == None:
             return None, None, None, None, None
-    elif p_type in (PG_TYPE.BM_EXCEPTION, PG_TYPE.M_EXCEPTION):
+    elif p_type in (PG_TYPE.P2_EXCEPTION, 
+                    PG_TYPE.BM_EXCEPTION, 
+                    PG_TYPE.M_EXCEPTION):
         if usertype == 2:
             all_count, lst = db.get_infos_all_exceptions(offset, limit)
         else:
@@ -588,32 +592,23 @@ def general_pad2(category, pagenum, p_type):
 
     # category list
     category_list = db.get_category_list_by_username(username)
-    
-    # number of exceptions
-    exception_num = db.get_exceptions_num_by_username(username)
-    
-    if p_type == PG_TYPE.P2_EXCEPTION:
-        lst = db.get_exceptions_by_username(username)
-        all_count = exception_num
-        page_html = '在问题消失或被解决后，程序会自动删除异常信息'
-        # 时:分:秒
-        now_time = datetime.datetime.\
-                   fromtimestamp(time.time()).\
-                   strftime('%H:%M:%S')
-        category = '当前用户的异常信息'
-        
-        for i in lst:
-            i.fetch_date = datetime.datetime.\
-                           fromtimestamp(i.fetch_date).\
-                           strftime('%y-%m-%d %H:%M')
+
+    # list  
+    lst, all_count, page_html, now_time, category = \
+            generate_list(username, category, 
+                          pagenum, p_type, DV_TYPE.PAD)
+    if lst == None:
+        return wrong_key_html
+            
+    # exceptions number
+    if usertype == 2:
+        if p_type == PG_TYPE.P2_EXCEPTION:
+            category = '所有用户的异常信息'
+        exception_num = db.get_all_exception_num()
     else:
-        # list  
-        lst, all_count, page_html, now_time, category = \
-                generate_list(username, category, 
-                              pagenum, p_type, DV_TYPE.PAD)
-    
-        if lst == None:
-            return wrong_key_html
+        if p_type == PG_TYPE.P2_EXCEPTION:
+            category = '当前用户的异常信息'
+        exception_num = db.get_exceptions_num_by_username(username)
 
     t2 = time.perf_counter()
     during = '%.5f' % (t2-t1)
@@ -641,8 +636,9 @@ def pad2_list(category, pagenum=1):
     return general_pad2(category, pagenum, PG_TYPE.P2_CATEGORY)
 
 @web.route('/pade', methods=['GET', 'POST'])
-def pad_exceptions():
-    return general_pad2('Exception', 1, PG_TYPE.P2_EXCEPTION)
+@web.route('/pade/<int:pagenum>', methods=['GET', 'POST'])
+def pad_exceptions(pagenum=1):
+    return general_pad2(None, pagenum, PG_TYPE.P2_EXCEPTION)
 
 @web.route('/cateinfo', methods=['GET', 'POST'])
 def cate_info():

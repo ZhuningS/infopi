@@ -601,8 +601,15 @@ def general_pad2(category, pagenum, p_type):
     # exceptions number
     if usertype == 2:
         exception_num = db.get_all_exception_num()
+        excep_pattern = '所有用户有%d条异常信息'
     else:
         exception_num = db.get_exceptions_num_by_username(username)
+        excep_pattern = '当前用户有%d条异常信息'
+
+    if exception_num > 0:
+        exception_num = excep_pattern % exception_num
+    else:
+        exception_num = ''
 
     t2 = time.perf_counter()
     during = '%.5f' % (t2-t1)

@@ -40,11 +40,11 @@ def get_info_list(cfg, usertype, show_exceptions,
     s = '端口:%d https:%s' % (cfg.web_port, 
                                '启用' if cfg.https else '未启用'
                                )
-    one = ('web服务器', s)
+    one = ('web服务器设置', s)
     lst.append(one)
 
     # tmpfs
-    one = ('tmpfs目录', cfg.tmpfs_path or '无')
+    one = ('tmpfs路径', cfg.tmpfs_path or '无')
     lst.append(one)
 
     # database

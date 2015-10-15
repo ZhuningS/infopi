@@ -200,7 +200,7 @@ class Fetcher:
         else:
             print('fetcher:异常,下载%s失败' % url, '\n异常信息:', e)
 
-            s = '%s (下载%s失败，重试了%d次，单次超时限制%d秒)' % \
+            s = '%s (下载%s失败，重试了%d次，连接超时限制%d秒)' % \
                 (str(e), url, self.info.retry_count, self.info.open_timeout)
             raise c_worker_exception('下载url失败', url, s)
 

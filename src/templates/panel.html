@@ -84,7 +84,6 @@ th{overflow:hidden;white-space:nowrap}
         <td class="tb" bgcolor="#ff9999"><button name="name" value="fetch_all">更新所有信息源</button></td>
         <td class="tb" bgcolor="#ff9999"><button name="name" value="del_except">删除所有异常信息</button></td>
         <td class="tb" bgcolor="#ffcc33"><button name="name" value="download_db">下载当前数据库文件</button></td>
-        <th rowspan="4" align="left">上传、加载新配置的方法：<br>1、把整个cfg目录压缩到一个zip文件<br>2、点“浏览”选择该zip文件<br>3、点“上传并加载此配置”</th>
     </tr>
     <tr>
         <td class="tb" bgcolor="#ffcc33"><button name="name" value="compact_db">紧凑当前数据库文件</button></td>
@@ -101,7 +100,10 @@ th{overflow:hidden;white-space:nowrap}
         <td class="tb" bgcolor="#cc6699"><input type="file" name="file" accept="application/zip"></td>
         <td class="tb" bgcolor="#cc6699"><input type="submit" value="上传并加载此配置"></td>
     </tr>
-</table>
+	<tr>
+		<td colspan=3>上传、加载新配置的方法：<br>1、把整个cfg目录压缩到一个zip文件。<br>2、点“浏览”选择该zip文件。<br>3、点“上传并加载此配置”。</td>
+	</tr>
+</table><br>
 </form>
 {%- endif -%}
 </body>

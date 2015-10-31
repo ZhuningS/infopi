@@ -698,7 +698,6 @@ class c_login_manager:
             delta = self.ip_dict[ip][0] - now_time
             return False, '尝试登录次数太多，请于%d秒后再试' % delta
         
-        self.maintenace(now_time)
         return True, ''
 
     def login_fail(self, ip):

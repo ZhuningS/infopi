@@ -980,7 +980,7 @@ def check_bw_queue():
                 for sid, stime, ttime in msg.data:
                     start = str(datetime.datetime.fromtimestamp(stime))
                     s = '%s超时，始于%s，超时限制%d秒' % (sid,start,ttime)
-                    write_weberr(s)
+                    write_weberr(Exception(s))
 
         elif msg.command == 'bw:send_config_users':
                 # token

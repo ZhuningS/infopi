@@ -6,7 +6,6 @@ import shutil
 import fnmatch
 import sqlite3
 import time
-import datetime
 
 from datadefine import *
 from db_wrapper import *
@@ -72,10 +71,7 @@ class c_sqldb:
 
     # now time to str
     def get_time_str(self):
-        int_now_time = int(time.time())
-        return datetime.datetime.\
-           fromtimestamp(int_now_time).\
-           strftime('%y%m%d_%H%M%S')
+        return time.strftime('%y%m%d_%H%M%S')
 
     # get sorted db file list
     def get_dbfile_list(self, dbfile_dir):

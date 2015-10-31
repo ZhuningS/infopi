@@ -681,24 +681,27 @@ class c_login_manager:
     RECENT_TIME = 3*60
     RECENT_COUNT = 4
     FORBID_TIME = 10*60
+    FAILED_LOGIN_ALARM = 50
 
-    def __init__(self):
+    def __init__(self, write_weberr):
         # ip -> <list>
         # <list>: [next_time, deque(time)]
         self.ip_dict = dict()
+        
+        self.fail_count = 0
+        self.write_weberr = write_weberr
 
     def login_check(self, ip):
         now_time = int(time.time())
 
-        if ip not in self.ip_dict:
-            return True, ''
-        elif now_time < self.ip_dict[ip][0]:
+        if ip in self.ip_dict and now_time < self.ip_dict[ip][0]:
             delta = self.ip_dict[ip][0] - now_time
             return False, '尝试登录次数太多，请于%d秒后再试' % delta
-        else:
-            return True, ''
+        
+        self.maintenace(now_time)
+        return True, ''
 
-    def login_fall(self, ip):
+    def login_fail(self, ip):
         now_time = int(time.time())
 
         # del old
@@ -709,26 +712,44 @@ class c_login_manager:
             self.ip_dict[ip] = [0, collections.deque()]
         self.ip_dict[ip][1].append(now_time)
 
-        # forbid
+        # forbid ip?
         if len(self.ip_dict[ip][1]) >= c_login_manager.RECENT_COUNT:
             self.ip_dict[ip][0] = now_time + c_login_manager.FORBID_TIME
+            
+            # msg & log
+            msg = '您的IP地址因多次登录失败被暂时禁止登录。'
+            e = Exception('IP地址%s因多次登录失败被暂时禁止登录。' % ip)
+            self.write_weberr(e)
+        else:
+            msg = '无此用户或密码错误'
+            
+        # all fail count
+        self.fail_count += 1
+        if self.fail_count % c_login_manager.FAILED_LOGIN_ALARM == 0:
+            e = Exception('程序启动以来，登录失败总数达到%d次。' % 
+                            self.fail_count)
+            self.write_weberr(e)
+            
+        return msg
 
     def maintenace(self, now_time=None):
         if now_time == None:
             now_time = int(time.time())
+
         recent = now_time - c_login_manager.RECENT_TIME
 
         temp_set = set()
 
         for ip, (next_time, deck) in self.ip_dict.items():
+            # del old record
             while deck and deck[0] < recent:
                 deck.popleft()
 
+            # clear record
             if not deck:
                 temp_set.add(ip)
 
         for ip in temp_set:
             del self.ip_dict[ip]
 
-    def clear(self):
-        self.ip_dict.clear()
+        

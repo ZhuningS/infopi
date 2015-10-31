@@ -2,7 +2,7 @@
 
 from enum import IntEnum
 import os
-import datetime
+import time
 import codecs
 
 from red import red
@@ -30,8 +30,7 @@ class c_config:
         self.version = ''
 
         if not c_config.s_boot_time:
-            c_config.s_boot_time = datetime.datetime.\
-                                   now().strftime('%Y-%m-%d %H:%M:%S %w')
+            c_config.s_boot_time = time.strftime('%Y-%m-%d %a %H:%M:%S')
 
         self.boot_time = c_config.s_boot_time
 
@@ -109,8 +108,7 @@ def load_config(version='test', web_port=0,
     cfg.root_path = bvars.root_path
     cfg.tmpfs_path = tmpfs_path
 
-    cfg.start_time = datetime.datetime.\
-                     now().strftime('%Y-%m-%d %H:%M:%S %w')
+    cfg.start_time = time.strftime('%Y-%m-%d %a %H:%M:%S')
     cfg.back_pid = os.getpid()
     #cfg.web_pid is not set, send to web-process
 

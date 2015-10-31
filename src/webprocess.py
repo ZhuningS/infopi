@@ -42,7 +42,6 @@ gcfg = None
 db = None
 
 template_cache = dict()
-login_manager = c_login_manager()
 
 # 在此源文件中，pad实际指大屏手机版，pad2实际指pad版
 
@@ -399,9 +398,9 @@ def login():
                                 expires=2147483640)
             return response
         else:
-            login_manager.login_fall(ip)
+            msg = login_manager.login_fail(ip)
             return render_template('login.html',
-                                    msg='无此用户或密码错误')
+                                    msg=msg)
 
     return render_template('login.html')
 
@@ -756,15 +755,6 @@ def panel():
                                            filename=fname,
                                            as_attachment=True)
 
-            # download weberr.txt
-            elif name == 'download_err':
-                fpath = os.path.join(wvars.upload_forlder, 'weberr.txt')
-                if os.path.isfile(fpath):
-                    return send_from_directory(
-                           directory=wvars.upload_forlder, 
-                           filename='weberr.txt',
-                           as_attachment=True)
-
             # 更新所有
             elif name == 'fetch_all':
                 c_message.make(web_back_queue, 'wb:request_fetch')
@@ -885,6 +875,39 @@ def listall():
                            user_num=db.get_user_number(),
                            source_num=len(listall)
                            )
+    
+@web.route('/viewerror', methods=['GET', 'POST'])
+def viewerror():
+    username = check_cookie()
+    if not username:
+        return jump_to_login
+
+    usertype = db.get_usertype(username)
+    if usertype != 2:
+        return '请使用管理员账号查看此页面'
+    
+    # path of weberr.txt
+    fpath = os.path.join(wvars.upload_forlder, 'weberr.txt')
+    
+    # clear exsiting file
+    if request.method == 'POST' and \
+       request.form.get('name') == 'clear':
+        try:
+            os.remove(fpath)
+        except:
+            pass
+    
+    # read content
+    if not os.path.isfile(fpath):
+        lines = ['目前不存在此文件']
+    else:
+        try:
+            with open(fpath) as f:
+                lines = f.readlines()
+        except Exception as e:
+            lines = ['读取文件出现异常：\n' + str(e)]
+            
+    return render_template('viewerror.html', lines=lines)
 
 @web.errorhandler(404)
 def page_not_found(e):
@@ -909,12 +932,15 @@ def write_weberr(exception):
 
     # write to weberr.txt
     with open(fpath, 'a') as f:
-        f.write(time.ctime() + '\n' + \
-                str(type(exception)) + ' ' + \
+        f.write(time.strftime('%Y-%m-%d %a %H:%M:%S') + '\n' + \
+                str(type(exception)) + '\n' + \
                 str(exception) + '\n\n')
 
     # print to console
     print('web-side exception:', str(exception))
+    
+# log in manager    
+login_manager = c_login_manager(write_weberr)
 
 @web.errorhandler(500)
 def internal_error(exception):
@@ -969,7 +995,6 @@ def check_bw_queue():
                 gcfg = cfg
 
                 template_cache.clear()
-                login_manager.clear()
 
                 # users
                 users = msg.data[2]

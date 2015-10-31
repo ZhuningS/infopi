@@ -1,0 +1,16 @@
+<!DOCTYPE html><html>
+<head>
+	<title>查看异常记录 - InfoPi</title>
+	<meta content="width=device-width" name="viewport">
+	<style>body{-webkit-text-size-adjust:200%}</style>
+</head>
+<body>
+<form action="/viewerror" method="post">
+	<button name="name" value="clear">清空记录</button>
+</form>
+<hr>
+{%- for line in lines -%}
+{{line}}<br>
+{% endfor %}
+</body>
+</html>

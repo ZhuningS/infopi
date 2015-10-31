@@ -737,7 +737,7 @@ class c_login_manager:
 
         recent = now_time - c_login_manager.RECENT_TIME
 
-        temp_set = set()
+        temp_lst = list()
 
         for ip, (next_time, deck) in self.ip_dict.items():
             # del old record
@@ -746,9 +746,9 @@ class c_login_manager:
 
             # clear record
             if not deck:
-                temp_set.add(ip)
+                temp_lst.append(ip)
 
-        for ip in temp_set:
+        for ip in temp_lst:
             del self.ip_dict[ip]
 
         

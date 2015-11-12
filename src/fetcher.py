@@ -38,7 +38,7 @@ class FetcherInfo:
 re_contenttype = red.d(r'charset\s*=\s*([^;\s]*)', red.I)
 
 meta_encoding = (br'''<(?:meta|\?xml)[^>]*?'''
-                 br'''(?:charset|encoding)\s*=\s*["']?([^"'>;\s]*)'''
+                 br'''(?:charset|encoding)\s*=\s*["']?([^"'>;\s]{1,30})'''
                 )
 re_meta = red.d(meta_encoding, red.A|red.S|red.I)
 

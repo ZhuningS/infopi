@@ -65,7 +65,7 @@ def parse_xml(data_dict, xml):
                   r'<feed>',
                   xml, 
                   count=1,
-                  flags=red.IGNORECASE)
+                  flags=red.IGNORECASE|red.A)
 
     # ElementTree
     try:

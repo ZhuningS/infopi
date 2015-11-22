@@ -328,20 +328,6 @@ class c_sqldb:
 
         return s
 
-    # 按source_id
-    def get_info_by_sourceid(self, source_id):
-        sql = ('SELECT * '
-               'FROM info_tbl '
-               'WHERE source_id = ? '
-               'ORDER BY fetch_date DESC, id DESC')
-        return self.get_infos_function(sql, (source_id,))   
-
-    # 得到总数
-    def get_count_function(self, sql, paras=()):
-        r = self.cursor.execute(sql, paras)
-        fetched = r.fetchone()
-        return fetched[0]
-
     # 转为info
     def get_infos_function(self, sql, paras=()):
         r = self.cursor.execute(sql, paras)

@@ -104,7 +104,7 @@ def parse_html(data_dict, base_url, html):
                     ss = map_attrs(m, v)
                 except Exception as e:
                     s1 = '处理第%d个block的map_rule时异常' % (i+1)
-                    s2 = str(k) + ', ' + str(e)
+                    s2 = '赋值%s给%s时出错，%s' % (str(v), str(k), str(e))
                     raise c_worker_exception(s1, '', s2)
 
                 if k == 'title':

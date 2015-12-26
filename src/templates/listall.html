@@ -12,6 +12,7 @@
     <td align="center">name/link</td>
     <td align="center">刷新间隔</td>
     <td align="center">最近有效刷新</td>
+    <td align="center">最近获取信息</td>
     <td align="center">用户列表</td>
 </tr>
 {% for item in items -%}
@@ -20,8 +21,9 @@
     <td>{% if item.source.link %}<a href="{{item.source.link}}" target="_blank">{{item.source.name}}</a>{% else %}{{item.source.name}}{% endif %}</td>
     <td>{{item.interval_str}}</td>
     <td>{{item.source.last_fetch_date}}</td>
+    <td>{{item.source.last_date_distance}}</td>
     <td>{{item.userlist}}</td>
-</tr><tr><td colspan="5">{{item.source.comment}}</td>
+</tr><tr><td colspan="6">{{item.source.comment}}</td>
 </tr>
 {% endfor %}
 </table>

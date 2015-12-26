@@ -100,6 +100,27 @@ class c_source_table:
         
         # last fetch_date
         self.last_fetch_date = '尚未刷新'
+        
+    @property
+    def last_date_distance(self):
+        if len(self.index_list) > 0:
+            t = self.index_list[0].fetch_date
+            distance = int(time.time()) - t
+            
+            if distance <= 24 * 3600:
+                return '1天内'
+            elif distance <= 7 * 24 * 3600:
+                return '1周内'
+            elif distance <= 30 * 24 * 3600:
+                return '1月内'
+            elif distance <= 3 * 30 * 24 * 3600:
+                return '3月内'
+            elif distance <= 6 * 30 * 24 * 3600:
+                return '6月内'
+            else:
+                return '6月以上'
+        else:
+            return '尚无信息'
 
 class c_for_show:
     __slots__ = ('source',

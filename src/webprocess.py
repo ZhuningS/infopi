@@ -12,9 +12,7 @@ from enum import IntEnum
 try:
     import winsound
 except:
-    has_winsound = False
-else:
-    has_winsound = True
+    winsound = None
 
 # ---------------------
 
@@ -945,7 +943,7 @@ login_manager = c_login_manager(write_weberr)
 @web.errorhandler(500)
 def internal_error(exception):
     # beep
-    if has_winsound:
+    if winsound != None:
         winsound.Beep(600, 1000)
         
     write_weberr(exception)

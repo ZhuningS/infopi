@@ -8,9 +8,7 @@ import hashlib
 try:
     import winsound
 except:
-    has_winsound = False
-else:
-    has_winsound = True
+    winsound = None
 
 from sqldb import *
 
@@ -101,7 +99,6 @@ class c_source_table:
         # last fetch_date
         self.last_fetch_date = '尚未刷新'
         
-    @property
     def last_date_distance(self):
         if len(self.index_list) > 0:
             t = self.index_list[0].fetch_date
@@ -218,7 +215,7 @@ class c_db_wrapper:
         if beep:
             print('database was added or updated')
             # 发出响声
-            if has_winsound:
+            if winsound != None:
                 try:
                     winsound.Beep(350, 300)
                 except:

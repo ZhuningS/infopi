@@ -944,7 +944,10 @@ login_manager = c_login_manager(write_weberr)
 def internal_error(exception):
     # beep
     if winsound != None:
-        winsound.Beep(600, 1000)
+        try:
+            winsound.Beep(600, 1000)
+        except:
+            pass
         
     write_weberr(exception)
     return str(exception)

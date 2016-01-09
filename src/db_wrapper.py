@@ -209,7 +209,7 @@ class c_db_wrapper:
                if i.source_id in self.sources]
 
         beep = sum(1 for i in res 
-                    if i in (DB_RESULT.ADDED, DB_RESULT.UPDATED)
+                    if i in {DB_RESULT.ADDED, DB_RESULT.UPDATED}
                     )
 
         if beep:

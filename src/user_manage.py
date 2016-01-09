@@ -152,7 +152,7 @@ class c_user_cfg:
                     if m:
                         sid = m.group(1).lower()
                         level = int(m.group(2))
-                        if level not in (0, 1, 2):
+                        if level not in {0, 1, 2}:
                             level = 0
                             
                         try:

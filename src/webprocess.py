@@ -137,7 +137,7 @@ def generate_page(all_count, now_pg,
         now_pg = last_pg
 
     # numbers width
-    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+    if p_type in {PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY}:
         sides = 3
     else:
         sides = 5
@@ -161,7 +161,7 @@ def generate_page(all_count, now_pg,
         template_cache[(p_type, category)] = template
 
     # mobile
-    if p_type in (PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY):
+    if p_type in {PG_TYPE.M_GATHER, PG_TYPE.M_CATEGORY}:
         
         # nag
         lst1 = list()
@@ -282,9 +282,9 @@ def generate_list(username, category, pagenum,
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
         if all_count == None:
             return None, None, None, None, None
-    elif p_type in (PG_TYPE.P2_EXCEPTION, 
+    elif p_type in {PG_TYPE.P2_EXCEPTION, 
                     PG_TYPE.BM_EXCEPTION, 
-                    PG_TYPE.M_EXCEPTION):
+                    PG_TYPE.M_EXCEPTION}:
         if usertype == 2:
             category = '所有用户的异常信息'
             all_count, lst = db.get_infos_all_exceptions(offset, limit)
@@ -332,8 +332,8 @@ def generate_list(username, category, pagenum,
                            fromtimestamp(i.fetch_date).\
                            strftime('%Y-%m-%d')            
 
-    if p_type in (PG_TYPE.GATHER, PG_TYPE.M_GATHER,
-                  PG_TYPE.P2_GATHER, PG_TYPE.BM_GATHER):
+    if p_type in {PG_TYPE.GATHER, PG_TYPE.M_GATHER,
+                  PG_TYPE.P2_GATHER, PG_TYPE.BM_GATHER}:
         if category == 0:
             category = '普通、关注、重要'
         elif category == 1:

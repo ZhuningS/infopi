@@ -73,7 +73,7 @@ def parse_xml(data_dict, xml):
     except Exception as e:
         doc = None
         if not etree:
-            raise c_worker_exception('解析XML失败，可以尝试安装lxml',
+            raise c_worker_exception('解析XML失败，可以尝试安装lxml模块',
                                      data_dict['url'],
                                      str(e)
                                      )
@@ -84,6 +84,10 @@ def parse_xml(data_dict, xml):
             parser = etree.XMLParser(recover=True, encoding='utf-8')
             doc = etree.fromstring(xml.encode('utf-8'), parser=parser)
             print('使用lxml解析%s' % data_dict['url'])
+            
+            if doc == None:
+                raise Exception('lxml模块也无法解析此XML')
+            
         except Exception as e:
             raise c_worker_exception('lxml解析XML失败',
                                      data_dict['url'],

@@ -331,7 +331,8 @@ def parse_data(worker_id, xml_string):
     try:
         parser = bvars.dataparsers[worker_id]
     except:
-        # can't find the data-parser, maybe the worker doesn't need data
+        # can't find the data-parser, maybe the worker doesn't need data.
+        # if worker_id doesn't exist, worker_starter will catch the issue.
         return dict()
     
     try:

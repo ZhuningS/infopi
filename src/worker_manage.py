@@ -67,6 +67,17 @@ def worker_starter(runcfg, source_id):
         int_time = int(time.time())
 
         try:
+            if worker == None:
+                s = '信息源%s没有找到指定worker: %s' % \
+                    (source.source_id, source.worker_id)
+                print(s)
+                raise c_worker_exception(s)
+            
+            if source.data == None:
+                s = '信息源%s的data未能被解析' % source.source_id
+                print(s)
+                raise c_worker_exception(s)
+                
             lst = worker(source.data, worker_dict)
 
         except c_worker_exception as e:
@@ -198,10 +209,15 @@ def worker_starter(runcfg, source_id):
         #print('线程结束：%s' % source.source_id)        
 
     source = bvars.sources[source_id]
-
-    worker_tuple = bvars.workers[source.worker_id]
-    worker = worker_tuple[0]
-    worker_dict = worker_tuple[1]
+    
+    try:
+        worker_tuple = bvars.workers[source.worker_id]
+    except:
+        worker = None
+        worker_dict = None
+    else:
+        worker = worker_tuple[0]
+        worker_dict = worker_tuple[1]
 
     t = threading.Thread(target=worker_wrapper, 
                          args=(runcfg,
@@ -218,7 +234,14 @@ def worker_starter(runcfg, source_id):
 def test_source(source_id):
     source = bvars.sources[source_id]
 
-    worker_tuple = bvars.workers[source.worker_id]
+    try:
+        worker_tuple = bvars.workers[source.worker_id]
+    except:
+        print('信息源%s没有找到指定worker: %s' % 
+              (source.source_id, source.worker_id)
+              )
+        return
+
     worker = worker_tuple[0]
     worker_dict = worker_tuple[1]
 
@@ -226,6 +249,8 @@ def test_source(source_id):
 
     # run
     try:
+        if source.data == None:
+            raise Exception('信息源%s的data未能被解析' % source.source_id)
         lst = worker(source.data, worker_dict)
 
     except Exception as e:
@@ -302,10 +327,12 @@ def test_source(source_id):
 
 # for source-loading
 def parse_data(worker_id, xml_string):
-    parser = bvars.dataparsers[worker_id]
-
-    d = parser(xml_string)
-    return d
+    try:
+        parser = bvars.dataparsers[worker_id]
+        d = parser(xml_string)
+        return d
+    except:
+        return None
 
 # worker function:
 # params: (data_dict, worker_dict) 

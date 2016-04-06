@@ -108,6 +108,8 @@ def load_xml(sources_path, path, filename):
 
     s.worker_id = get_text_from_tag(xml.find('worker'))
     s.data = parse_data(s.worker_id, string)
+    if s.data == None:
+        print('解析信息源%s的data失败' % s.source_id)
 
     callback = get_text_from_tag(xml.find('callback'))
     if callback != '':

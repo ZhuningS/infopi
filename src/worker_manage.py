@@ -251,6 +251,7 @@ def test_source(source_id):
     try:
         if source.data == None:
             raise Exception('信息源%s的data未能被解析' % source.source_id)
+        
         lst = worker(source.data, worker_dict)
 
     except Exception as e:
@@ -325,13 +326,18 @@ def test_source(source_id):
             print()
 
 
-# for source-loading
+# parse source data, return a dict
 def parse_data(worker_id, xml_string):
     try:
         parser = bvars.dataparsers[worker_id]
-        d = parser(xml_string)
-        return d
     except:
+        # can't find the data-parser, maybe the worker doesn't need data
+        return dict()
+    
+    try:
+        return parser(xml_string)
+    except:
+        # can't parse the data, return None
         return None
 
 # worker function:

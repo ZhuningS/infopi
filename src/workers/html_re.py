@@ -242,3 +242,17 @@ def html_re_parser(xml_string):
         d['blocks_list'] = block_list
 
     return d
+
+
+# worker: html_re_rev
+# get a reversed list from html_re
+# this worker rely on html_re
+
+@worker('html_re_rev')
+def rev_worker(data_dict, worker_dict):
+    lst = download_process(data_dict, worker_dict)
+    return lst[::-1]
+
+@dataparser('html_re_rev')
+def rev_parser(xml_string):
+    return html_re_parser(xml_string)

@@ -62,13 +62,15 @@ class red:
 
         return compiled
 
+    # not applicable to the situations where need to 
+    # generate informative error prompt
     @staticmethod
     def sub(pattern, repl, string, count=0, flags=0):
         prog = red.d(pattern, flags)
-        if prog != None:
-            return prog.sub(repl, string, count=0)
-        else:
-            return ''
+        if prog == None:
+            return None
+        
+        return prog.sub(repl, string, count=0)
 
     @staticmethod
     def clear_cache():

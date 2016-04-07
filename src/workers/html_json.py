@@ -53,11 +53,11 @@ def parse_html(data_dict, base_url, html):
     
     # replace
     if 'repl' in data_dict:
-        json_str = red.sub(data_dict['repl_pattern'],
-                           data_dict['repl'],
-                           json_str,
-                           0,
-                           data_dict['repl_flags'])
+        r = red.d(data_dict['repl_pattern'], data_dict['repl_flags'])
+        if r == None:
+            raise c_worker_exception('replace正则表达式编译失败')
+            
+        json_str = r.sub(data_dict['repl'], json_str)
 
     # parse json
     try:

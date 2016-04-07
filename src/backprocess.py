@@ -170,7 +170,7 @@ def main_process(version, web_port, https, tmpfs_path,
         cfg_token = int(time.time())
         bvars.cfg_token = cfg_token
         
-        # tasks_suspend
+        # tasks_suspend， 挂起时timer_heap返回None
         if gcfg.tasks_suspend:
             return cfg_token, None, user_list
 

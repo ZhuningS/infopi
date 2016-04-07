@@ -67,10 +67,11 @@ class red:
     @staticmethod
     def sub(pattern, repl, string, count=0, flags=0):
         prog = red.d(pattern, flags)
-        if prog == None:
-            return None
-        
-        return prog.sub(repl, string, count=0)
+        try:
+            return prog.sub(repl, string, count=0)
+        except:
+            print('red.sub()函数出现异常，可能是正则表达式编译失败')
+            raise
 
     @staticmethod
     def clear_cache():

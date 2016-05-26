@@ -9,7 +9,7 @@ a:link{color:#0000DD}
 table{border:1px solid;border-collapse:collapse}
 td{border:1px solid}
 .c{TABLE-LAYOUT:fixed;word-break:break-all}
-.h{border-top:2px solid}
+.sm{background-color:#daeada;TABLE-LAYOUT:fixed;word-break:break-all}
 .e{color:#cc33ff}
 .nb{white-space:nowrap}
 .h8{background-color:#FF99CC;white-space:nowrap}
@@ -23,7 +23,7 @@ td{border:1px solid}
 {{htmlpage|safe}}
 <table bgcolor="#ccffd6" width="100%">
 {%- for entry in entries -%}
-<tr class="h">
+<tr>
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr>
@@ -38,7 +38,7 @@ td{border:1px solid}
 	</td>
 </tr>
 {%- if entry.summary -%}
-<tr><td colspan=2 class="c">
+<tr><td colspan=2 class="sm">
 {{entry.summary}}
 </td></tr>
 {%- endif -%}

@@ -15,8 +15,8 @@ a{TEXT-DECORATION:none}
 table{border-collapse:collapse;border:1px solid}
 td{border:1px solid}
 .c{TABLE-LAYOUT:fixed;word-break:break-all}
+.sm{background-color:#daeada;TABLE-LAYOUT:fixed;word-break:break-all}
 .hd{background-color:#336633}
-.h{border-top:2px solid}
 .a{TEXT-DECORATION:none;color:#FFFFEF}
 .ea{color:#ccccff}
 .e{color:#cc33ff}
@@ -70,7 +70,7 @@ td{border:1px solid}
 
 {%- if landscape -%}
 {%- for entry in entries -%}
-<tr class="h">
+<tr>
 	<td>{{entry.author}}</td>
 	<td class="c">
 {%- if entry.suid == '<exception>' -%}
@@ -84,14 +84,14 @@ td{border:1px solid}
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr>
 {%- if entry.summary -%}
-<tr><td colspan=3 class="c">{{entry.summary}}</td>
+<tr><td colspan=3 class="sm">{{entry.summary}}</td>
 </tr>
 {%- endif -%}
 {%- endfor -%}
 
 {%- else -%}
 {%- for entry in entries -%}
-<tr class="h">
+<tr>
 	<td>{{entry.author}}</td>
 	<td {% if entry.temp == 1 %}class="h8"{% elif entry.temp == 2 %}class="d1"{% else %}class="nb"{% endif %}>{{entry.fetch_date}}</td>
 </tr><tr>
@@ -106,7 +106,7 @@ td{border:1px solid}
 	</td>
 </tr>
 {%- if entry.summary -%}
-<tr><td colspan=2 class="c">{{entry.summary}}</td>
+<tr><td colspan=2 class="sm">{{entry.summary}}</td>
 </tr>
 {%- endif -%}
 {%- endfor -%}

@@ -18,8 +18,8 @@
 24小时内获取的信息
 
 -------- 大屏手机版 plist.html ----------
-.h{border-top:2px solid}
-大屏手机版，每条信息间粗线
+.sm{background-color:#daeada;TABLE-LAYOUT:fixed;word-break:break-all}
+摘要
 
 -------- PAD版 pad.html ----------
 .hd{background-color:#336633}

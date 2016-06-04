@@ -11,7 +11,7 @@
 .nb{white-space:nowrap}
 不换行
 
-.h8{background-color:#FFB7D8;white-space:nowrap}
+.h8{background-color:#FFACD1;white-space:nowrap}
 8小时内获取的信息
 
 .d1{background-color:#FFCC99;white-space:nowrap}

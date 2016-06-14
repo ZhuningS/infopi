@@ -20,8 +20,6 @@ from flask import (Flask, render_template, request,
                   make_response, redirect, 
                   send_from_directory)
 
-from werkzeug import secure_filename
-
 # ---------------------
 
 import wvars

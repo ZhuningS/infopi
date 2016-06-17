@@ -152,8 +152,6 @@ def get_python_process(cfg):
             
         # pid
         one.append(items[1])
-        # user id
-        one.append(items[0])
         # status
         one.append(items[7])
         # cpu usage

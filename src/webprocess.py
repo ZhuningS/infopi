@@ -308,15 +308,19 @@ def generate_list(username, category, pagenum,
     now_time = datetime.datetime.\
                fromtimestamp(int_now_time).\
                strftime('%H:%M:%S')
-
+               
+    ago_180day = int_now_time - 3600*24*180
+    ago_8h = int_now_time - 3600*8
+    ago_24h = int_now_time - 3600*24
+    
     for i in lst:
         # 180天之内
-        if i.fetch_date >= int_now_time - 3600*24*180:
+        if i.fetch_date >= ago_180day:
             # 8小时之内
-            if i.fetch_date >= int_now_time - 3600*8:
+            if i.fetch_date >= ago_8h:
                 i.temp = 1
             # 24小时之内
-            elif i.fetch_date >= int_now_time - 3600*24:
+            elif i.fetch_date >= ago_24h:
                 i.temp = 2
             
             # 月-日 时:分

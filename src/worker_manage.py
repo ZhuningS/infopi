@@ -9,16 +9,12 @@ from datadefine import *
 
 # translate for wz_tooltip.js (web tooltip)
 def for_wz(s):
-    # for html
-    s = s.replace('<', '[')
-    s = s.replace('>', ']')
-    s = s.replace("'", '"') # this rely on html templates
+    # 1st line: for html code
+    # 2nd line: no line break
+    #           replace("'", '"') this rely on html templates
     
-    # no line break
-    s = s.replace('\n', '')
-    s = s.replace('\r', '')
-    
-    return s
+    return s.replace('<', '[').replace('>', ']').replace("'", '"').\
+             replace('\n', '').replace('\r', '')
 
 def hasher(string):
     try:

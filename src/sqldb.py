@@ -6,13 +6,12 @@ import shutil
 import fnmatch
 import sqlite3
 import time
-import bisect
 
 from datadefine import *
 from db_wrapper import *
 import wvars
 
-__all__ = ('DB_RESULT', 'c_sqldb_keeper')
+__all__ = ('DB_RESULT', 'c_sqldb')
 
 class DB_RESULT(IntEnum):
     NO = 0
@@ -378,7 +377,9 @@ class c_sqldb:
             _souce_id = i[1]
             _fetch_date = i[2]
 
-            self.cb_remove(_souce_id, _id, _fetch_date, '<exception>')
+            # don't call on ghost sources
+            if _souce_id in source_dict:
+                self.cb_remove(_souce_id, _id, _fetch_date, '<exception>')
 
         # del from sqlite
         sql = 'DELETE FROM info_tbl WHERE suid = "<exception>"'
@@ -438,23 +439,8 @@ class c_sqldb:
             self.conn.commit()
             self.has_changed = True
 
-    # remove ghost source
+    # remove ghost source, no need callback
     def del_ghost_by_sid(self, sid):
-        # del from keeper
-        sql = ('SELECT id, suid, fetch_date '
-               'FROM info_tbl '
-               'WHERE source_id = ?'
-               )
-        r = self.cursor.execute(sql, (sid,))
-
-        for i in r.fetchall():
-            _id = i[0]
-            _suid = i[1]
-            _fetch_date = i[2]
-
-            self.cb_remove(sid, _id, _fetch_date, _suid)
-        
-        # del from db
         sql = 'DELETE FROM info_tbl WHERE source_id = ?'
         self.cursor.execute(sql, (sid,))
 
@@ -462,88 +448,3 @@ class c_sqldb:
             self.conn.commit()
             self.has_changed = True
             print('%s有%d条幽灵数据被删除' % (sid, self.cursor.rowcount))
-            
-# =============== keeper ===============
-
-class c_keeper_item:
-    __slots__ = ('id', 'source_id', 'suid', 'fetch_date')
-    
-    def __init__(self, id, source_id, suid, fetch_date):
-        self.id = id
-        self.source_id = source_id
-        self.suid = suid
-        self.fetch_date = fetch_date
-        
-    def __lt__(self, other):
-        if self.fetch_date != other.fetch_date:
-            return self.fetch_date > other.fetch_date
-        
-        return self.id > other.id
-    
-    def __eq__(self, other):
-        return self.id == other.id and \
-               self.fetch_date == other.fetch_date
-               
-# no need to reload file from disk when reloading configure
-class c_sqldb_keeper(c_sqldb):
-    def __init__(self, tempfs_dir=''):
-        super().__init__(tempfs_dir)
-        
-        self.full_list = None
-        self.exception_dic = dict()
-        
-    def set_callbacks(self, append, remove, add):
-        # for this layer
-        self.cb_append = self.callback_append_one_info
-        self.cb_remove = self.callback_remove_from_indexs
-        self.cb_add = self.callback_add_to_indexs
-        
-        # for db_wrapper
-        self.cb_append2 = append
-        self.cb_remove2 = remove
-        self.cb_add2 = add
-        
-    def callback_append_one_info(self, source_id, iid, fetch_date, suid):
-        item = c_keeper_item(iid, source_id, suid, fetch_date)
-        self.full_list.append(item)
-        
-        if suid == '<exception>':
-            self.exception_dic[source_id] = item
-        
-        self.cb_append2(source_id, iid, fetch_date, suid)
-    
-    def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
-        item = c_keeper_item(iid, source_id, suid, fetch_date)
-        p = bisect.bisect_left(self.full_list, item)
-        
-        del self.full_list[p]
-        
-        if suid == '<exception>':
-            del self.exception_dic[source_id]
-        
-        self.cb_remove2(source_id, iid, fetch_date, suid)
-    
-    def callback_add_to_indexs(self, source_id, iid, fetch_date, suid):
-        item = c_keeper_item(iid, source_id, suid, fetch_date)
-        bisect.insort_left(self.full_list, item)
-        
-        if suid == '<exception>':
-            self.exception_dic[source_id] = item
-        
-        self.cb_add2(source_id, iid, fetch_date, suid)
-    
-    def get_all_for_make_index(self):
-        # first load
-        if self.full_list == None:
-            self.full_list = list()
-            
-            # load data to build indexs
-            super().get_all_for_make_index()
-        # buffered load
-        else:
-            print('sqlite keeper: %d rows buffered' % len(self.full_list))
-            
-            for item in self.full_list:
-                self.cb_append2(item.source_id, item.id, 
-                                item.fetch_date, item.suid)
-

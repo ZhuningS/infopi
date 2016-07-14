@@ -179,7 +179,7 @@ class c_db_wrapper:
                  'cfg', 'listall')
 
     def __init__(self, tmpfs_path):
-        self.sqldb = c_sqldb_keeper(tmpfs_path)
+        self.sqldb = c_sqldb(tmpfs_path)
         self.sqldb.set_callbacks(self.callback_append_one_info,
                                  self.callback_remove_from_indexs,
                                  self.callback_add_to_indexs)
@@ -433,10 +433,6 @@ class c_db_wrapper:
 
     # remove from indexs
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
-        # pass ghost source
-        if source_id not in self.sources:
-            return
-        
         unit = c_index_unit(iid, fetch_date)
 
         # category indexs

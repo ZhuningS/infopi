@@ -302,7 +302,7 @@ class c_sqldb:
 
         print('sqlite: %d rows loaded' % count)    
 
-    # get one info by id
+    # get info by id list
     def get_info_by_iid_list(self, iid_lst):
         ret = []
         

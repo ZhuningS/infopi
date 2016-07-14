@@ -303,31 +303,34 @@ class c_sqldb:
         print('sqlite: %d rows loaded' % count)    
 
     # get one info by id
-    def get_info_by_iid(self, iid):
-        sql = ('SELECT * '
-               'FROM info_tbl '
-               'WHERE id = ?;'
-               )
-        self.cursor.execute(sql, (iid,))
-        row = self.cursor.fetchone()
-        if row == None:
-            return None
-
-        s = c_info()
+    def get_info_by_iid_list(self, iid_lst):
+        ret = []
         
-        s.id = row[0]
-        s.source_id = row[1]
-        s.suid = row[2]
-        s.fetch_date = row[3]
-
-        s.title = row[4]
-        s.url = row[5]
-
-        s.author = row[6]
-        s.summary = row[7]
-        s.pub_date = row[8]
-
-        return s
+        for iid in iid_lst:
+            sql = ('SELECT * '
+                   'FROM info_tbl '
+                   'WHERE id = ?;'
+                   )
+            self.cursor.execute(sql, (iid,))
+            row = self.cursor.fetchone()
+    
+            s = c_info()
+            
+            s.id = row[0]
+            s.source_id = row[1]
+            s.suid = row[2]
+            s.fetch_date = row[3]
+    
+            s.title = row[4]
+            s.url = row[5]
+    
+            s.author = row[6]
+            s.summary = row[7]
+            s.pub_date = row[8]
+            
+            ret.append(s)
+            
+        return ret
 
     # 转为info
     def get_infos_function(self, sql, paras=()):

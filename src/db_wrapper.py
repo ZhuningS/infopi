@@ -433,14 +433,16 @@ class c_db_wrapper:
 
     # remove from indexs
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
-        # pass ghost source
-        if source_id not in self.sources:
+        try:
+            source = self.sources[source_id]
+        except:
+            # it's ghost source
             return
         
         unit = c_index_unit(iid, fetch_date)
 
         # category indexs
-        ucd = self.sources[source_id].user_cateset_dict
+        ucd = source.user_cateset_dict
         for user, cate_set in ucd.items():
             if suid != '<exception>' or self.users[user].show_exceptions:
                 for cate in cate_set:
@@ -608,12 +610,10 @@ class c_db_wrapper:
         allcount = len(index)
         end = min(offset+limit, len(index))
 
-        ret_list = list()
-        for i in range(offset, end):
-            info = self.sqldb.get_info_by_iid(index[i].iid)
-            
-            ret_list.append(info)
-
+        ret_list = self.sqldb.get_info_by_iid_list(
+                        index[i].iid for i in range(offset, end)
+                        )
+        
         return allcount, ret_list
 
     # get infos of a page
@@ -646,26 +646,20 @@ class c_db_wrapper:
         return self.get_infos(index, offset, limit)
 
     # get all exceptions
-    def get_all_exceptions(self):
-        lst = list()
-        for unit in self.exceptions_index:
-            info = self.sqldb.get_info_by_iid(unit.iid)
-            lst.append(info)
-
-        return lst
+    def get_all_exceptions(self):          
+        return self.sqldb.get_info_by_iid_list(
+                            i.iid for i in self.exceptions_index
+                            )
     
     # 所有异常信息的数目
     def get_all_exception_num(self):
         return len(self.exceptions_index)
     
     # get exceptions by username
-    def get_exceptions_by_username(self, username):
-        lst = list()
-        for unit in self.users[username].cate_indexlist_dict[-1]:
-            info = self.sqldb.get_info_by_iid(unit.iid)
-            lst.append(info)
-
-        return lst
+    def get_exceptions_by_username(self, username):   
+        return self.sqldb.get_info_by_iid_list(
+                i.iid for i in self.users[username].cate_indexlist_dict[-1]
+                )
     
     def get_exceptions_num_by_username(self, username):
         return len(self.users[username].cate_indexlist_dict[-1])

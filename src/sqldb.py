@@ -490,7 +490,6 @@ class c_sqldb_keeper(c_sqldb):
         super().__init__(tempfs_dir)
         
         self.full_list = None
-        self.exception_dic = dict()
         
     def set_callbacks(self, append, remove, add):
         # for this layer
@@ -506,29 +505,19 @@ class c_sqldb_keeper(c_sqldb):
     def callback_append_one_info(self, source_id, iid, fetch_date, suid):
         item = c_keeper_item(iid, source_id, suid, fetch_date)
         self.full_list.append(item)
-        
-        if suid == '<exception>':
-            self.exception_dic[source_id] = item
-        
+
         self.cb_append2(source_id, iid, fetch_date, suid)
     
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
         item = c_keeper_item(iid, source_id, suid, fetch_date)
         p = bisect.bisect_left(self.full_list, item)
-        
         del self.full_list[p]
-        
-        if suid == '<exception>':
-            del self.exception_dic[source_id]
         
         self.cb_remove2(source_id, iid, fetch_date, suid)
     
     def callback_add_to_indexs(self, source_id, iid, fetch_date, suid):
         item = c_keeper_item(iid, source_id, suid, fetch_date)
         bisect.insort_left(self.full_list, item)
-        
-        if suid == '<exception>':
-            self.exception_dic[source_id] = item
         
         self.cb_add2(source_id, iid, fetch_date, suid)
     

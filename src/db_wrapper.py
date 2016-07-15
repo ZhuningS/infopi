@@ -433,16 +433,14 @@ class c_db_wrapper:
 
     # remove from indexs
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
-        try:
-            source = self.sources[source_id]
-        except:
-            # it's ghost source
+        # it's ghost source
+        if source_id not in self.sources:
             return
         
         unit = c_index_unit(iid, fetch_date)
 
         # category indexs
-        ucd = source.user_cateset_dict
+        ucd = self.sources[source_id].user_cateset_dict
         for user, cate_set in ucd.items():
             if suid != '<exception>' or self.users[user].show_exceptions:
                 for cate in cate_set:

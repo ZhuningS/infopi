@@ -12,7 +12,7 @@ from datadefine import *
 from db_wrapper import *
 import wvars
 
-__all__ = ('DB_RESULT', 'c_sqldb_keeper')
+__all__ = ('c_sqldb_keeper',)
 
 class DB_RESULT(IntEnum):
     NO = 0
@@ -266,7 +266,20 @@ class c_sqldb:
 
             self.cb_add(one.source_id, one.id, one.fetch_date, one.suid)
 
-            return DB_RESULT.ADDED             
+            return DB_RESULT.ADDED
+    
+    # 添加info列表
+    # return: updated count
+    def add_info_list(self, lst_itr):
+        # add one by one
+        itr = (self.add_info(i) for i in lst_itr)
+        
+        # rows count
+        updated = sum(1 for i in itr 
+                          if i in {DB_RESULT.ADDED, DB_RESULT.UPDATED}
+                      )
+        
+        return updated
 
     #--------------------------
     #  获取info

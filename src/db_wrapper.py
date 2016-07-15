@@ -202,17 +202,11 @@ class c_db_wrapper:
     def add_infos(self, lst):
         if not lst:
             return
+        
+        itr = (i for i in lst[::-1] if i.source_id in self.sources)
+        updated = self.sqldb.add_info_list(itr)
 
-        # add one by one
-        res = [self.sqldb.add_info(i) \
-               for i in lst[::-1] \
-               if i.source_id in self.sources]
-
-        beep = sum(1 for i in res 
-                    if i in {DB_RESULT.ADDED, DB_RESULT.UPDATED}
-                    )
-
-        if beep:
+        if updated:
             print('database was added or updated')
             # 发出响声
             if winsound != None:

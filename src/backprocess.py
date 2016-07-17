@@ -55,7 +55,7 @@ def pre_process(users, all_source_dict, fetch_time_dict):
                                else 3600*sinfo[2]
                     interval = max(60, int(round(interval)))
 
-                    if sid not in run_source_dict:                       
+                    if sid not in run_source_dict:
                         # souce_id, interval, next_time
                         unit = m_task_ctrl.c_run_heap_unit(sid, 
                                                            interval, 
@@ -94,6 +94,8 @@ def pre_process(users, all_source_dict, fetch_time_dict):
         # next time & last fetch time
         if sid in d and d[sid].xml == unit.xml:
             next_time = d[sid].next_time
+            # fetch_time_dict may be None
+            # but if fetch_time_dict is None, sid must NOT in d
             last_fetch_time = fetch_time_dict[sid]
         else:
             next_time = boot_time + \
@@ -104,6 +106,7 @@ def pre_process(users, all_source_dict, fetch_time_dict):
         # push heap
         heapq.heappush(timer_heap, unit)
 
+        # for show
         for sinfo in sid_sinfolist_dict[sid]:
             sinfo[2] = unit.interval
             sinfo[6] = last_fetch_time

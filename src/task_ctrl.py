@@ -108,9 +108,9 @@ class c_task_controller:
         if source_id in self.running_map:
             del self.running_map[source_id]
 
+        # remove from running list
         for i, unit in enumerate(self.running_sorted_list):
-            if unit.source_id == source_id:                
-                # remove from running list
+            if unit.source_id == source_id:
                 del self.running_sorted_list[i]
                 break
 

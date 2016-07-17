@@ -404,7 +404,7 @@ class c_sqldb:
             self.conn.commit()
             self.has_changed = True
 
-    def del_exceptions_by_sid(self, source_id):
+    def del_exception_by_sid(self, source_id):
         # del exist from indexs
         sql = ('SELECT id, fetch_date '
                'FROM info_tbl '

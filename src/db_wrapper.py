@@ -537,7 +537,7 @@ class c_db_wrapper:
         for sid, fetch_date in lst:
             if sid in self.sources:
                 self.sources[sid].last_fetch_date = fetch_date
-                self.sqldb.del_exceptions_by_sid(sid)
+                self.sqldb.del_exception_by_sid(sid)
 
     def del_all_exceptions(self):
         self.sqldb.del_all_exceptions()

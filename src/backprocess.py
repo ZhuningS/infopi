@@ -26,7 +26,7 @@ c_fetcher = None
 # 2, make timer_heap
 # 3, print unable_source and unused_source
 def pre_process(users, all_source_dict, 
-                remember_time_dict):   
+                remember_time_dict):
     run_source_dict = dict()
     unable_source_list = list()
 
@@ -114,7 +114,7 @@ def pre_process(users, all_source_dict,
         # for show
         for sinfo in sid_sinfolist_dict[sid]:
             sinfo[2] = unit.interval
-            sinfo[6] = last_fetch_time
+            sinfo[6] = unit.last_fetch
 
 #     # print unused sources
 #     t_all_source = set(all_source_dict.keys())

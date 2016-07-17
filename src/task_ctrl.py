@@ -171,13 +171,14 @@ class c_task_controller:
             temp = heapq.heappop(self.timer_heap)
             temp.next_time += temp.interval
 
-            # for wrong start-up time
+            # fix wrong system start-up time
             if temp.next_time <= now_time:
                 if temp.source_id == 'db_process':
                     dbnext, dbinterval = get_db_process_time(self.gcfg)
                     temp.next_time = dbnext
                 else:
-                    temp.next_time = now_time + temp.interval
+                    temp.next_time = bvars.boot_time + \
+                      ((now_time-bvars.boot_time)//interval+1) * interval
 
             heapq.heappush(self.timer_heap, temp)
 

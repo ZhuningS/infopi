@@ -168,7 +168,7 @@ class c_user_cfg:
                         if current_category != None:
                             current_category.append([sid, level, interval,
                                                     'name', 'comment', 'link',
-                                                    'last_fetch'])
+                                                    0])
                         else:
                             s = '文件%s出现错误，缺少分类:\n%s'
                             print(s % (f_filename, line))

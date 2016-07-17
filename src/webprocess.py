@@ -768,9 +768,7 @@ def panel():
                 db.backup_db()
 
             elif name == 'reload_data':
-                fetch_time_dict = db.get_sources_last_fetch()
-                c_message.make(web_back_queue, 'wb:request_load',
-                               data=fetch_time_dict)
+                c_message.make(web_back_queue, 'wb:request_load')
                 
             elif name == 'maintain_db':
                 db.db_process()
@@ -838,9 +836,7 @@ def panel():
 
                 print('.zip has been extracted')
                 
-                fetch_time_dict = db.get_sources_last_fetch()
-                c_message.make(web_back_queue, 'wb:request_load',
-                               data=fetch_time_dict)
+                c_message.make(web_back_queue, 'wb:request_load')
 
     show_exceptions = db.should_show_exceptions(username)
     db_file, db_size = db.get_current_file()
@@ -973,11 +969,21 @@ def check_bw_queue():
             break
         
         if msg.token == wvars.cfg_token:
-            if msg.command == 'bw:send_infos':
-                db.add_infos(msg.data)
+            if msg.command == 'bw:success_infos':
+                # [sid, fetch_time, info list]
+                db.success_infos(msg.data[0],
+                                 msg.data[1],
+                                 msg.data[2])
+                # feedback
+                c_message.make(web_back_queue, 'wb:source_updated',
+                               wvars.cfg_token,
+                               msg.data[:2]) # [sid, fetch_time]
     
-            elif msg.command == 'bw:source_finished':
-                db.source_finished(msg.data)
+            elif msg.command == 'bw:exception_info':
+                # [sid, fetch_time, einfo list]
+                db.exception_info(msg.data[0],
+                                  msg.data[1],
+                                  msg.data[2])
     
             elif msg.command == 'bw:db_process_time':
                 db.db_process()

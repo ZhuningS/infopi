@@ -3,6 +3,7 @@
 import bisect
 import collections
 import time
+import datetime
 import hashlib
 
 try:
@@ -214,6 +215,24 @@ class c_db_wrapper:
                     winsound.Beep(350, 300)
                 except:
                     pass
+    
+    # 成功获取列表
+    def success_infos(self, sid, fetch_time, lst):
+        # fetch time
+        fetch_date_str = datetime.datetime.\
+                         fromtimestamp(fetch_time).\
+                         strftime('%m-%d %H:%M')
+        self.sources[sid].last_fetch_date = fetch_date_str
+        
+        # remove exception
+        self.sqldb.del_exception_by_sid(sid)
+        
+        # add infos
+        self.add_infos(lst)
+    
+    # 出现异常
+    def exception_info(self, sid, fetch_time, einfo_lst):
+        self.add_infos(einfo_lst)
 
     def add_one_user(self, cfg, user):
         # create user_table
@@ -268,8 +287,11 @@ class c_db_wrapper:
                     st.name = source_tuple[3]
                     st.comment = source_tuple[4]
                     st.link = source_tuple[5]
-                    if source_tuple[6] != '':
-                        st.last_fetch_date = source_tuple[6]
+                    if source_tuple[6] != 0:
+                        fetch_date_str = datetime.datetime.\
+                                         fromtimestamp(source_tuple[6]).\
+                                         strftime('%m-%d %H:%M')
+                        st.last_fetch_date = fetch_date_str
                     #print(st.name, st.comment)
 
                 # source_table.user_cateset_dict
@@ -535,12 +557,6 @@ class c_db_wrapper:
     def get_current_file(self):
         return self.sqldb.get_current_file()
 
-    def source_finished(self, lst):
-        for sid, fetch_date in lst:
-            if sid in self.sources:
-                self.sources[sid].last_fetch_date = fetch_date
-                self.sqldb.del_exception_by_sid(sid)
-
     def del_all_exceptions(self):
         self.sqldb.del_all_exceptions()
 
@@ -661,12 +677,6 @@ class c_db_wrapper:
     # 此用户是否显示异常信息
     def should_show_exceptions(self, username):
         return self.users[username].show_exceptions
-    
-    # 得到信息源的最后获取时间
-    def get_sources_last_fetch(self):
-        d = {sid:source.last_fetch_date 
-                for sid, source in self.sources.items()}
-        return d
 
     # ----------- for login --------------
 

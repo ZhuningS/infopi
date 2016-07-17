@@ -26,7 +26,7 @@ c_fetcher = None
 # 2, make timer_heap
 # 3, print unable_source and unused_source
 def pre_process(users, all_source_dict, 
-                remember_time_dict, fetch_time_dict):   
+                remember_time_dict):   
     run_source_dict = dict()
     unable_source_list = list()
 
@@ -91,18 +91,22 @@ def pre_process(users, all_source_dict,
     timer_heap = list()
     
     for sid, unit in run_source_dict.items():
-        # next time & last fetch time
-        if sid in remember_time_dict and remember_time_dict[sid].xml == unit.xml:
-            next_time = remember_time_dict[sid].next_time
-            # fetch_time_dict may be None.
-            # but if fetch_time_dict is None, sid must 
-            # NOT in remember_time_dict.
-            last_fetch_time = fetch_time_dict[sid]
+        # next time
+        if sid in remember_time_dict and \
+           remember_time_dict[sid].xml == unit.xml:
+            if remember_time_dict[sid].temp_next_time != 0:
+                next_time = remember_time_dict[sid].temp_next_time
+            else:
+                next_time = remember_time_dict[sid].next_time
+            last_fetch_time = remember_time_dict[sid].last_fetch
         else:
             next_time = boot_time + \
               ((now_time-boot_time) // interval) * interval
-            last_fetch_time = ''
+            last_fetch_time = 0
+        
+        # update unit
         unit.next_time = next_time
+        unit.last_fetch = last_fetch_time
         
         # push heap
         heapq.heappush(timer_heap, unit)
@@ -163,7 +167,7 @@ def main_process(version, web_port, https, tmpfs_path,
                  web_back_queue, back_web_queue):
 
     def load_config_sources_users(web_port, https, tmpfs_path, 
-                                  remember_time_dict, fetch_time_dict):
+                                  remember_time_dict):
         # check cfg directory exist?
         config_path = os.path.join(bvars.root_path, 'cfg')
         if not os.path.isdir(config_path):
@@ -189,8 +193,7 @@ def main_process(version, web_port, https, tmpfs_path,
 
         # pre process
         timer_heap, user_list = pre_process(user_list, bvars.sources, 
-                                            remember_time_dict,
-                                            fetch_time_dict)
+                                            remember_time_dict)
         
         # config token
         cfg_token = int(time.time())
@@ -276,7 +279,12 @@ def main_process(version, web_port, https, tmpfs_path,
         elif msg.command == 'bb:source_return' and \
              msg.token == bvars.cfg_token:
             # msg.data is sourcd_id
-            ctrl.task_finished(msg.data)
+            ctrl.task_finished(msg.data[0], msg.data[1])
+            
+        # web端成功添加
+        elif msg.command == 'wb:source_updated' and \
+             msg.token == bvars.cfg_token:
+            ctrl.web_updated(msg.data[0], msg.data[1])
 
         # 运行sources
         elif msg.command == 'wb:request_fetch':
@@ -294,10 +302,9 @@ def main_process(version, web_port, https, tmpfs_path,
             # remember next_time
             remember_time_dict = ctrl.remember_nexttime_dict()
             
-            # msg.data is a dict {sid:last_fetch} or None
             cfg_token, timer_heap, user_list = \
                 load_config_sources_users(web_port, https, tmpfs_path,
-                                          remember_time_dict, msg.data)
+                                          remember_time_dict)
             
             # clear remember
             remember_time_dict.clear()

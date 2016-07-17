@@ -61,6 +61,7 @@ def worker_starter(runcfg, source_id):
         #print('线程开始：%s' % source.source_id)
 
         int_time = int(time.time())
+        is_exception = True
 
         try:
             if worker == None:
@@ -142,23 +143,15 @@ def worker_starter(runcfg, source_id):
                     newlst.append(one)
 
             lst = newlst
-
-            # remove existing exception
-            fetch_date_str = datetime.datetime.\
-                fromtimestamp(int_time).\
-                strftime('%m-%d %H:%M')
-
-            c_message.make(back_web_queue,
-                           'bw:source_finished',
-                           cfg_token,
-                           [(source.source_id, fetch_date_str)])
+            
+            is_exception = False
 
         finally:
             # 通知执行结束
             c_message.make(bb_queue,
                            'bb:source_return',
                            cfg_token,
-                           source.source_id
+                           [source.source_id, int_time]
                            )
             
             if not lst:
@@ -197,10 +190,17 @@ def worker_starter(runcfg, source_id):
                 i.summary = for_wz(i.summary)
                 i.pub_date = for_wz(i.pub_date)
 
-            c_message.make(back_web_queue,
-                           'bw:send_infos',
-                           cfg_token,
-                           lst)
+            data = [source.source_id, int_time, lst]
+            if is_exception:
+                c_message.make(back_web_queue,
+                               'bw:exception_info',
+                               cfg_token,
+                               data)
+            else:
+                c_message.make(back_web_queue,
+                               'bw:success_infos',
+                               cfg_token,
+                               data)
 
         #print('线程结束：%s' % source.source_id)        
 

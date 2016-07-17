@@ -10,13 +10,17 @@ import bvars
 import worker_manage
 
 class c_run_heap_unit:
-    __slots__ = ('source_id', 'interval', 'next_time', 'xml')
+    __slots__ = ('source_id', 'interval', 'next_time', 
+                 'xml', 'last_fetch', 'temp_next_time')
 
     def __init__(self, source_id, interval, next_time, xml):
         self.source_id = source_id
         self.interval = interval
         self.next_time = next_time
+        
         self.xml = xml
+        self.last_fetch = 0
+        self.temp_next_time = 0
 
     def __lt__(self, other):
         if self.next_time < other.next_time:
@@ -78,6 +82,8 @@ class c_task_controller:
     def set_data(self, gcfg, timer_heap):
         self.gcfg = gcfg
         self.timer_heap = timer_heap
+        
+        self.sid_unit_dic = {u.source_id:u for u in timer_heap}
 
         # database process timer
         if self.timer_heap != None:
@@ -97,17 +103,18 @@ class c_task_controller:
         self.queue_set.clear()
         self.queue_deque.clear()
 
-    def task_finished(self, source_id):
+    def task_finished(self, source_id, fetch_time):
         # remove from running
         if source_id in self.running_map:
             del self.running_map[source_id]
 
         for i, unit in enumerate(self.running_sorted_list):
-            if unit.source_id == source_id:
+            if unit.source_id == source_id:                
+                # remove from running list
                 del self.running_sorted_list[i]
                 break
 
-        self.fresh_job()   
+        self.fresh_job()
 
     def fresh_job(self):
         now_time = int(time.time())
@@ -169,6 +176,7 @@ class c_task_controller:
         while now_time >= self.timer_heap[0].next_time:
             # timer heap
             temp = heapq.heappop(self.timer_heap)
+            temp.temp_next_time = temp.next_time
             temp.next_time += temp.interval
 
             # fix wrong system start-up time
@@ -220,6 +228,10 @@ class c_task_controller:
                 print('任务%s超时' % temp_source_id)
         if mark:
             self.fresh_job()
+            
+    def web_updated(self, sid, fetch_time):
+        self.sid_unit_dic[sid].temp_next_time = 0
+        self.sid_unit_dic[sid].last_fetch = fetch_time
     
     # remember nexttime of running source
     def remember_nexttime_dict(self):
@@ -229,7 +241,7 @@ class c_task_controller:
         if self.timer_heap != None:
             for unit in self.timer_heap:
                 d[unit.source_id] = unit
-                    
+        
         return d
 
     def get_status_str(self):

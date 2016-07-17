@@ -1,5 +1,6 @@
 # coding=utf-8
 import os
+import time
 
 # source_id -> source
 sources = dict()
@@ -20,3 +21,10 @@ bb_queue = None
 
 root_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(root_path)
+
+# boot time
+boot_time = int(time.time())
+
+# rememver next_time of running source
+remember_time_dict = None
+

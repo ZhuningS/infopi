@@ -3,6 +3,7 @@
 from enum import IntEnum
 import os
 import time
+import datetime
 import codecs
 
 from red import red
@@ -24,15 +25,12 @@ class c_runcfg:
         self.pub_date_len = 50
 
 class c_config:
-    s_boot_time = None
-
     def __init__(self):
         self.version = ''
 
-        if not c_config.s_boot_time:
-            c_config.s_boot_time = time.strftime('%Y-%m-%d %a %H:%M:%S')
-
-        self.boot_time = c_config.s_boot_time
+        self.boot_time = datetime.datetime.\
+                           fromtimestamp(bvars.boot_time).\
+                           strftime('%Y-%m-%d %a %H:%M:%S')
 
         # default values
         self.default_colperpage = 15

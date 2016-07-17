@@ -268,6 +268,8 @@ class c_db_wrapper:
                     st.name = source_tuple[3]
                     st.comment = source_tuple[4]
                     st.link = source_tuple[5]
+                    if source_tuple[6] != '':
+                        st.last_fetch_date = source_tuple[6]
                     #print(st.name, st.comment)
 
                 # source_table.user_cateset_dict
@@ -659,6 +661,12 @@ class c_db_wrapper:
     # 此用户是否显示异常信息
     def should_show_exceptions(self, username):
         return self.users[username].show_exceptions
+    
+    # 得到信息源的最后获取时间
+    def get_sources_last_fetch(self):
+        d = {sid:source.last_fetch_date 
+                for sid, source in self.sources.items()}
+        return d
 
     # ----------- for login --------------
 

@@ -17,7 +17,8 @@ class c_source:
     __slots__ = ('source_id',
                  'name', 'comment', 'link',
                  'worker_id', 'data',
-                 'callback')
+                 'callback',
+                 'xml')
     def __init__(self):
         self.source_id = ''
 
@@ -29,6 +30,8 @@ class c_source:
         self.data = None
 
         self.callback = None
+        
+        self.xml = ''
 
 
 temp_dict = None
@@ -124,6 +127,9 @@ def load_xml(sources_path, path, filename):
         # callback
         if s.callback == None:
             s.callback = temp_dict[father].callback
+            
+    # xml content
+    s.xml = string
 
     # add to dict
     temp_dict[short_fn] = s

@@ -10,12 +10,13 @@ import bvars
 import worker_manage
 
 class c_run_heap_unit:
-    __slots__ = ('source_id', 'interval', 'next_time')
+    __slots__ = ('source_id', 'interval', 'next_time', 'xml')
 
-    def __init__(self, source_id, interval, next_time):
+    def __init__(self, source_id, interval, next_time, xml):
         self.source_id = source_id
         self.interval = interval
         self.next_time = next_time
+        self.xml = xml
 
     def __lt__(self, other):
         if self.next_time < other.next_time:
@@ -83,7 +84,8 @@ class c_task_controller:
             dbnext, dbinterval = get_db_process_time(gcfg)
             db_unit = c_run_heap_unit('db_process',
                                       dbinterval,
-                                      dbnext)
+                                      dbnext,
+                                      '')
             heapq.heappush(self.timer_heap, db_unit)
 
         # clear
@@ -217,6 +219,16 @@ class c_task_controller:
                 print('任务%s超时' % temp_source_id)
         if mark:
             self.fresh_job()
+    
+    # remember nexttime of running source
+    def remember_nexttime_dict(self):
+        d = dict()
+        
+        if self.timer_heap != None:
+            for unit in self.timer_heap:
+                d[unit.source_id] = unit
+        
+        return d
 
     def get_status_str(self):
         s = ('timer heap length: %d<br>'

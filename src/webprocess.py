@@ -768,7 +768,9 @@ def panel():
                 db.backup_db()
 
             elif name == 'reload_data':
-                c_message.make(web_back_queue, 'wb:request_load')
+                fetch_time_dict = db.get_sources_last_fetch()
+                c_message.make(web_back_queue, 'wb:request_load',
+                               data=fetch_time_dict)
                 
             elif name == 'maintain_db':
                 db.db_process()

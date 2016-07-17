@@ -28,7 +28,7 @@ class c_user_cfg:
         # 组织结构列表
         # 列表的元素为tuple: (category, <list>)
         # <list>的元素为list: 
-        # [sid, level, interval, name, comment, link]
+        # [sid, level, interval, name, comment, link, last_fetch]
         self.category_list = list()
 
     @staticmethod
@@ -167,7 +167,8 @@ class c_user_cfg:
 
                         if current_category != None:
                             current_category.append([sid, level, interval,
-                                                    'name', 'comment', 'link'])
+                                                    'name', 'comment', 'link',
+                                                    'last_fetch'])
                         else:
                             s = '文件%s出现错误，缺少分类:\n%s'
                             print(s % (f_filename, line))

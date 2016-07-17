@@ -25,7 +25,8 @@ c_fetcher = None
 # 1, append (name, comment, link) to source_info of user_table
 # 2, make timer_heap
 # 3, print unable_source and unused_source
-def pre_process(users, all_source_dict, fetch_time_dict):   
+def pre_process(users, all_source_dict, 
+                remember_time_dict, fetch_time_dict):   
     run_source_dict = dict()
     unable_source_list = list()
 
@@ -85,17 +86,17 @@ def pre_process(users, all_source_dict, fetch_time_dict):
                     
     # for next_time
     boot_time = bvars.boot_time
-    d = bvars.remember_time_dict
 
     # make running heap
     timer_heap = list()
     
     for sid, unit in run_source_dict.items():
         # next time & last fetch time
-        if sid in d and d[sid].xml == unit.xml:
-            next_time = d[sid].next_time
-            # fetch_time_dict may be None
-            # but if fetch_time_dict is None, sid must NOT in d
+        if sid in remember_time_dict and remember_time_dict[sid].xml == unit.xml:
+            next_time = remember_time_dict[sid].next_time
+            # fetch_time_dict may be None.
+            # but if fetch_time_dict is None, sid must 
+            # NOT in remember_time_dict.
             last_fetch_time = fetch_time_dict[sid]
         else:
             next_time = boot_time + \
@@ -161,7 +162,8 @@ def import_files():
 def main_process(version, web_port, https, tmpfs_path,
                  web_back_queue, back_web_queue):
 
-    def load_config_sources_users(web_port, https, tmpfs_path, fetch_time_dict):
+    def load_config_sources_users(web_port, https, tmpfs_path, 
+                                  remember_time_dict, fetch_time_dict):
         # check cfg directory exist?
         config_path = os.path.join(bvars.root_path, 'cfg')
         if not os.path.isdir(config_path):
@@ -186,7 +188,9 @@ def main_process(version, web_port, https, tmpfs_path,
         print('back-side loaded %d users' % len(user_list))
 
         # pre process
-        timer_heap, user_list = pre_process(user_list, bvars.sources, fetch_time_dict)
+        timer_heap, user_list = pre_process(user_list, bvars.sources, 
+                                            remember_time_dict,
+                                            fetch_time_dict)
         
         # config token
         cfg_token = int(time.time())
@@ -288,14 +292,15 @@ def main_process(version, web_port, https, tmpfs_path,
         # load config, users
         elif msg.command == 'wb:request_load':
             # remember next_time
-            bvars.remember_time_dict = ctrl.remember_nexttime_dict()
+            remember_time_dict = ctrl.remember_nexttime_dict()
             
+            # msg.data is a dict {sid:last_fetch} or None
             cfg_token, timer_heap, user_list = \
                 load_config_sources_users(web_port, https, tmpfs_path,
-                                          msg.data)
+                                          remember_time_dict, msg.data)
             
             # clear remember
-            bvars.remember_time_dict.clear()
+            remember_time_dict.clear()
 
             # 加载cfg文件夹失败
             if cfg_token == None:

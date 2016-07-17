@@ -837,7 +837,10 @@ def panel():
                     return '无法复制cfg目录' + str(e)
 
                 print('.zip has been extracted')
-                c_message.make(web_back_queue, 'wb:request_load')
+                
+                fetch_time_dict = db.get_sources_last_fetch()
+                c_message.make(web_back_queue, 'wb:request_load',
+                               data=fetch_time_dict)
 
     show_exceptions = db.should_show_exceptions(username)
     db_file, db_size = db.get_current_file()

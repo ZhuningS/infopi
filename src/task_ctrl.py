@@ -225,10 +225,11 @@ class c_task_controller:
     def remember_nexttime_dict(self):
         d = dict()
         
+        # in heap
         if self.timer_heap != None:
             for unit in self.timer_heap:
                 d[unit.source_id] = unit
-        
+                    
         return d
 
     def get_status_str(self):

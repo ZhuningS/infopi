@@ -436,19 +436,18 @@ class c_sqldb:
         if not lst:
             return
         
+        # callback
         sql1 = 'SELECT suid FROM info_tbl WHERE id = ?'
-        sql2 = 'DELETE FROM info_tbl WHERE id = ?'
 
         for _sid, _id, _fetch_date in lst[::-1]:
-            # sql1
             r = self.cursor.execute(sql1, (_id,))
             suid = r.fetchone()[0]
             
-            # callback
             self.cb_remove(_sid, _id, _fetch_date, suid)
-            
-            # sql2
-            self.cursor.execute(sql2, (_id,))
+                        
+        # remove from db
+        sql2 = 'DELETE FROM info_tbl WHERE id = ?'
+        self.cursor.executemany(sql2, ((id,) for _,id,_ in lst[::-1]))
 
         if self.cursor.rowcount > 0:
             self.conn.commit()

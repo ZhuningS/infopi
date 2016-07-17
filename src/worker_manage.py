@@ -151,7 +151,7 @@ def worker_starter(runcfg, source_id):
             c_message.make(bb_queue,
                            'bb:source_return',
                            cfg_token,
-                           [source.source_id, int_time]
+                           source.source_id
                            )
             
             if not lst:

@@ -156,7 +156,6 @@ def worker_starter(runcfg, source_id):
             
             if not lst:
                 print('%s获得的列表为空' % source.source_id)
-                return
 
             # 处理内容
             for i in lst:

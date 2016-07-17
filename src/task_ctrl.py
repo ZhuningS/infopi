@@ -103,7 +103,7 @@ class c_task_controller:
         self.queue_set.clear()
         self.queue_deque.clear()
 
-    def task_finished(self, source_id, fetch_time):
+    def task_finished(self, source_id):
         # remove from running
         if source_id in self.running_map:
             del self.running_map[source_id]

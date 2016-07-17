@@ -278,8 +278,8 @@ def main_process(version, web_port, https, tmpfs_path,
         # source执行完毕
         elif msg.command == 'bb:source_return' and \
              msg.token == bvars.cfg_token:
-            # msg.data is [source_id, fetch_time]
-            ctrl.task_finished(msg.data[0], msg.data[1])
+            # msg.data is source_id
+            ctrl.task_finished(msg.data)
             
         # web端成功添加
         elif msg.command == 'wb:source_updated' and \

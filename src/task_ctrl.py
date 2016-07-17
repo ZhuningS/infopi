@@ -82,17 +82,21 @@ class c_task_controller:
     def set_data(self, gcfg, timer_heap):
         self.gcfg = gcfg
         self.timer_heap = timer_heap
-        
-        self.sid_unit_dic = {u.source_id:u for u in timer_heap}
 
         # database process timer
         if self.timer_heap != None:
+            # dict: sid -> unit
+            self.sid_unit_dic = {u.source_id:u for u in timer_heap}
+            
+            # push heap: db process
             dbnext, dbinterval = get_db_process_time(gcfg)
             db_unit = c_run_heap_unit('db_process',
                                       dbinterval,
                                       dbnext,
                                       '')
             heapq.heappush(self.timer_heap, db_unit)
+        else:
+            self.sid_unit_dic = dict()
 
         # clear
         self.temp_fetch_list.clear()

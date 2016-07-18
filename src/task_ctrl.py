@@ -192,7 +192,8 @@ class c_task_controller:
                     temp.next_time = dbnext
                 else:
                     temp.next_time = bvars.boot_time + \
-                      ((now_time-bvars.boot_time)//interval+1) * interval
+                      ((now_time-bvars.boot_time)//temp.interval+1) * \
+                        temp.interval
 
             heapq.heappush(self.timer_heap, temp)
 

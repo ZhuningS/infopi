@@ -425,7 +425,8 @@ def general_index(page_type):
         # fetch my sources
         elif usertype > 0 and name == 'fetch_mine':
             lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
+            c_message.make(web_back_queue, 'wb:request_fetch',
+                           wvars.cfg_token, lst)
 
     # category list
     category_list = db.get_category_list_by_username(username)
@@ -592,7 +593,8 @@ def general_pad2(category, pagenum, p_type):
         # fetch my sources
         elif usertype > 0 and name == 'fetch_mine':
             lst = db.get_fetch_list_by_user(username)
-            c_message.make(web_back_queue, 'wb:request_fetch', 0, lst)
+            c_message.make(web_back_queue, 'wb:request_fetch',
+                           wvars.cfg_token, lst)
 
     # category list
     category_list = db.get_category_list_by_username(username)
@@ -661,7 +663,8 @@ def cate_info():
         sid = db.get_sid_by_encoded(username, name)
         if not sid:
             return '请求的信息源列表url有误：<br>' + name
-        c_message.make(web_back_queue, 'wb:request_fetch', 0, [sid])
+        c_message.make(web_back_queue, 'wb:request_fetch',
+                       wvars.cfg_token, [sid])
 
     show_list = db.get_forshow_by_user(username)
     all_s_num, set_s_num = db.get_sourcenum_by_user(username)
@@ -756,7 +759,8 @@ def panel():
 
             # 更新所有
             elif name == 'fetch_all':
-                c_message.make(web_back_queue, 'wb:request_fetch')
+                c_message.make(web_back_queue, 'wb:request_fetch',
+                               wvars.cfg_token)
 
             # 删除所有异常
             elif name == 'del_except':
@@ -778,7 +782,7 @@ def panel():
             if db.is_valid_sid(sid):
                 c_message.make(web_back_queue,
                                'wb:request_fetch',
-                               0, 
+                               wvars.cfg_token, 
                                [sid]
                                )
 

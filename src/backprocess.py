@@ -274,27 +274,26 @@ def main_process(version, web_port, https, tmpfs_path,
                 except:
                     pass
 
-        # source执行完毕
-        elif msg.command == 'bb:source_return' and \
-             msg.token == bvars.cfg_token:
-            # msg.data is source_id
-            ctrl.task_finished(msg.data)
-            
-        # web端成功添加
-        elif msg.command == 'wb:source_updated' and \
-             msg.token == bvars.cfg_token:
-            ctrl.web_updated(msg.data[0], msg.data[1])
+        elif msg.token == bvars.cfg_token:
+            # source执行完毕
+            if msg.command == 'bb:source_return':
+                # msg.data is source_id
+                ctrl.task_finished(msg.data)
+                
+            # web端成功添加
+            elif msg.command == 'wb:source_updated':
+                ctrl.web_updated(msg.data[0], msg.data[1])
 
-        # 运行sources
-        elif msg.command == 'wb:request_fetch':
-            #print('web side request fetch')
-            
-            # 挂起 或 无信息源
-            if not fetch_all:
-                continue
-
-            # 运行source
-            ctrl.fetch(fetch_all if msg.data == None else msg.data)
+            # 运行sources
+            elif msg.command == 'wb:request_fetch':
+                #print('web side request fetch')
+                
+                # 挂起 或 无信息源
+                if not fetch_all:
+                    continue
+    
+                # 运行source
+                ctrl.fetch(fetch_all if msg.data == None else msg.data)
 
         # load config, users
         elif msg.command == 'wb:request_load':

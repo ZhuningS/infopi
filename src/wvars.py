@@ -1,7 +1,7 @@
 # coding=utf-8
 import os
 
-cfg_token = 0
+cfg_token = -1
 
 static_folder = 'static'
 template_folder = 'templates'

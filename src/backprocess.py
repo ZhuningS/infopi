@@ -273,28 +273,7 @@ def main_process(version, web_port, https, tmpfs_path,
                     request_web_check()
                 except:
                     pass
-
-        elif msg.token == bvars.cfg_token:
-            # source执行完毕
-            if msg.command == 'bb:source_return':
-                # msg.data is source_id
-                ctrl.task_finished(msg.data)
                 
-            # web端成功添加
-            elif msg.command == 'wb:source_updated':
-                ctrl.web_updated(msg.data[0], msg.data[1])
-
-            # 运行sources
-            elif msg.command == 'wb:request_fetch':
-                #print('web side request fetch')
-                
-                # 挂起 或 无信息源
-                if not fetch_all:
-                    continue
-    
-                # 运行source
-                ctrl.fetch(fetch_all if msg.data == None else msg.data)
-
         # load config, users
         elif msg.command == 'wb:request_load':
             # ctrl.remember_nexttime_dict() return a dict
@@ -322,6 +301,27 @@ def main_process(version, web_port, https, tmpfs_path,
                            'bw:send_config_users',
                            cfg_token,
                            [cfg_token, gcfg, user_list])
+
+        elif msg.token == bvars.cfg_token:
+            # source执行完毕
+            if msg.command == 'bb:source_return':
+                # msg.data is source_id
+                ctrl.task_finished(msg.data)
+                
+            # web端成功添加
+            elif msg.command == 'wb:source_updated':
+                ctrl.web_updated(msg.data[0], msg.data[1])
+
+            # 运行sources
+            elif msg.command == 'wb:request_fetch':
+                #print('web side request fetch')
+                
+                # 挂起 或 无信息源
+                if not fetch_all:
+                    continue
+    
+                # 运行source
+                ctrl.fetch(fetch_all if msg.data == None else msg.data)
             
         else:
             print('back can not handle:', msg.command, msg.token)

@@ -26,7 +26,7 @@ c_fetcher = None
 # 2, make timer_heap
 # 3, print unable_source and unused_source
 def pre_process(users, all_source_dict, 
-                remember_time_dict):
+                remember_dic):
     run_source_dict = dict()
     unable_source_list = list()
 
@@ -90,17 +90,26 @@ def pre_process(users, all_source_dict,
     # make running heap
     timer_heap = list()
     
+    # make heap & remembered
     for sid, unit in run_source_dict.items():
-        # next time & last fetch time
-        if sid in remember_time_dict and \
-           remember_time_dict[sid].xml == unit.xml:
-            if remember_time_dict[sid].temp_next_time != 0:
-                next_time = remember_time_dict[sid].temp_next_time
+        if sid in remember_dic and \
+           remember_dic[sid].xml == unit.xml:
+            # next time
+            if remember_dic[sid].interval == unit.interval:
+                next_time = remember_dic[sid].temp_next_time \
+                            if remember_dic[sid].temp_next_time != 0 \
+                            else remember_dic[sid].next_time
             else:
-                next_time = remember_time_dict[sid].next_time
-            last_fetch_time = remember_time_dict[sid].last_fetch
+                next_time = boot_time+\
+                            ((now_time-boot_time)//unit.interval)*\
+                            unit.interval
+            
+            # last fetch time
+            last_fetch_time = remember_dic[sid].last_fetch
         else:
-            next_time = boot_time+((now_time-boot_time)//interval)*interval
+            next_time = boot_time+\
+                        ((now_time-boot_time)//unit.interval)*\
+                        unit.interval
             last_fetch_time = 0
         
         # update unit

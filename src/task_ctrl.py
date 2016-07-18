@@ -66,6 +66,8 @@ class c_task_controller:
         self.timer_heap = None
 
         self.temp_fetch_list = list()
+        # dict: sid -> unit
+        self.sid_unit_dic = dict()
 
         # 运行中--------------------
         # key:source_id, value:start time
@@ -80,6 +82,8 @@ class c_task_controller:
         self.queue_deque = collections.deque()
 
     def set_data(self, gcfg, timer_heap):
+        self.sid_unit_dic.clear()
+        
         self.gcfg = gcfg
         self.timer_heap = timer_heap
 
@@ -95,8 +99,6 @@ class c_task_controller:
                                       dbnext,
                                       '')
             heapq.heappush(self.timer_heap, db_unit)
-        else:
-            self.sid_unit_dic = dict()
 
         # clear
         self.temp_fetch_list.clear()
@@ -237,16 +239,9 @@ class c_task_controller:
         self.sid_unit_dic[sid].temp_next_time = 0
         self.sid_unit_dic[sid].last_fetch = fetch_time
     
-    # remember nexttime of running source
-    def remember_nexttime_dict(self):
-        d = dict()
-        
-        # in heap
-        if self.timer_heap != None:
-            for unit in self.timer_heap:
-                d[unit.source_id] = unit
-        
-        return d
+    # remember next_time & last_fetch for next cfg
+    def remember_nexttime_dict(self):       
+        return self.sid_unit_dic
 
     def get_status_str(self):
         s = ('timer heap length: %d<br>'

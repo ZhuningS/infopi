@@ -91,7 +91,7 @@ def pre_process(users, all_source_dict,
     timer_heap = list()
     
     for sid, unit in run_source_dict.items():
-        # next time
+        # next time & last fetch time
         if sid in remember_time_dict and \
            remember_time_dict[sid].xml == unit.xml:
             if remember_time_dict[sid].temp_next_time != 0:
@@ -100,8 +100,7 @@ def pre_process(users, all_source_dict,
                 next_time = remember_time_dict[sid].next_time
             last_fetch_time = remember_time_dict[sid].last_fetch
         else:
-            next_time = boot_time + \
-              ((now_time-boot_time) // interval) * interval
+            next_time = boot_time+((now_time-boot_time)//interval)*interval
             last_fetch_time = 0
         
         # update unit
@@ -299,15 +298,13 @@ def main_process(version, web_port, https, tmpfs_path,
 
         # load config, users
         elif msg.command == 'wb:request_load':
-            # remember next_time
-            remember_time_dict = ctrl.remember_nexttime_dict()
-            
+            # ctrl.remember_nexttime_dict() return a dict
+            # which remember next_time & last_fetch for next cfg.
+            # this dict will be cleared in ctrl.set_data() when
+            # loading a good cfg.
             cfg_token, timer_heap, user_list = \
                 load_config_sources_users(web_port, https, tmpfs_path,
-                                          remember_time_dict)
-            
-            # clear remember
-            remember_time_dict.clear()
+                                          ctrl.remember_nexttime_dict())
 
             # 加载cfg文件夹失败
             if cfg_token == None:

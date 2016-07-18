@@ -85,7 +85,7 @@ def load_xml(sources_path, path, filename):
     try:
         xml = ET.fromstring(string)
     except Exception as e:
-        s = ('解析信息源XML文件失败, %s:%s\n'
+        s = ('解析信息源XML文件失败,请检查格式 %s:%s\n'
              '异常:%s\n'
              '如果XML中出现如下字符，请转义替换:\n'
              '  &替换成&amp;\n'
@@ -127,9 +127,12 @@ def load_xml(sources_path, path, filename):
         # callback
         if s.callback == None:
             s.callback = temp_dict[father].callback
-            
-    # xml content
-    s.xml = string
+        
+        # father + xml
+        s.xml = temp_dict[father].xml + string
+    else:
+        # xml content
+        s.xml = string
 
     # add to dict
     temp_dict[short_fn] = s

@@ -11,7 +11,7 @@ import worker_manage
 
 class c_run_heap_unit:
     __slots__ = ('source_id', 'interval', 'next_time', 
-                 'xml', 'last_fetch', 'temp_next_time')
+                 'xml', 'last_fetch_str', 'temp_next_time')
 
     def __init__(self, source_id, interval, next_time, xml):
         self.source_id = source_id
@@ -19,7 +19,7 @@ class c_run_heap_unit:
         self.next_time = next_time
         
         self.xml = xml
-        self.last_fetch = 0
+        self.last_fetch_str = ''
         self.temp_next_time = 0
 
     def __lt__(self, other):
@@ -236,9 +236,9 @@ class c_task_controller:
         if mark:
             self.fresh_job()
             
-    def web_updated(self, sid, fetch_time):
+    def web_updated(self, sid, fetch_time_str):
         self.sid_unit_dic[sid].temp_next_time = 0
-        self.sid_unit_dic[sid].last_fetch = fetch_time
+        self.sid_unit_dic[sid].last_fetch_str = fetch_time_str
     
     # remember next_time & last_fetch for next cfg
     def remember_nexttime_dict(self):       

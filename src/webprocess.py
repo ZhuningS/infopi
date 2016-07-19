@@ -974,20 +974,18 @@ def check_bw_queue():
         
         if msg.token == wvars.cfg_token:
             if msg.command == 'bw:success_infos':
-                # [sid, fetch_time, info list]
+                # [sid, fetch_time_str, info list]
                 db.success_infos(msg.data[0],
                                  msg.data[1],
                                  msg.data[2])
                 # feedback
                 c_message.make(web_back_queue, 'wb:source_updated',
                                wvars.cfg_token,
-                               msg.data[:2]) # [sid, fetch_time]
+                               msg.data[:2]) # [sid, fetch_time_str]
     
             elif msg.command == 'bw:exception_info':
-                # [sid, fetch_time, einfo list]
-                db.exception_info(msg.data[0],
-                                  msg.data[1],
-                                  msg.data[2])
+                # msg.data is [einfo]
+                db.exception_info(msg.data)
     
             elif msg.command == 'bw:db_process_time':
                 db.db_process()

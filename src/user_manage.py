@@ -28,7 +28,7 @@ class c_user_cfg:
         # 组织结构列表
         # 列表的元素为tuple: (category, <list>)
         # <list>的元素为list: 
-        # [sid, level, interval, name, comment, link, last_fetch:int]
+        # [sid, level, interval, name, comment, link, last_fetch_str]
         self.category_list = list()
 
     @staticmethod

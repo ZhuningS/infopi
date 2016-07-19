@@ -105,16 +105,16 @@ def pre_process(users, all_source_dict,
                             unit.interval
             
             # last fetch time
-            last_fetch_time = remember_dic[sid].last_fetch
+            last_fetch_time = remember_dic[sid].last_fetch_str
         else:
             next_time = boot_time+\
                         ((now_time-boot_time)//unit.interval)*\
                         unit.interval
-            last_fetch_time = 0
+            last_fetch_time = ''
         
         # update unit
         unit.next_time = next_time
-        unit.last_fetch = last_fetch_time
+        unit.last_fetch_str = last_fetch_time
         
         # push heap
         heapq.heappush(timer_heap, unit)
@@ -122,7 +122,7 @@ def pre_process(users, all_source_dict,
         # for show
         for sinfo in sid_sinfolist_dict[sid]:
             sinfo[2] = unit.interval
-            sinfo[6] = unit.last_fetch
+            sinfo[6] = unit.last_fetch_str
 
 #     # print unused sources
 #     t_all_source = set(all_source_dict.keys())

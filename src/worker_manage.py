@@ -189,13 +189,16 @@ def worker_starter(runcfg, source_id):
                 i.summary = for_wz(i.summary)
                 i.pub_date = for_wz(i.pub_date)
 
-            data = [source.source_id, int_time, lst]
             if is_exception:
                 c_message.make(back_web_queue,
                                'bw:exception_info',
                                cfg_token,
-                               data)
+                               lst)
             else:
+                fetch_date_str = datetime.datetime.\
+                                 fromtimestamp(int_time).\
+                                 strftime('%m-%d %H:%M')
+                data = [source.source_id, fetch_date_str, lst]
                 c_message.make(back_web_queue,
                                'bw:success_infos',
                                cfg_token,

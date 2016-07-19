@@ -3,7 +3,6 @@
 import bisect
 import collections
 import time
-import datetime
 import hashlib
 
 try:
@@ -217,12 +216,9 @@ class c_db_wrapper:
                     pass
     
     # 成功获取列表
-    def success_infos(self, sid, fetch_time, lst):
+    def success_infos(self, sid, fetch_time_str, lst):
         # fetch time
-        fetch_date_str = datetime.datetime.\
-                         fromtimestamp(fetch_time).\
-                         strftime('%m-%d %H:%M')
-        self.sources[sid].last_fetch_date = fetch_date_str
+        self.sources[sid].last_fetch_date = fetch_time_str
         
         # remove exception
         self.sqldb.del_exception_by_sid(sid)
@@ -231,7 +227,7 @@ class c_db_wrapper:
         self.add_infos(lst)
     
     # 出现异常
-    def exception_info(self, sid, fetch_time, einfo_lst):
+    def exception_info(self, einfo_lst):
         self.add_infos(einfo_lst)
 
     def add_one_user(self, cfg, user):
@@ -287,11 +283,8 @@ class c_db_wrapper:
                     st.name = source_tuple[3]
                     st.comment = source_tuple[4]
                     st.link = source_tuple[5]
-                    if source_tuple[6] != 0:
-                        fetch_date_str = datetime.datetime.\
-                                         fromtimestamp(source_tuple[6]).\
-                                         strftime('%m-%d %H:%M')
-                        st.last_fetch_date = fetch_date_str
+                    if source_tuple[6]:
+                        st.last_fetch_date = source_tuple[6]
                     #print(st.name, st.comment)
 
                 # source_table.user_cateset_dict

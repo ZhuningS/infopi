@@ -322,7 +322,7 @@ class c_db_wrapper:
         ut.sid_list = list(ut.sid_level_dict.keys())
 
         # for show
-        for cate, sid_lst in ut.cate_list:
+        for i, (cate, sid_lst) in enumerate(ut.cate_list):
             temp_lst = list()
 
             for sid in sid_lst:
@@ -357,7 +357,7 @@ class c_db_wrapper:
                 # count appeared source number
                 ut.appeared_source_num += 1
 
-            ut.show_list.append( (cate, temp_lst) )
+            ut.show_list.append( (i, cate, temp_lst) )
 
         #print('显示列表 %d' % len(ut.show_list))
 
@@ -588,6 +588,14 @@ class c_db_wrapper:
             return self.encoded_sid[(username, encoded)]
         except:
             return ''
+        
+    def get_cate_list_for_fetch(self, username, cate_idx):
+        try:
+            _, _, lst = self.users[username].show_list[int(cate_idx)]
+        except:
+            return None
+        
+        return [one.source.source_id for one in lst]            
         
     def is_valid_sid(self, sid):
         return sid in self.sources

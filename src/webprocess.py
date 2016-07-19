@@ -660,12 +660,21 @@ def cate_info():
     
     if request.method == 'POST' and usertype > 0:
         name = request.form.get('name')
-        sid = db.get_sid_by_encoded(username, name)
-        if not sid:
-            return '请求的信息源列表url有误：<br>' + name
-        c_message.make(web_back_queue, 'wb:request_fetch',
-                       wvars.cfg_token, [sid])
-
+        if name:
+            sid = db.get_sid_by_encoded(username, name)
+            if not sid:
+                return '请求的信息源列表url有误：<br>' + name
+            c_message.make(web_back_queue, 'wb:request_fetch',
+                           wvars.cfg_token, [sid])
+        else:
+            cate = request.form.get('cate')
+            if cate:
+                lst = db.get_cate_list_for_fetch(username, cate)
+                if lst == None:
+                    return '请求的分类列表有误：<br>' + cate
+                c_message.make(web_back_queue, 'wb:request_fetch',
+                               wvars.cfg_token, lst)
+    
     show_list = db.get_forshow_by_user(username)
     all_s_num, set_s_num = db.get_sourcenum_by_user(username)
 

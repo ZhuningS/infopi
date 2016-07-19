@@ -32,19 +32,20 @@ td{border:1px solid}
 <span style="float:left">
 	<font color=#FFFFFF>{{usertype}}</font>
 	<font color=#99FFFF>{{username}}</font>
-	<button name="name" value="logout">退出登录</button>
+	<button name="name" value="logout">退出</button>
 </span>
 <span style="float:right">
 {%- if allowfetch -%}
-	<button name="name" value="fetch_mine">更新我的源</button>
+	<button name="name" value="fetch_mine">全部更新</button>
 {%- endif %}
 	<button name="name" value="switch">
 {%- if landscape -%}
-切换到竖屏版
+竖屏版
 {%- else -%}
-切换到横屏版
+横屏版
 {%- endif -%}
 	</button>
+	<a href='/cateinfo' class='a'>版块信息</a>
 	<a href='/' class='a'>电脑版</a>
 </span>
 </form>

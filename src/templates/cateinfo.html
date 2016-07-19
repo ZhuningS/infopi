@@ -45,7 +45,7 @@ a{TEXT-DECORATION:none}
 		<td class="hd">最近有效刷新</td>
 		<td class="hd">查看列表</td>
 	</tr>
-{% for cate, lst in show_list %}
+{% for i, cate, lst in show_list %}
 	<tr bgcolor="#cc99cc"><td>{{cate}}</td><td></td><td></td><td></td><td></td><td></td></tr>
 {%- for one in lst %}
 	<tr>

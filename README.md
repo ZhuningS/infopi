@@ -9,7 +9,7 @@ InfoPi的定位是**个人信息收集服务器**。
     从网页抓取信息，需要用到正则表达式，通常学习1-2天即可入门，2-4周可熟练掌握。
 
 
-点击[这里](http://wjssz.hopto.org:5000/)可以试用，用户名lishi，密码不用填。  
+点击[这里](http://wjssz.hopto.org:5000/)可以试用，用户名demo，密码不用填。  
 教程、文档见此博客：[http://www.cnblogs.com/infopi/](http://www.cnblogs.com/infopi/)  
 反馈交流帖子：[http://tieba.baidu.com/p/3315855755](http://tieba.baidu.com/p/3315855755)
 

@@ -7,11 +7,12 @@ import bvars
 import workers
 
 import source_manage
-source_manage.load_sources()
-
 from worker_manage import test_source
 
 def find_idle():
+    # load sources
+    source_manage.load_sources()
+
     # load users config
     from user_manage import c_user_cfg
     user_list = c_user_cfg.load_users()
@@ -43,33 +44,47 @@ def find_idle():
         print('{0:<14}{1}'.format(p2, name))
 
 def main():
-    if len(sys.argv) == 2:
-        arg = sys.argv[1]
+    # test a source
+    if len(sys.argv) == 2 and ':' in sys.argv[1]:
+        # load sources
+        source_manage.load_sources()
         
-        # it's source
-        if ':' in arg:
-            if arg in bvars.sources:
-                test_source(arg)
-            else:
-                print('没有加载信息源%s' % arg)
-                
-        # find idle sources
-        elif arg.lower() == 'idle':
-            find_idle()
-    
+        if sys.argv[1] in bvars.sources:
+            test_source(sys.argv[1])
+        else:
+            print('没有加载信息源%s' % sys.argv[1])
+            
     # test cfg
-    elif len(sys.argv) == 1:
-        print('正在尝试加载全局配置文件、用户配置文件，以下是尝试结果：')
-        
+    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'cfg':       
         # global config
         from gconfig import load_config
         load_config()
         
-        print()
-        
+        # load sources
+        source_manage.load_sources()
+                
         # users config
         from user_manage import c_user_cfg
         c_user_cfg.load_users()
+        
+    # find idle sources
+    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'idle':
+        find_idle()
+        
+    else:
+        s = '''\
+使用方法：
+
+./test_source.py cate:source
+测试某个指定的信息源
+
+./test_source.py cfg
+尝试加载config.ini、加载所有信息源、加载所有用户配置
+
+./test_source.py idle
+罗列未被直接使用的信息源
+'''
+        print(s)
 
 if __name__ == '__main__':
     main()

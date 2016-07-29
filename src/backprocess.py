@@ -72,10 +72,12 @@ def pre_process(users, all_source_dict,
                         sid_sinfolist_dict[sid] = list()
                     sid_sinfolist_dict[sid].append(sinfo)
                 else:
-                    # (name, comment, link) of source info
+                    # interval, name, comment, link, last_fetch
+                    sinfo[2] *= 3600
                     sinfo[3] = '<未加载>'
                     sinfo[4] = '无法找到或无法加载%s的xml文件' % sid
                     sinfo[5] = ''
+                    sinfo[6] = ''
 
                     s = ('用户:%s 版块:%s\n'
                          'source_id为%s的信息源定义不存在\n'

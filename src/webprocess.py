@@ -464,6 +464,18 @@ def general_index(page_type):
 def left():
     return general_index(DV_TYPE.COMPUTER)
 
+@web.route('/ajax_exception')
+def ajax_exception():
+    username = check_cookie()
+    if not username:
+        return jump_to_login
+    
+    ec = db.get_exceptions_num_by_username(username)
+    if ec == 0:
+        return ''
+    
+    return '%d条异常信息<br>' % ec
+
 @web.route('/m', methods=['GET', 'POST'])
 def mobile():
     return general_index(DV_TYPE.MOBILE)

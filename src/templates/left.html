@@ -1,9 +1,11 @@
 <!DOCTYPE html><html>
 <head>
 	<meta charset="UTF-8">
+	<script src="/static/jquery-3.1.0.min.js"></script>
 	<style>
 		a{text-decoration:none; color:#FFFFEF}
 		a:hover{color: #FFFF00}
+		.ea{color:#ccccff}
 	</style>
 </head>
 <body bgcolor="#336633">
@@ -14,6 +16,7 @@
 <a href='/list/{{category|urlencode}}' target='show'>{{category}}</a><br>
 {%- endfor %}
 	<hr>
+	<div id="enumber" class="ea"></div>
 	<form action="/left" method="post">
 		<font color=#FFFFFF>{{usertype}}</font>
 		<font color=#99FFFF>{{username}}</font><br>
@@ -28,5 +31,14 @@
 	<br><a href='/pad0' target='_top'>PAD版</a>
 	<br><a href='/p' target='_top'>大屏手机版</a>
 	<br><a href='/m' target='_top'>手机版</a>
+<script type="text/javascript">
+function ajaxCall() {
+	$.get("/ajax_exception", function(result){
+		$("#enumber").html(result);
+	});
+}
+
+setInterval(ajaxCall, 300000);
+</script>
 </body>
 </html>

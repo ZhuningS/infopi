@@ -24,5 +24,3 @@ root_path = os.path.dirname(root_path)
 
 # boot time
 boot_time = int(time.time())
-
-

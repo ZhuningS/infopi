@@ -6,8 +6,9 @@ from red import *
 
 import bvars
 
+
 class c_user_cfg:
-    __slots__ = ('username', 'password', 
+    __slots__ = ('username', 'password',
                  'col_per_page', 'col_per_page_pad',
                  'col_per_page_bigmobile',
                  'usertype', 'show_exceptions', 'category_list')
@@ -21,13 +22,13 @@ class c_user_cfg:
 
         # 0:public, 1:normal, 2:admin
         self.usertype = 1
-        
+
         # 是否显示异常信息
         self.show_exceptions = True
 
         # 组织结构列表
         # 列表的元素为tuple: (category, <list>)
-        # <list>的元素为list: 
+        # <list>的元素为list:
         # [sid, level, interval, name, comment, link, last_fetch_str]
         self.category_list = list()
 
@@ -41,13 +42,13 @@ class c_user_cfg:
             fpath = os.path.join(users_path, item)
             if os.path.isfile(fpath) and \
                item.lower().endswith('.txt'):
-                    user_cfg = c_user_cfg.parse_cfg(cfg, fpath, item)
-                    if user_cfg:
-                        user_cfg_list.append(user_cfg)
+                user_cfg = c_user_cfg.parse_cfg(cfg, fpath, item)
+                if user_cfg:
+                    user_cfg_list.append(user_cfg)
 
         print('载入了%d个用户' % len(user_cfg_list))
         return user_cfg_list
-                 
+
     @staticmethod
     def parse_cfg(cfg, f_fullpath, f_filename):
 
@@ -70,8 +71,8 @@ class c_user_cfg:
             print('文件%s解码失败，请确保是utf-8编码。' % f_filename,
                   '(有没有BOM无所谓)\n', str(e), '\n')
             return None
-       
-        # to \n 
+
+        # to \n
         text = text.replace('\r\n', '\n')
         text = text.replace('\r', '\n')
 
@@ -143,7 +144,7 @@ class c_user_cfg:
                 m = re_category.search(line)
                 if m:
                     category_name = m.group(1).strip().replace('/', '\\')
-                    user.category_list.append( (category_name, list()) )
+                    user.category_list.append((category_name, list()))
                     current_category = user.category_list[-1][1]
 
                 else:
@@ -154,7 +155,7 @@ class c_user_cfg:
                         level = int(m.group(2))
                         if level not in {0, 1, 2}:
                             level = 0
-                            
+
                         try:
                             interval = eval(m.group(3))
                             if interval < 0:
@@ -167,8 +168,8 @@ class c_user_cfg:
 
                         if current_category != None:
                             current_category.append([sid, level, interval,
-                                                    'name', 'comment', 'link',
-                                                    'last_fetch'])
+                                                     'name', 'comment', 'link',
+                                                     'last_fetch'])
                         else:
                             s = '文件%s出现错误，缺少分类:\n%s'
                             print(s % (f_filename, line))
@@ -176,7 +177,7 @@ class c_user_cfg:
                     else:
                         s = '\n文件%s出现错误，格式有误\n%s\n'
                         print(s % (f_filename, line))
-        
+
         if cfg:
             if user.col_per_page == -1:
                 user.col_per_page = cfg.default_colperpage

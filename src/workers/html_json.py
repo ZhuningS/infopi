@@ -13,6 +13,7 @@ from datadefine import *
 
 __all__ = ()
 
+
 def item_process(text):
     text = str(text)
 
@@ -29,44 +30,45 @@ def item_process(text):
 
     return text
 
+
 def parse_html(data_dict, base_url, html):
     if not html:
         raise c_worker_exception('html为空字符串', data_dict['url'], '')
-    
+
     r = red.d(r'^\s*$')
     if r.match(html) != None:
         raise c_worker_exception('html只有空白', data_dict['url'], '')
-    
+
     # extract json string
     re = red.d(data_dict['re_pattern'], data_dict['re_flags'])
     if re == None:
         raise c_worker_exception('正则表达式编译失败',
                                  '',
                                  '用于提取json字符串的正则表达式编译失败')
-    
+
     m = re.search(html)
     if m == None:
-        raise c_worker_exception('无法用re(正则表达式)提取json字符', 
-                                 data_dict['url'], 
+        raise c_worker_exception('无法用re(正则表达式)提取json字符',
+                                 data_dict['url'],
                                  '')
     json_str = m.group(1)
-    
+
     # replace
     if 'repl' in data_dict:
         r = red.d(data_dict['repl_pattern'], data_dict['repl_flags'])
         if r == None:
             raise c_worker_exception('replace正则表达式编译失败')
-            
+
         json_str = r.sub(data_dict['repl'], json_str)
 
     # parse json
     try:
         json_obj = json.loads(json_str)
     except Exception as e:
-        raise c_worker_exception('解析json时出错', 
-                                 data_dict['url'], 
+        raise c_worker_exception('解析json时出错',
+                                 data_dict['url'],
                                  str(e))
-    
+
     # blocks
     json_lst = data_dict['blocks_list']
     ret = list()
@@ -76,7 +78,7 @@ def parse_html(data_dict, base_url, html):
         # travel path
         path = block[0]
         block_j = json_obj
-        
+
         # path必定为tuple
         for ii, path_item in enumerate(path):
             try:
@@ -84,10 +86,10 @@ def parse_html(data_dict, base_url, html):
             except:
                 s = '第%d个block, block_path的第%d个路径元素%s无效'
                 raise c_worker_exception(
-                    s % (i+1, ii+1, str(path_item)), 
-                    data_dict['url'], 
+                    s % (i + 1, ii + 1, str(path_item)),
+                    data_dict['url'],
                     'path:%s 可能是网站改变了json的设计结构' % str(path)
-                    )
+                )
 
         # extract
         if type(block_j) == list:
@@ -97,24 +99,25 @@ def parse_html(data_dict, base_url, html):
         else:
             s = '第%d个block, block_path找到的不是列表或字典'
             raise c_worker_exception(
-                    s % (i+1), 
-                    data_dict['url'], 
-                    'path:%s 可能是网站改变了json的设计结构' % str(path)
-                    )
+                s % (i + 1),
+                data_dict['url'],
+                'path:%s 可能是网站改变了json的设计结构' % str(path)
+            )
 
         for block_item_j in block_j:
             info = c_info()
 
             for key, sub_path in block[1].items():
-                
+
                 temp_jj = block_item_j
                 for sub_path_item in sub_path:
                     try:
                         temp_jj = temp_jj[sub_path_item]
                     except:
-                        s1 = '处理第%d个block的映射时异常' % (i+1)
+                        s1 = '处理第%d个block的映射时异常' % (i + 1)
                         s2 = 'path:%s,key:%s,map:%s,无法找到指定元素%s.' % \
-                             (str(path), key, str(sub_path), str(sub_path_item))
+                             (str(path), key, str(sub_path),
+                              str(sub_path_item))
                         raise c_worker_exception(s1, '', s2)
                 ss = item_process(temp_jj)
 
@@ -141,7 +144,7 @@ def parse_html(data_dict, base_url, html):
                     info.suid = info.url
 
             ret.append(info)
-     
+
     return ret
 
 
@@ -157,6 +160,7 @@ def download_process(data_dict, worker_dict):
 
     return parse_html(data_dict, url, string)
 
+
 def process_multiline(string):
     ret = ''
 
@@ -165,6 +169,7 @@ def process_multiline(string):
         ret += line.strip()
 
     return ret
+
 
 def process_flags(string):
     def is_this(upper_flag, s1, s2):
@@ -198,6 +203,7 @@ def process_flags(string):
 
     return ret
 
+
 @dataparser('html_json')
 def html_json_parser(xml_string):
     d = dict()
@@ -209,23 +215,23 @@ def html_json_parser(xml_string):
 
         str_encoding = url_tag.attrib.get('encoding', '').strip()
         d['encoding'] = Fetcher.lookup_encoding(str_encoding)
-        
+
         str_errors = url_tag.attrib.get('errors', '').strip()
         d['errors'] = str_errors
-    
+
     # extract json string
     re_tag = data.find('re')
     if re_tag != None:
         d['re_pattern'] = process_multiline(re_tag.text)
         d['re_flags'] = process_flags(re_tag.attrib.get('flags', ''))
-        
+
     # replace
     replace_tag = data.find('replace')
     if replace_tag != None:
         replace_re_tag = replace_tag.find('re')
         d['repl_pattern'] = process_multiline(replace_re_tag.text)
         d['repl_flags'] = process_flags(replace_re_tag.attrib.get('flags', ''))
-        
+
         repl_tag = replace_tag.find('repl')
         d['repl'] = process_multiline(repl_tag.text)
 
@@ -240,7 +246,7 @@ def html_json_parser(xml_string):
             else:
                 s = '(' + path.text.strip() + ',)'
             path_value = eval(s)
-            
+
             map_dict = dict()
             for r in block.iter():
                 if r.tag != 'block' and r.tag != 'block_path':
@@ -251,7 +257,7 @@ def html_json_parser(xml_string):
                         if not str_urljoin:
                             map_dict['url'] = value
                         elif (str_urljoin.isdigit() and int(str_urljoin)) or \
-                            str_urljoin.lower() == 'true':
+                                str_urljoin.lower() == 'true':
                             map_dict['urljoin'] = value
                         else:
                             map_dict['url'] = value

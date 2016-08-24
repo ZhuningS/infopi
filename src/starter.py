@@ -3,6 +3,7 @@
 
 version = 'InfoPi v.2016-08-24a'
 
+
 def main():
     # -------------------
     #      import
@@ -27,32 +28,32 @@ def main():
     parser = argparse.ArgumentParser()
 
     # tmpfs
-    parser.add_argument('-t', '--tmpfs', 
+    parser.add_argument('-t', '--tmpfs',
                         type=str, help='内存临时文件夹',
                         metavar='路径',
                         default='',
-                        dest='tmpfs_path')    
+                        dest='tmpfs_path')
 
     # port
-    parser.add_argument('-p', '--port', 
+    parser.add_argument('-p', '--port',
                         type=int, help='使用的端口',
                         metavar='端口',
                         default=5000,
                         dest='web_port')
 
-    #certfile keyfile
-    parser.add_argument('-c', '--certfile', 
+    # certfile keyfile
+    parser.add_argument('-c', '--certfile',
                         type=str, help='证书文件，应位于程序根目录下',
                         metavar='文件名',
                         default='',
                         dest='certfile')
 
-    parser.add_argument('-k', '--keyfile', 
+    parser.add_argument('-k', '--keyfile',
                         type=str, help='密钥文件，应位于程序根目录下',
                         metavar='文件名',
                         default='',
                         dest='keyfile')
-    
+
     args = parser.parse_args()
 
     tmpfs_path = args.tmpfs_path
@@ -75,7 +76,7 @@ def main():
             pass
 
         # static/template dir
-        wvars.static_folder = os.path.join(tmpfs_path, 'static')        
+        wvars.static_folder = os.path.join(tmpfs_path, 'static')
         wvars.template_folder = os.path.join(tmpfs_path, 'templates')
         # copy folders
         shutil.copytree(get_src_subdir('static'), wvars.static_folder)
@@ -118,13 +119,13 @@ def main():
                                             tmpfs_path,
                                             web_back_queue,
                                             back_web_queue),
-                                      daemon = True
+                                      daemon=True
                                       )
     process.start()
 
     #-----------------
     # web process
-    #-----------------   
+    #-----------------
     from webprocess import run_web
     run_web(web_port, certfile, keyfile, tmpfs_path,
             web_back_queue, back_web_queue)

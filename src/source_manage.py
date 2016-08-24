@@ -13,12 +13,14 @@ __all__ = ('load_sources')
 
 sources = bvars.sources
 
+
 class c_source:
     __slots__ = ('source_id',
                  'name', 'comment', 'link',
                  'worker_id', 'data',
                  'callback',
                  'xml')
+
     def __init__(self):
         self.source_id = ''
 
@@ -30,11 +32,12 @@ class c_source:
         self.data = None
 
         self.callback = None
-        
+
         self.xml = ''
 
 
 temp_dict = None
+
 
 def load_xml(sources_path, path, filename):
     def get_text_from_tag(tag):
@@ -70,7 +73,7 @@ def load_xml(sources_path, path, filename):
     # lower and remove '.xml'
     lpath = path.lower()
     lfilename = filename.lower()
-    
+
     if len(lfilename) < 5 or lfilename[-4:] != '.xml':
         return
 
@@ -99,7 +102,7 @@ def load_xml(sources_path, path, filename):
     # load father first
     father = xml.attrib.get('father', '')
     if father and father not in temp_dict:
-        load_xml(sources_path, path, father+'.xml')
+        load_xml(sources_path, path, father + '.xml')
 
     # make source object
     s = c_source()
@@ -127,7 +130,7 @@ def load_xml(sources_path, path, filename):
         # callback
         if s.callback == None:
             s.callback = temp_dict[father].callback
-        
+
         # father + xml
         s.xml = temp_dict[father].xml + string
     else:
@@ -164,4 +167,3 @@ def load_sources():
     print('back-side loaded %d sources' % len(sources))
 
     del temp_dict
-

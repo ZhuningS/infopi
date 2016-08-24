@@ -9,6 +9,7 @@ import workers
 import source_manage
 from worker_manage import test_source
 
+
 def find_idle():
     # load sources
     source_manage.load_sources()
@@ -16,7 +17,7 @@ def find_idle():
     # load users config
     from user_manage import c_user_cfg
     user_list = c_user_cfg.load_users()
-    
+
     # add user used
     user_used = set()
     for user in user_list:
@@ -24,14 +25,14 @@ def find_idle():
             for item in lst:
                 # add sid
                 user_used.add(item[0])
-    
+
     # not used source
     not_used_lst = list()
     for sid, source in bvars.sources.items():
         if sid not in user_used:
             not_used_lst.append((sid, source.name))
     not_used_lst.sort(key=lambda tup: tup[0])
-    
+
     # print
     print('以下信息源未被用户直接使用，包括了未被直接使用的父信息源：')
     last = None
@@ -40,37 +41,38 @@ def find_idle():
         if last != p1:
             print('\n<%s>' % p1)
         last = p1
-        
+
         print('{0:<14}{1}'.format(p2, name))
+
 
 def main():
     # test a source
     if len(sys.argv) == 2 and ':' in sys.argv[1]:
         # load sources
         source_manage.load_sources()
-        
+
         if sys.argv[1] in bvars.sources:
             test_source(sys.argv[1])
         else:
             print('没有加载信息源%s' % sys.argv[1])
-            
+
     # test cfg
-    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'cfg':       
+    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'cfg':
         # global config
         from gconfig import load_config
         load_config()
-        
+
         # load sources
         source_manage.load_sources()
-                
+
         # users config
         from user_manage import c_user_cfg
         c_user_cfg.load_users()
-        
+
     # find idle sources
     elif len(sys.argv) == 2 and sys.argv[1].lower() == 'idle':
         find_idle()
-        
+
     else:
         s = '''\
 使用方法：

@@ -23,23 +23,24 @@ class c_index_unit:
     def __lt__(self, other):
         if self.fetch_date != other.fetch_date:
             return self.fetch_date > other.fetch_date
-        
+
         return self.iid > other.iid
 
     def __eq__(self, other):
         return self.iid == other.iid and \
-               self.fetch_date == other.fetch_date
+            self.fetch_date == other.fetch_date
 
     def __ne__(self, other):
         return self.iid != other.iid or \
-               self.fetch_date != other.fetch_date
+            self.fetch_date != other.fetch_date
 
     def __str__(self):
         return str(self.iid) + ',' + str(self.fetch_date)
 
+
 class c_user_table:
-    __slots__ = ('username', 'password', 'up_hash', 
-                 'col_per_page', 'col_per_page_pad', 
+    __slots__ = ('username', 'password', 'up_hash',
+                 'col_per_page', 'col_per_page_pad',
                  'col_per_page_bigmobile', 'usertype', 'show_exceptions',
                  'sid_level_dict', 'sid_list',
                  'cate_list', 'cate_indexlist_dict',
@@ -76,8 +77,9 @@ class c_user_table:
         # 出现的信息源数目(包括重复的)
         self.appeared_source_num = 0
 
+
 class c_source_table:
-    __slots__ = ('source_id', 
+    __slots__ = ('source_id',
                  'name', 'comment', 'link', 'interval',
                  'user_cateset_dict', 'index_list', 'last_fetch_date')
 
@@ -95,15 +97,15 @@ class c_source_table:
 
         # 元素为c_index_unit
         self.index_list = list()
-        
+
         # last fetch_date
         self.last_fetch_date = '尚未刷新'
-        
+
     def last_date_distance(self):
         if len(self.index_list) > 0:
             t = self.index_list[0].fetch_date
             distance = int(time.time()) - t
-            
+
             if distance <= 24 * 3600:
                 return '1天内'
             elif distance <= 7 * 24 * 3600:
@@ -119,63 +121,68 @@ class c_source_table:
         else:
             return '尚无信息'
 
+
 class c_for_show:
     __slots__ = ('source',
                  'level_str', 'interval_str', 'encoded_url')
-    
+
     def __init__(self):
         self.source = None
 
         self.level_str = ''
         self.interval_str = ''
         self.encoded_url = ''
-        
+
+
 class c_for_listall:
     __slots__ = ('source',
                  'interval_str', 'userlist', 'color')
-    
+
     def __init__(self):
         self.source = None
-        
+
         self.interval_str = ''
         self.userlist = list()
         self.color = 0
-        
+
     def __lt__(self, other):
         if self.source.source_id < other.source.source_id:
             return True
         else:
             return False
-        
+
+
 def get_interval_str(interval):
     interval_str = ''
-    
-    if interval >= 24*3600:
-        interval_str += '%d天' % (interval//(24*3600))
-        interval = interval % (24*3600)
+
+    if interval >= 24 * 3600:
+        interval_str += '%d天' % (interval // (24 * 3600))
+        interval = interval % (24 * 3600)
 
     if interval >= 3600:
-        interval_str += '%d小时' % (interval//3600)
+        interval_str += '%d小时' % (interval // 3600)
         interval = interval % 3600
 
     if interval >= 60:
-        interval_str += '%d分钟' % (interval//60)
+        interval_str += '%d分钟' % (interval // 60)
         interval = interval % 60
-        
+
     if interval > 0:
         interval_str += '%d秒' % interval
-    
+
     return interval_str
+
 
 def hasher(string):
     hashobj = hashlib.md5()
     hashobj.update(string.encode('utf-8'))
     return hashobj.hexdigest()
 
+
 class c_db_wrapper:
-    __slots__ = ('sqldb', 
+    __slots__ = ('sqldb',
                  'users', 'sources', 'hash_user', 'encoded_sid',
-                 'ghost_sources', 'exceptions_index', 
+                 'ghost_sources', 'exceptions_index',
                  'cfg', 'listall')
 
     def __init__(self, tmpfs_path):
@@ -192,17 +199,17 @@ class c_db_wrapper:
 
         # sid
         self.ghost_sources = set()
-        
+
         # 元素为c_index_unit
         self.exceptions_index = list()
 
         self.cfg = None
         self.listall = None
-        
+
     def add_infos(self, lst):
         if not lst:
             return
-        
+
         itr = (i for i in lst[::-1] if i.source_id in self.sources)
         updated = self.sqldb.add_info_list(itr)
 
@@ -214,18 +221,18 @@ class c_db_wrapper:
                     winsound.Beep(350, 300)
                 except:
                     pass
-    
+
     # 成功获取列表
     def success_infos(self, sid, fetch_time_str, lst):
         # fetch time
         self.sources[sid].last_fetch_date = fetch_time_str
-        
+
         # remove exception
         self.sqldb.del_exception_by_sid(sid)
-        
+
         # add infos
         self.add_infos(lst)
-    
+
     # 出现异常
     def exception_info(self, einfo_lst):
         self.add_infos(einfo_lst)
@@ -249,7 +256,7 @@ class c_db_wrapper:
         ut.cate_indexlist_dict[2] = list()
         # exception infos
         ut.cate_indexlist_dict[-1] = list()
-        
+
         # temp dict for encoded_sid
         temp_sid_int_dic = dict()
 
@@ -260,7 +267,7 @@ class c_db_wrapper:
             ut.cate_indexlist_dict[now_cate] = list()
 
             # cate_list.cate
-            ut.cate_list.append( (cate_tuple[0], list()) )
+            ut.cate_list.append((cate_tuple[0], list()))
 
             for source_tuple in cate_tuple[1]:
                 now_sid = source_tuple[0]
@@ -273,7 +280,7 @@ class c_db_wrapper:
                     ut.sid_level_dict[now_sid] = source_tuple[1]
                 else:
                     ut.sid_level_dict[now_sid] = \
-                    max(ut.sid_level_dict[now_sid], source_tuple[1])
+                        max(ut.sid_level_dict[now_sid], source_tuple[1])
 
                 # sources table
                 st = self.sources.setdefault(now_sid, c_source_table())
@@ -328,7 +335,7 @@ class c_db_wrapper:
             for sid in sid_lst:
                 one = c_for_show()
                 source = self.sources[sid]
-                
+
                 # source ref
                 one.source = source
 
@@ -357,10 +364,9 @@ class c_db_wrapper:
                 # count appeared source number
                 ut.appeared_source_num += 1
 
-            ut.show_list.append( (i, cate, temp_lst) )
+            ut.show_list.append((i, cate, temp_lst))
 
         #print('显示列表 %d' % len(ut.show_list))
-
 
     def add_users(self, cfg, users_lst):
         # clear first
@@ -388,15 +394,15 @@ class c_db_wrapper:
             item.interval_str = get_interval_str(source.interval)
 
             tempd[source.source_id] = item
-            
+
         for user, ut in self.users.items():
             for sid in ut.sid_list:
                 tempd[sid].userlist.append(user)
-                
+
         # sort by source_id
         self.listall = [item for item in tempd.values()]
         self.listall.sort()
-        
+
         last_category = ''
         now_color = 2
         for item in self.listall:
@@ -419,7 +425,7 @@ class c_db_wrapper:
             # print and add to ghost
             if source_id not in self.ghost_sources:
                 s = 'datebase wrapper: %s is ghost source'
-                print(s % source_id)         
+                print(s % source_id)
                 self.ghost_sources.add(source_id)
             return
 
@@ -435,7 +441,7 @@ class c_db_wrapper:
         # source index
         sindex = self.sources[source_id].index_list
         sindex.append(unit)
-        
+
         # exception index
         if suid == '<exception>':
             self.exceptions_index.append(unit)
@@ -447,7 +453,7 @@ class c_db_wrapper:
         # it's ghost source
         if source_id not in self.sources:
             return
-        
+
         unit = c_index_unit(iid, fetch_date)
 
         # category indexs
@@ -456,7 +462,7 @@ class c_db_wrapper:
             if suid != '<exception>' or self.users[user].show_exceptions:
                 for cate in cate_set:
                     index = self.users[user].cate_indexlist_dict[cate]
-    
+
                     p = bisect.bisect_left(index, unit)
                     del index[p]
 
@@ -464,20 +470,20 @@ class c_db_wrapper:
         sindex = self.sources[source_id].index_list
         p = bisect.bisect_left(sindex, unit)
         del sindex[p]
-        
+
         # exception index
         if suid == '<exception>':
             sindex = self.exceptions_index
             p = bisect.bisect_left(sindex, unit)
             del sindex[p]
-            
+
             for user in ucd.keys():
                 sindex = self.users[user].cate_indexlist_dict[-1]
                 p = bisect.bisect_left(sindex, unit)
                 del sindex[p]
 
     # add to indexs
-    def callback_add_to_indexs(self, source_id, iid, fetch_date, suid):        
+    def callback_add_to_indexs(self, source_id, iid, fetch_date, suid):
         unit = c_index_unit(iid, fetch_date)
 
         # category indexs
@@ -491,14 +497,14 @@ class c_db_wrapper:
         # source index
         sindex = self.sources[source_id].index_list
         bisect.insort_left(sindex, unit)
-        
+
         # exception index
         if suid == '<exception>':
             bisect.insort_left(self.exceptions_index, unit)
-            
+
             for user in ucd.keys():
                 index = self.users[user].cate_indexlist_dict[-1]
-                bisect.insort_left(index, unit)                
+                bisect.insort_left(index, unit)
 
     # ----------- utility --------------
     def compact_db(self):
@@ -522,7 +528,8 @@ class c_db_wrapper:
                     tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
                     del_lst.extend(tuple_lst)
         else:
-            before_del = int(time.time())-self.cfg.db_process_del_days*24*3600
+            before_del = int(time.time()) - \
+                self.cfg.db_process_del_days * 24 * 3600
             tmp_unit = c_index_unit(0, before_del)
 
             for s in self.sources.values():
@@ -564,13 +571,13 @@ class c_db_wrapper:
     # return col_per_page
     def get_colperpage_by_user(self, username):
         return self.users[username].col_per_page
-    
+
     def get_colperpagepad_by_user(self, username):
         return self.users[username].col_per_page_pad
-    
+
     def get_colperpagebm_by_user(self, username):
         return self.users[username].col_per_page_bigmobile
-    
+
     def get_colperpagemobile(self):
         return self.cfg.mobile_colperpage
 
@@ -581,25 +588,25 @@ class c_db_wrapper:
     # for show
     def get_forshow_by_user(self, username):
         return self.users[username].show_list
-    
+
     # for show
     def get_sid_by_encoded(self, username, encoded):
         try:
             return self.encoded_sid[(username, encoded)]
         except:
             return ''
-        
+
     def get_cate_list_for_fetch(self, username, cate_idx):
         try:
             _, _, lst = self.users[username].show_list[int(cate_idx)]
         except:
             return None
-        
-        return [one.source.source_id for one in lst]            
-        
+
+        return [one.source.source_id for one in lst]
+
     def is_valid_sid(self, sid):
         return sid in self.sources
-    
+
     # listall
     def get_listall(self):
         return self.listall
@@ -607,7 +614,7 @@ class c_db_wrapper:
     # for cateinfo. all/unduplicated sources number
     def get_sourcenum_by_user(self, username):
         return self.users[username].appeared_source_num, \
-               len(self.users[username].sid_list)
+            len(self.users[username].sid_list)
 
     # get fetch list (sid)
     def get_fetch_list_by_user(self, username):
@@ -615,66 +622,66 @@ class c_db_wrapper:
 
     def get_usertype(self, username):
         return self.users[username].usertype
-    
+
     # 从('iid', 'fetch_date')索引获得数据
     def get_infos(self, index, offset, limit):
         allcount = len(index)
-        end = min(offset+limit, len(index))
+        end = min(offset + limit, len(index))
 
         ret_list = self.sqldb.get_info_by_iid_list(
-                        index[i].iid for i in range(offset, end)
-                        )
-        
+            index[i].iid for i in range(offset, end)
+        )
+
         return allcount, ret_list
 
     # get infos of a page
-    def get_infos_by_user_category(self, 
-                                   username, category, 
+    def get_infos_by_user_category(self,
+                                   username, category,
                                    offset, limit):
         try:
             index = self.users[username].cate_indexlist_dict[category]
         except:
             return None, None
-        
+
         return self.get_infos(index, offset, limit)
 
     # get infos of a source
     def get_infos_by_sid(self, username, sid, offset, limit):
         if sid not in self.users[username].sid_level_dict:
             return None, None
-        
+
         index = self.sources[sid].index_list
-        
+
         return self.get_infos(index, offset, limit)
-    
+
     # get all exceptions infos
     def get_infos_all_exceptions(self, offset, limit):
         return self.get_infos(self.exceptions_index, offset, limit)
-    
+
     # get user exceptions infos
     def get_infos_user_exception(self, username, offset, limit):
         index = self.users[username].cate_indexlist_dict[-1]
         return self.get_infos(index, offset, limit)
 
     # get all exceptions
-    def get_all_exceptions(self):          
+    def get_all_exceptions(self):
         return self.sqldb.get_info_by_iid_list(
-                            i.iid for i in self.exceptions_index
-                            )
-    
+            i.iid for i in self.exceptions_index
+        )
+
     # 所有异常信息的数目
     def get_all_exception_num(self):
         return len(self.exceptions_index)
-    
+
     # get exceptions by username
-    def get_exceptions_by_username(self, username):   
+    def get_exceptions_by_username(self, username):
         return self.sqldb.get_info_by_iid_list(
-                i.iid for i in self.users[username].cate_indexlist_dict[-1]
-                )
-    
+            i.iid for i in self.users[username].cate_indexlist_dict[-1]
+        )
+
     def get_exceptions_num_by_username(self, username):
         return len(self.users[username].cate_indexlist_dict[-1])
-    
+
     # 此用户是否显示异常信息
     def should_show_exceptions(self, username):
         return self.users[username].show_exceptions
@@ -705,16 +712,16 @@ class c_login_manager:
     # if one ip has tried RECENT_COUNT in the
     # last RECENT_TIME, then forbid login for FORBID_TIME
     # (unit of times are seconds)
-    RECENT_TIME = 3*60
+    RECENT_TIME = 3 * 60
     RECENT_COUNT = 4
-    FORBID_TIME = 10*60
+    FORBID_TIME = 10 * 60
     FAILED_LOGIN_ALARM = 50
 
     def __init__(self, write_weberr):
         # ip -> <list>
         # <list>: [next_time, deque(time)]
         self.ip_dict = dict()
-        
+
         self.fail_count = 0
         self.write_weberr = write_weberr
 
@@ -724,7 +731,7 @@ class c_login_manager:
         if ip in self.ip_dict and now_time < self.ip_dict[ip][0]:
             delta = self.ip_dict[ip][0] - now_time
             return False, '尝试登录次数太多，请于%d秒后再试' % delta
-        
+
         return True, ''
 
     def login_fail(self, ip):
@@ -741,21 +748,21 @@ class c_login_manager:
         # forbid ip?
         if len(self.ip_dict[ip][1]) >= c_login_manager.RECENT_COUNT:
             self.ip_dict[ip][0] = now_time + c_login_manager.FORBID_TIME
-            
+
             # msg & log
             msg = '您的IP地址因多次登录失败被暂时禁止登录。'
             e = Exception('IP地址%s因多次登录失败被暂时禁止登录。' % ip)
             self.write_weberr(e)
         else:
             msg = '无此用户或密码错误'
-            
+
         # all fail count
         self.fail_count += 1
         if self.fail_count % c_login_manager.FAILED_LOGIN_ALARM == 0:
-            e = Exception('程序启动以来，登录失败总数达到%d次。' % 
-                            self.fail_count)
+            e = Exception('程序启动以来，登录失败总数达到%d次。' %
+                          self.fail_count)
             self.write_weberr(e)
-            
+
         return msg
 
     def maintenace(self, now_time=None):
@@ -777,5 +784,3 @@ class c_login_manager:
 
         for ip in temp_lst:
             del self.ip_dict[ip]
-
-        

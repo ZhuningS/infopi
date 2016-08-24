@@ -13,6 +13,7 @@ from worker_manage import worker, dataparser
 from fetcher import *
 from datadefine import *
 
+
 def de_html_char(text):
     '''去掉html转义'''
 
@@ -32,30 +33,32 @@ def de_html_char(text):
     text = text.replace('\n', ' ')
     text = red.sub(r'\s{3,}', r'  ', text)
     text = text.strip()
-    
+
     return text
 
 
 # rss1.0, rss2.0, atom
 tagnames = {
-        'f_author': ('channel/title', 'channel/title', 'title'),
-        'f_items' : ('channel/item', 'channel/item', 'entry'),
-        
-        'title'   : ('title', 'title', 'title'),
-        'url'     : ('link', 'link', 'link'),
-        
-        'author'  : ('author', 'author', 'author'),
-        'summary' : ('description', 'description', 'summary'),
-        'pub_date': ('dc:date', 'pubDate', 'updated'),
-        
-        'guid'    : ('guid', 'guid', 'id')
-        }
+    'f_author': ('channel/title', 'channel/title', 'title'),
+    'f_items': ('channel/item', 'channel/item', 'entry'),
+
+    'title': ('title', 'title', 'title'),
+    'url': ('link', 'link', 'link'),
+
+    'author': ('author', 'author', 'author'),
+    'summary': ('description', 'description', 'summary'),
+    'pub_date': ('dc:date', 'pubDate', 'updated'),
+
+    'guid': ('guid', 'guid', 'id')
+}
 
 # parse xml
+
+
 def parse_xml(data_dict, xml):
     if not xml:
         raise c_worker_exception('xml为空字符串', data_dict['url'], '')
-    
+
     r = red.d(r'^\s*$')
     if r.match(xml) != None:
         raise c_worker_exception('xml只有空白', data_dict['url'], '')
@@ -63,9 +66,9 @@ def parse_xml(data_dict, xml):
     # remove namespace of atom
     xml = red.sub(r'''<feed\s+(?:"[^"]*"|'[^']*'|[^"'>])*>''',
                   r'<feed>',
-                  xml, 
+                  xml,
                   count=1,
-                  flags=red.IGNORECASE|red.A)
+                  flags=red.IGNORECASE | red.A)
 
     # ElementTree
     try:
@@ -84,10 +87,10 @@ def parse_xml(data_dict, xml):
             parser = etree.XMLParser(recover=True, encoding='utf-8')
             doc = etree.fromstring(xml.encode('utf-8'), parser=parser)
             print('使用lxml解析%s' % data_dict['url'])
-            
+
             if doc == None:
                 raise Exception('lxml模块也无法解析此XML')
-            
+
         except Exception as e:
             raise c_worker_exception('lxml解析XML失败',
                                      data_dict['url'],
@@ -116,7 +119,7 @@ def parse_xml(data_dict, xml):
     for item in item_iter:
         # ------- info -------
         one = c_info()
-        
+
         # title
         one.title = de_html_char(item.findtext(tagnames['title'][feedtype]))
 
@@ -134,16 +137,18 @@ def parse_xml(data_dict, xml):
                             break
                         url = url or tag_link.get('href')
         one.url = url
-        
+
         # author, summary, pub_date
         if 'use_feed_author' in data_dict:
             one.author = de_html_char(
-                            item.findtext(tagnames['author'][feedtype],
-                            f_author)
-                            )
-        one.summary = de_html_char(item.findtext(tagnames['summary'][feedtype]))
-        one.pub_date = de_html_char(item.findtext(tagnames['pub_date'][feedtype]))
-        
+                item.findtext(tagnames['author'][feedtype],
+                              f_author)
+            )
+        one.summary = de_html_char(
+            item.findtext(tagnames['summary'][feedtype]))
+        one.pub_date = de_html_char(
+            item.findtext(tagnames['pub_date'][feedtype]))
+
         # suid
         guid = item.findtext(tagnames['guid'][feedtype])
         one.suid = guid or one.url or one.title
@@ -153,6 +158,8 @@ def parse_xml(data_dict, xml):
     return ret
 
 # download and parse
+
+
 @worker('rss_atom')
 def download_process(data_dict, worker_dict):
     url = data_dict['url']
@@ -175,7 +182,7 @@ def rss_atom_parser(xml_string):
 
     str_encoding = url_tag.attrib.get('encoding', '').strip()
     d['encoding'] = Fetcher.lookup_encoding(str_encoding)
-    
+
     str_errors = url_tag.attrib.get('errors', '').strip()
     d['errors'] = str_errors
 

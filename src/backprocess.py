@@ -2,7 +2,7 @@
 
 import time
 import threading
-import queue  
+import queue
 import heapq
 import os
 
@@ -25,14 +25,16 @@ c_fetcher = None
 # 1, append (name, comment, link) to source_info of user_table
 # 2, make timer_heap
 # 3, print unable_source and unused_source
-def pre_process(users, all_source_dict, 
+
+
+def pre_process(users, all_source_dict,
                 remember_dic):
     run_source_dict = dict()
     unable_source_list = list()
 
     sid_sinfolist_dict = dict()
     now_time = int(time.time())
-    
+
     for user in users:
         for category, sinfo_list in user.category_list:
             for sinfo in sinfo_list:
@@ -52,14 +54,14 @@ def pre_process(users, all_source_dict,
 
                     # for timer_heap
                     interval = gcfg.default_source_interval \
-                               if sinfo[2] == 0 \
-                               else 3600*sinfo[2]
+                        if sinfo[2] == 0 \
+                        else 3600 * sinfo[2]
                     interval = max(60, int(round(interval)))
 
                     if sid not in run_source_dict:
                         # souce_id, interval, next_time
-                        unit = m_task_ctrl.c_run_heap_unit(sid, 
-                                                           interval, 
+                        unit = m_task_ctrl.c_run_heap_unit(sid,
+                                                           interval,
                                                            now_time,
                                                            xml)
                         run_source_dict[sid] = unit
@@ -84,14 +86,14 @@ def pre_process(users, all_source_dict,
                          )
                     print(s % (user.username, category, sid))
 
-                    unable_source_list.append( (user, category, sid) )
-                    
+                    unable_source_list.append((user, category, sid))
+
     # for next_time
     boot_time = bvars.boot_time
 
     # make running heap
     timer_heap = list()
-    
+
     # make heap & remembered
     for sid, unit in run_source_dict.items():
         if sid in remember_dic and \
@@ -99,25 +101,25 @@ def pre_process(users, all_source_dict,
             # next time
             if remember_dic[sid].interval == unit.interval:
                 next_time = remember_dic[sid].temp_next_time \
-                            if remember_dic[sid].temp_next_time != 0 \
-                            else remember_dic[sid].next_time
+                    if remember_dic[sid].temp_next_time != 0 \
+                    else remember_dic[sid].next_time
             else:
-                next_time = boot_time+\
-                            ((now_time-boot_time)//unit.interval)*\
-                            unit.interval
-            
+                next_time = boot_time +\
+                    ((now_time - boot_time) // unit.interval) *\
+                    unit.interval
+
             # last fetch time
             last_fetch_time = remember_dic[sid].last_fetch_str
         else:
-            next_time = boot_time+\
-                        ((now_time-boot_time)//unit.interval)*\
-                        unit.interval
+            next_time = boot_time +\
+                ((now_time - boot_time) // unit.interval) *\
+                unit.interval
             last_fetch_time = ''
-        
+
         # update unit
         unit.next_time = next_time
         unit.last_fetch_str = last_fetch_time
-        
+
         # push heap
         heapq.heappush(timer_heap, unit)
 
@@ -138,6 +140,7 @@ def pre_process(users, all_source_dict,
 #         print(s % (sid, tname, tcomment, tlink))
 
     return timer_heap, users
+
 
 def import_files():
     import workers
@@ -173,10 +176,11 @@ def import_files():
     global c_fetcher
     c_fetcher = fetcher.Fetcher
 
+
 def main_process(version, web_port, https, tmpfs_path,
                  web_back_queue, back_web_queue):
 
-    def load_config_sources_users(web_port, https, tmpfs_path, 
+    def load_config_sources_users(web_port, https, tmpfs_path,
                                   remember_time_dict):
         # check cfg directory exist?
         config_path = os.path.join(bvars.root_path, 'cfg')
@@ -184,7 +188,7 @@ def main_process(version, web_port, https, tmpfs_path,
             print('不存在cfg文件夹，无法加载配置。')
             print('请在准备好cfg配置文件夹后重新启动程序。')
             return None, None, None
-        
+
         # clrear red & fetcher cache
         c_red.clear_cache()
         c_fetcher.clear_cache()
@@ -202,13 +206,13 @@ def main_process(version, web_port, https, tmpfs_path,
         print('back-side loaded %d users' % len(user_list))
 
         # pre process
-        timer_heap, user_list = pre_process(user_list, bvars.sources, 
+        timer_heap, user_list = pre_process(user_list, bvars.sources,
                                             remember_time_dict)
-        
+
         # config token
         cfg_token = int(time.time())
         bvars.cfg_token = cfg_token
-        
+
         # tasks_suspend， 挂起时timer_heap返回None
         if gcfg.tasks_suspend:
             return cfg_token, None, user_list
@@ -216,7 +220,7 @@ def main_process(version, web_port, https, tmpfs_path,
         return cfg_token, timer_heap, user_list
 
     # -----------------------
-    #         start 
+    #         start
     # -----------------------
 
     # back-process global queues
@@ -237,7 +241,7 @@ def main_process(version, web_port, https, tmpfs_path,
     # -----------------------
     # threads
     # -----------------------
-    
+
     def web_back_queue_monitor(web_back_queue, bb_queue):
         while True:
             msg = web_back_queue.get()
@@ -276,7 +280,7 @@ def main_process(version, web_port, https, tmpfs_path,
         if msg.command == 'bb:timer':
             ctrl.timer()
             #status_str = ctrl.get_status_str()
-            #print(status_str)
+            # print(status_str)
 
             # 检查发送队列
             if not back_web_queue.empty():
@@ -284,30 +288,30 @@ def main_process(version, web_port, https, tmpfs_path,
                     request_web_check()
                 except:
                     pass
-                
+
         # source执行完毕
         elif msg.command == 'bb:source_return' and \
-             msg.token == bvars.cfg_token:
+                msg.token == bvars.cfg_token:
             # msg.data is source_id
             ctrl.task_finished(msg.data)
-            
+
         # web端成功添加
         elif msg.command == 'wb:source_updated' and \
-             msg.token == bvars.cfg_token:
+                msg.token == bvars.cfg_token:
             ctrl.web_updated(msg.data[0], msg.data[1])
 
         # 运行sources
         elif msg.command == 'wb:request_fetch' and \
-             msg.token == bvars.cfg_token:
+                msg.token == bvars.cfg_token:
             #print('web side request fetch')
-            
+
             # 挂起 或 无信息源
             if not fetch_all:
                 continue
 
             # 运行source
             ctrl.fetch(fetch_all if msg.data == None else msg.data)
-                
+
         # load config, users
         elif msg.command == 'wb:request_load':
             # ctrl.remember_nexttime_dict() return a dict
@@ -321,7 +325,7 @@ def main_process(version, web_port, https, tmpfs_path,
             # 加载cfg文件夹失败
             if cfg_token == None:
                 continue
-            
+
             # 挂起?
             if timer_heap == None:
                 fetch_all = list()
@@ -331,11 +335,11 @@ def main_process(version, web_port, https, tmpfs_path,
             ctrl.set_data(gcfg, timer_heap)
 
             # send [cfg_token, config, users] to web
-            c_message.make(back_web_queue, 
+            c_message.make(back_web_queue,
                            'bw:send_config_users',
                            cfg_token,
                            [cfg_token, gcfg, user_list])
-            
+
         else:
             print('back can not handle:', msg.command, msg.token)
 
@@ -350,8 +354,8 @@ def fun_request_web_check(port, https):
     else:
         import ssl
         https_handler = urllib.request.HTTPSHandler(
-                context=ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-                )
+            context=ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+        )
         opener = urllib.request.build_opener(proxy, https_handler)
         req = urllib.request.Request('https://127.0.0.1:%d/check' % port)
 

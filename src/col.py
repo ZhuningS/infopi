@@ -1,15 +1,17 @@
 # coding=utf-8
 # 用于统计目录里的行数
 
-import os, sys
+import os
+import sys
 
 exts = ['.py', '.c', '.h']
 here = os.path.abspath(os.path.dirname(sys.argv[0]))
 idx = sys.argv[0].rfind('\\')
 if idx != -1:
-    myname = sys.argv[0][idx+1:]
+    myname = sys.argv[0][idx + 1:]
 else:
     myname = ''
+
 
 def read_line_count(fname):
     count = 0

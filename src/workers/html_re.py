@@ -12,6 +12,7 @@ from datadefine import *
 
 __all__ = ()
 
+
 def de_html_char(text):
     '''去掉html转义'''
 
@@ -32,6 +33,8 @@ def de_html_char(text):
     return text
 
 # 处理映射规则
+
+
 def map_attrs(m, one):
     if type(one) == int:
         return de_html_char(m.group(one))
@@ -47,21 +50,23 @@ def map_attrs(m, one):
         return one
     else:
         print('map_rule的定义出现错误')
-        
+
+
 def pattern_error(blocknum, isblock=True):
     if isblock:
-        s = '第%d个block的blockre编译失败' % (blocknum+1)
+        s = '第%d个block的blockre编译失败' % (blocknum + 1)
     else:
-        s = '第%d个block的itemre编译失败' % (blocknum+1)
-    
+        s = '第%d个block的itemre编译失败' % (blocknum + 1)
+
     raise c_worker_exception('正则表达式编译失败',
                              '',
                              s)
 
+
 def parse_html(data_dict, base_url, html):
     if not html:
         raise c_worker_exception('html为空字符串', data_dict['url'], '')
-    
+
     r = red.d(r'^\s*$')
     if r.match(html) != None:
         raise c_worker_exception('html只有空白', data_dict['url'], '')
@@ -75,25 +80,25 @@ def parse_html(data_dict, base_url, html):
         block_prog = red.d(block[0][0], block[0][1])
         if block_prog == None:
             pattern_error(i)
-        
+
         itr = block_prog.finditer(html)
         matches = list(itr)
         if len(matches) != 1:
             s = '第%d个block的block_re找到的结果为%d，应为1' % \
-                (i+1, len(matches))
-            raise c_worker_exception(s, '', 
+                (i + 1, len(matches))
+            raise c_worker_exception(s, '',
                                      '可能是网页改版、服务器显示错误信息')
         subhtml = matches[0].group(1)
 
         # item re
         item_prog = red.d(block[1][0], block[1][1])
         if item_prog == None:
-            pattern_error(i, False)        
-        
+            pattern_error(i, False)
+
         itr = item_prog.finditer(subhtml)
         matches = list(itr)
         if not matches:
-            s = '第%d个block的item_re找到的结果为0，应大于0' % (i+1)
+            s = '第%d个block的item_re找到的结果为0，应大于0' % (i + 1)
             raise c_worker_exception(s, '', '可能是网页改版')
 
         for m in matches:
@@ -103,7 +108,7 @@ def parse_html(data_dict, base_url, html):
                 try:
                     ss = map_attrs(m, v)
                 except Exception as e:
-                    s1 = '处理第%d个block的map_rule时异常' % (i+1)
+                    s1 = '处理第%d个block的map_rule时异常' % (i + 1)
                     s2 = '赋值%s给%s时出错，%s' % (str(v), str(k), str(e))
                     raise c_worker_exception(s1, '', s2)
 
@@ -128,8 +133,8 @@ def parse_html(data_dict, base_url, html):
                     info.suid = info.url
 
             ret.append(info)
-     
-    return ret   
+
+    return ret
 
 
 # download and parse
@@ -153,6 +158,7 @@ def process_multiline(string):
         ret += line.strip()
 
     return ret
+
 
 def process_flags(string):
     def is_this(upper_flag, s1, s2):
@@ -186,6 +192,7 @@ def process_flags(string):
 
     return ret
 
+
 @dataparser('html_re')
 def html_re_parser(xml_string):
     d = dict()
@@ -197,7 +204,7 @@ def html_re_parser(xml_string):
 
         str_encoding = url_tag.attrib.get('encoding', '').strip()
         d['encoding'] = Fetcher.lookup_encoding(str_encoding)
-        
+
         str_errors = url_tag.attrib.get('errors', '').strip()
         d['errors'] = str_errors
 
@@ -213,7 +220,7 @@ def html_re_parser(xml_string):
             itemre = block.find('itemre')
             itemre_re = process_multiline(itemre.text)
             itemre_flags = process_flags(itemre.attrib.get('flags', ''))
-            
+
             map_dict = dict()
             maprules = block.find('maprules')
             for r in maprules.iter():
@@ -225,7 +232,7 @@ def html_re_parser(xml_string):
                         if not str_urljoin:
                             map_dict['url'] = value
                         elif (str_urljoin.isdigit() and int(str_urljoin)) or \
-                            str_urljoin.lower() == 'true':
+                                str_urljoin.lower() == 'true':
                             map_dict['urljoin'] = value
                         else:
                             map_dict['url'] = value
@@ -252,6 +259,7 @@ def html_re_parser(xml_string):
 def rev_worker(data_dict, worker_dict):
     lst = download_process(data_dict, worker_dict)
     return lst[::-1]
+
 
 @dataparser('html_re_rev')
 def rev_parser(xml_string):

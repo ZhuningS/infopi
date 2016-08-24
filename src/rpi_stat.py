@@ -7,15 +7,16 @@ import wvars
 
 __all__ = ('get_info_list', 'get_python_process')
 
+
 def get_info_list(cfg, usertype, show_exceptions,
-                   db_file='', db_size=''):
+                  db_file='', db_size=''):
     lst = list()
-    
+
     # suspend?
     if cfg.tasks_suspend:
         one = ('挂起', '已挂起，后端进程的定时器不再执行任务。')
         lst.append(one)
-        
+
     # show_exceptions
     one = ('此用户的列表显示异常信息', str(show_exceptions))
     lst.append(one)
@@ -37,9 +38,9 @@ def get_info_list(cfg, usertype, show_exceptions,
     lst.append(one)
 
     # web port
-    s = '端口:%d https:%s' % (cfg.web_port, 
-                               '启用' if cfg.https else '未启用'
-                               )
+    s = '端口:%d https:%s' % (cfg.web_port,
+                            '启用' if cfg.https else '未启用'
+                            )
     one = ('web服务器设置', s)
     lst.append(one)
 
@@ -63,7 +64,7 @@ def get_info_list(cfg, usertype, show_exceptions,
 
     one = ('web进程异常记录文件大小', size)
     lst.append(one)
-    
+
     if usertype == 2:
         # programe start time
         one = ('程序启动时间', cfg.boot_time)
@@ -75,6 +76,7 @@ def get_info_list(cfg, usertype, show_exceptions,
 
     return lst
 
+
 def get_meminfo():
     with open('/proc/meminfo') as f:
         lines = f.readlines()
@@ -82,22 +84,23 @@ def get_meminfo():
     lst = list()
 
     name, value, other = lines[0].split()
-    one = ('系统-总内存(MemTotal)', '%.1f MB' % (int(value)/1024))
+    one = ('系统-总内存(MemTotal)', '%.1f MB' % (int(value) / 1024))
     lst.append(one)
 
     name, value, other = lines[1].split()
-    one = ('系统-剩余内存(MemFree)', '%.1f MB' % (int(value)/1024))
+    one = ('系统-剩余内存(MemFree)', '%.1f MB' % (int(value) / 1024))
     lst.append(one)
 
     name, value, other = lines[2].split()
-    one = ('系统-缓冲区内存(Buffers)', '%.1f MB' % (int(value)/1024))
+    one = ('系统-缓冲区内存(Buffers)', '%.1f MB' % (int(value) / 1024))
     lst.append(one)
 
     name, value, other = lines[3].split()
-    one = ('系统-缓存内存(Cached)', '%.1f MB' % (int(value)/1024))
+    one = ('系统-缓存内存(Cached)', '%.1f MB' % (int(value) / 1024))
     lst.append(one)
 
     return lst
+
 
 def get_cpu_temperature():
     rpi = '/sys/class/thermal/thermal_zone0/temp'
@@ -109,13 +112,14 @@ def get_cpu_temperature():
         try:
             f = open(filename)
             data = f.readline().strip()
-            temp = float(data)/1000
+            temp = float(data) / 1000
         except:
             pass
         else:
             return temp
 
     return None
+
 
 def get_python_process(cfg):
     lst = list()
@@ -143,29 +147,28 @@ def get_python_process(cfg):
     for line in lst:
         items = line.split()
         one = list()
-        
+
         # process
         if int(items[1]) == cfg.web_pid:
             one.append('web进程')
         else:
             one.append('后端进程')
-            
+
         # pid
         one.append(items[1])
         # status
         one.append(items[7])
         # cpu usage
-        one.append(items[2]+'%')
+        one.append(items[2] + '%')
         # cpu time
         one.append(items[9])
         # mem usage
-        one.append(items[3]+'%')
+        one.append(items[3] + '%')
         # phy mem
-        one.append(items[5]+' KB')
+        one.append(items[5] + ' KB')
         # virtual mem
-        one.append(items[4]+' KB')
+        one.append(items[4] + ' KB')
 
         ret.append(one)
 
     return ret
-

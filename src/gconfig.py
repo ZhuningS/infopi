@@ -10,12 +10,15 @@ from red import red
 
 import bvars
 
+
 class VALUE_TYPE(IntEnum):
     STRING = 0
     INT = 1
     INT_TUPLE_2 = 2
 
+
 class c_runcfg:
+
     def __init__(self):
         self.max_entries = 50
 
@@ -24,13 +27,15 @@ class c_runcfg:
         self.author_len = 50
         self.pub_date_len = 50
 
+
 class c_config:
+
     def __init__(self):
         self.version = ''
 
         self.boot_time = datetime.datetime.\
-                           fromtimestamp(bvars.boot_time).\
-                           strftime('%Y-%m-%d %a %H:%M:%S')
+            fromtimestamp(bvars.boot_time).\
+            strftime('%Y-%m-%d %a %H:%M:%S')
 
         # default values
         self.default_colperpage = 15
@@ -45,13 +50,12 @@ class c_config:
         self.tasks_suspend = False
 
         # database auto maintance
-        self.db_process_at = (4, 0) # (hour, minute) 24小时制
+        self.db_process_at = (4, 0)  # (hour, minute) 24小时制
         self.db_process_interval = 0
         self.db_process_del_entries = 300
         self.db_process_del_days = 30
         self.db_process_rm_ghost = 1
         self.db_backup_maxfiles = 20
-
 
         # run-time status
         self.web_port = 0
@@ -96,7 +100,6 @@ def load_config(version='test', web_port=0,
 
         return None
 
-
     cfg = c_config()
     cfg.version = version
 
@@ -108,7 +111,7 @@ def load_config(version='test', web_port=0,
 
     cfg.start_time = time.strftime('%Y-%m-%d %a %H:%M:%S')
     cfg.back_pid = os.getpid()
-    #cfg.web_pid is not set, send to web-process
+    # cfg.web_pid is not set, send to web-process
 
     config_path = os.path.join(cfg.root_path, 'cfg', 'config.ini')
 
@@ -131,8 +134,8 @@ def load_config(version='test', web_port=0,
         print('文件config.ini解码失败，请确保是utf-8编码。',
               '(有没有BOM无所谓)\n', str(e), '\n')
         return cfg
-   
-    # to \n 
+
+    # to \n
     text = text.replace('\r\n', '\n')
     text = text.replace('\r', '\n')
 
@@ -153,7 +156,7 @@ def load_config(version='test', web_port=0,
                 cfg.default_colperpage = v
             else:
                 print('default_colperpage', string)
-                
+
         # default_pad_colperpage
         elif k == 'default_pad_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
@@ -161,7 +164,7 @@ def load_config(version='test', web_port=0,
                 cfg.default_pad_colperpage = v
             else:
                 print('default_pad_colperpage', string)
-                
+
         # default_bigmobile_colperpage
         elif k == 'default_bigmobile_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
@@ -169,7 +172,7 @@ def load_config(version='test', web_port=0,
                 cfg.default_bigmobile_colperpage = v
             else:
                 print('default_bigmobile_colperpage', string)
-                
+
         # mobile_colperpage
         elif k == 'mobile_colperpage':
             v = get_value(string, VALUE_TYPE.INT)
@@ -200,7 +203,7 @@ def load_config(version='test', web_port=0,
                 cfg.default_source_interval = v
             else:
                 print('default_source_interval', string)
-                
+
         elif k == 'tasks_suspend':
             v = get_value(string, VALUE_TYPE.INT)
             if v == 1 or v == 0:
@@ -214,36 +217,35 @@ def load_config(version='test', web_port=0,
             if v != None:
                 cfg.runcfg.max_entries = v
             else:
-                print('fetch_max_entries', string)  
+                print('fetch_max_entries', string)
 
         elif k == 'fetch_title_len':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.runcfg.title_len = v
             else:
-                print('fetch_title_len', string)  
+                print('fetch_title_len', string)
 
         elif k == 'fetch_summary_len':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.runcfg.summary_len = v
             else:
-                print('fetch_summary_len', string)  
+                print('fetch_summary_len', string)
 
         elif k == 'fetch_author_len':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.runcfg.author_len = v
             else:
-                print('fetch_author_len', string)  
+                print('fetch_author_len', string)
 
         elif k == 'fetch_pub_date_len':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.runcfg.pub_date_len = v
             else:
-                print('fetch_pub_date_len', string)  
-
+                print('fetch_pub_date_len', string)
 
         # database maintenance
         elif k == 'db_process_at':
@@ -252,7 +254,7 @@ def load_config(version='test', web_port=0,
                 cfg.db_process_at = v
             else:
                 print('db_process_at', string)
-                
+
         elif k == 'db_process_interval':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
@@ -265,34 +267,33 @@ def load_config(version='test', web_port=0,
             if v != None:
                 cfg.db_process_del_entries = v
             else:
-                print('db_process_del_entries', string)   
+                print('db_process_del_entries', string)
 
         elif k == 'db_process_del_days':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.db_process_del_days = v
             else:
-                print('db_process_del_days', string)    
+                print('db_process_del_days', string)
 
         elif k == 'db_process_rm_ghost':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.db_process_rm_ghost = v
             else:
-                print('db_process_rm_ghost', string) 
+                print('db_process_rm_ghost', string)
 
         elif k == 'db_backup_maxfiles':
             v = get_value(string, VALUE_TYPE.INT)
             if v != None:
                 cfg.db_backup_maxfiles = v
             else:
-                print('db_backup_maxfiles', string) 
+                print('db_backup_maxfiles', string)
 
         else:
             print('无法识别的config.ini设置', k)
 
     cfg.db_process_del_entries = max(cfg.runcfg.max_entries + 1,
-                                    cfg.db_process_del_entries)
+                                     cfg.db_process_del_entries)
 
     return cfg
-

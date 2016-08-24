@@ -8,13 +8,16 @@ import bvars
 from datadefine import *
 
 # translate for wz_tooltip.js (web tooltip)
+
+
 def for_wz(s):
     # 1st line: for html code
     # 2nd line: no line break
     #           replace("'", '"') this rely on html templates
-    
+
     return s.replace('<', '[').replace('>', ']').replace("'", '"').\
-             replace('\n', '').replace('\r', '')
+        replace('\n', '').replace('\r', '')
+
 
 def hasher(string):
     try:
@@ -25,14 +28,16 @@ def hasher(string):
         print('hasher函数异常', e)
         return ''
 
+
 def unixtime(string, fmt='%m-%d %H:%M'):
     try:
         return datetime.datetime.\
-               fromtimestamp(float(string)).\
-               strftime(fmt)
+            fromtimestamp(float(string)).\
+            strftime(fmt)
     except Exception as e:
         print('unixtime函数异常', e)
         return ''
+
 
 class c_worker_exception(Exception):
 
@@ -42,19 +47,19 @@ class c_worker_exception(Exception):
         self.summary = summary
 
     def __str__(self):
-        s = '异常:' + self.title+'\n'
+        s = '异常:' + self.title + '\n'
         if self.url:
-            s += self.url+'\n'
+            s += self.url + '\n'
         if self.summary:
-            s += self.summary+'\n'
+            s += self.summary + '\n'
         return s
 
 
 # 启动worker线程
 def worker_starter(runcfg, source_id):
 
-    def worker_wrapper(runcfg, 
-                       worker, source, worker_dict,  
+    def worker_wrapper(runcfg,
+                       worker, source, worker_dict,
                        back_web_queue, bb_queue,
                        cfg_token):
 
@@ -69,12 +74,12 @@ def worker_starter(runcfg, source_id):
                     (source.source_id, source.worker_id)
                 print(s)
                 raise c_worker_exception(s)
-            
+
             if source.data == None:
                 s = '信息源%s的data未能被解析' % source.source_id
                 print(s)
                 raise c_worker_exception(s)
-                
+
             lst = worker(source.data, worker_dict)
 
         except c_worker_exception as e:
@@ -113,7 +118,7 @@ def worker_starter(runcfg, source_id):
                 local_d = dict()
                 local_d['hasher'] = hasher
                 local_d['unixtime'] = unixtime
-                
+
                 for i, info in enumerate(lst):
                     local_d['posi'] = i
                     local_d['info'] = info
@@ -123,7 +128,7 @@ def worker_starter(runcfg, source_id):
                         print('callback异常:', e)
                         info.title = 'callback代码异常'
                         info.summary = str(e)
-                    
+
                     if info.temp != 'del':
                         newlst.append(info)
 
@@ -133,7 +138,7 @@ def worker_starter(runcfg, source_id):
             # (escape special suid inside this code)
             suid_set = set()
             newlst = list()
-            for one in lst:              
+            for one in lst:
                 # escape special suid
                 if one.suid == '<exception>':
                     one.suid = '#<exception>#'
@@ -143,7 +148,7 @@ def worker_starter(runcfg, source_id):
                     newlst.append(one)
 
             lst = newlst
-            
+
             is_exception = False
 
         finally:
@@ -153,7 +158,7 @@ def worker_starter(runcfg, source_id):
                            cfg_token,
                            source.source_id
                            )
-            
+
             if not lst:
                 print('%s获得的列表为空' % source.source_id)
 
@@ -174,17 +179,17 @@ def worker_starter(runcfg, source_id):
 
                 # length
                 if len(i.title) > runcfg.title_len:
-                    i.title = i.title[:runcfg.title_len-3] + '...'
-                    
+                    i.title = i.title[:runcfg.title_len - 3] + '...'
+
                 if len(i.summary) > runcfg.summary_len:
-                    i.summary = i.summary[:runcfg.summary_len-3] + '...'
+                    i.summary = i.summary[:runcfg.summary_len - 3] + '...'
 
                 if len(i.author) > runcfg.author_len:
-                    i.author = i.author[:runcfg.author_len-3] + '...' 
+                    i.author = i.author[:runcfg.author_len - 3] + '...'
 
                 if len(i.pub_date) > runcfg.pub_date_len:
-                    i.pub_date = i.pub_date[:runcfg.pub_date_len-3] + '...'
-                    
+                    i.pub_date = i.pub_date[:runcfg.pub_date_len - 3] + '...'
+
                 # for html show
                 i.summary = for_wz(i.summary)
                 i.pub_date = for_wz(i.pub_date)
@@ -196,18 +201,18 @@ def worker_starter(runcfg, source_id):
                                lst)
             else:
                 fetch_date_str = datetime.datetime.\
-                                 fromtimestamp(int_time).\
-                                 strftime('%m-%d %H:%M')
+                    fromtimestamp(int_time).\
+                    strftime('%m-%d %H:%M')
                 data = [source.source_id, fetch_date_str, lst]
                 c_message.make(back_web_queue,
                                'bw:success_infos',
                                cfg_token,
                                data)
 
-        #print('线程结束：%s' % source.source_id)        
+        #print('线程结束：%s' % source.source_id)
 
     source = bvars.sources[source_id]
-    
+
     try:
         worker_tuple = bvars.workers[source.worker_id]
     except:
@@ -217,12 +222,12 @@ def worker_starter(runcfg, source_id):
         worker = worker_tuple[0]
         worker_dict = worker_tuple[1]
 
-    t = threading.Thread(target=worker_wrapper, 
+    t = threading.Thread(target=worker_wrapper,
                          args=(runcfg,
-                               worker, 
+                               worker,
                                source, worker_dict,
                                bvars.back_web_queue, bvars.bb_queue,
-                               bvars.cfg_token), 
+                               bvars.cfg_token),
                          daemon=True
                          )
     t.start()
@@ -235,7 +240,7 @@ def test_source(source_id):
     try:
         worker_tuple = bvars.workers[source.worker_id]
     except:
-        print('信息源%s没有找到指定worker: %s' % 
+        print('信息源%s没有找到指定worker: %s' %
               (source.source_id, source.worker_id)
               )
         return
@@ -249,7 +254,7 @@ def test_source(source_id):
     try:
         if source.data == None:
             raise Exception('信息源%s的data未能被解析' % source.source_id)
-        
+
         lst = worker(source.data, worker_dict)
 
     except Exception as e:
@@ -273,7 +278,7 @@ def test_source(source_id):
                     print('callback异常:', e)
                     info.title = 'callback代码异常'
                     info.summary = str(e)
-                
+
                 if info.temp != 'del':
                     newlst.append(info)
 
@@ -290,15 +295,15 @@ def test_source(source_id):
 
             if len(i.title) > 70:
                 i.title = i.title[:67] + '...'
-                
+
             if len(i.summary) > 160:
                 i.summary = i.summary[:157] + '...'
 
             if len(i.author) > 50:
-                i.author = i.author[:47] + '...' 
+                i.author = i.author[:47] + '...'
 
             if len(i.pub_date) > 50:
-                i.pub_date = i.pub_date[:47] + '...'    
+                i.pub_date = i.pub_date[:47] + '...'
 
         print('\n---------- 以下为测试结果 ----------')
         print(' 信息源id(source_id)为 %s' % source.source_id)
@@ -306,12 +311,11 @@ def test_source(source_id):
 
         if len(lst) > 16:
             print_str = ''.join(str(i) for i in lst[:8]) + \
-                        '...中间省略%d条...\n\n' % (len(lst)-16) + \
+                        '...中间省略%d条...\n\n' % (len(lst) - 16) + \
                         ''.join(str(i) for i in lst[-8:])
         else:
             print_str = ''.join(str(i) for i in lst)
 
-     
         try:
             print(print_str)
         except UnicodeEncodeError:
@@ -332,7 +336,7 @@ def parse_data(worker_id, xml_string):
         # can't find the data-parser, maybe the worker doesn't need data.
         # if worker_id doesn't exist, worker_starter will catch the issue.
         return dict()
-    
+
     try:
         return parser(xml_string)
     except:
@@ -340,10 +344,12 @@ def parse_data(worker_id, xml_string):
         return None
 
 # worker function:
-# params: (data_dict, worker_dict) 
+# params: (data_dict, worker_dict)
 # return: list(info) or c_worker_exception
 
 # worker decorator
+
+
 def worker(worker_id):
     def worker_decorator(func):
         if worker_id not in bvars.workers:
@@ -351,7 +357,7 @@ def worker(worker_id):
         else:
             print('worker_id: %s already exist in workers' % worker_id)
         return func
-    
+
     return worker_decorator
 
 # dataparser function:
@@ -359,6 +365,8 @@ def worker(worker_id):
 # return: data_dict
 
 # data-parser decorator
+
+
 def dataparser(worker_id):
     def dataparser_decorator(func):
         if worker_id not in bvars.dataparsers:
@@ -366,5 +374,5 @@ def dataparser(worker_id):
         else:
             print('worker_id: %s already exist in dataparsers' % worker_id)
         return func
-    
+
     return dataparser_decorator

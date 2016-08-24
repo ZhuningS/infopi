@@ -1,17 +1,18 @@
 # coding=utf-8
 
+
 class c_info:
     __slots__ = ('id', 'source_id',
                  'title', 'url',
                  'author', 'summary', 'pub_date',
                  'suid', 'fetch_date', 'temp')
-    
+
     def __init__(self):
         self.id = -1
         self.source_id = ''
         self.suid = ''
         self.fetch_date = 0
-        
+
         self.title = ''
         self.url = ''
 
@@ -24,7 +25,7 @@ class c_info:
     def __lt__(self, other):
         if self.fetch_date != other.fetch_date:
             return self.fetch_date > other.fetch_date
-        
+
         return self.id > other.id
 
     def __str__(self):
@@ -34,16 +35,16 @@ class c_info:
             else:
                 return ''
 
-        lst = ( ('title', self.title),
-                ('url', self.url),
-                ('author', self.author),
-                ('summary', self.summary),
-                ('pub_date', self.pub_date),
-                ('suid', self.suid),
+        lst = (('title', self.title),
+               ('url', self.url),
+               ('author', self.author),
+               ('summary', self.summary),
+               ('pub_date', self.pub_date),
+               ('suid', self.suid),
                )
 
         return ''.join(make_str(*i) for i in lst) + '\n'
-        
+
 
 class c_message:
     __slots__ = ('command', 'token', 'data')

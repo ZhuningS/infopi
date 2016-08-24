@@ -15,6 +15,7 @@ except:
 #       regular expression wrapper
 #========================================
 
+
 class red:
     A = re.A
     ASCII = re.ASCII
@@ -35,7 +36,7 @@ class red:
 
     X = re.X
     VERBOSE = re.VERBOSE
-    
+
     # cache
     regexs = dict()
 
@@ -62,7 +63,7 @@ class red:
 
         return compiled
 
-    # not applicable to the situations where need to 
+    # not applicable to the situations where need to
     # generate informative error prompt
     @staticmethod
     def sub(pattern, repl, string, count=0, flags=0):
@@ -78,4 +79,3 @@ class red:
         red.lock.acquire()
         red.regexs.clear()
         red.lock.release()
-

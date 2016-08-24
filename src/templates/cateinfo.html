@@ -1,6 +1,8 @@
 <!DOCTYPE html><html>
 <head>
 <meta charset="UTF-8">
+<title>版块信息</title>
+<script src="/static/jquery-3.1.0.min.js"></script>
 <meta content="width=device-width" name="viewport">
 <style>
 a{TEXT-DECORATION:none}
@@ -11,7 +13,7 @@ a{TEXT-DECORATION:none}
 <body bgcolor="#ccccff">
 共有{{cate_num}}个版块，信息源出现{{allnum}}次，其中有{{setnum}}个不重复的信息源：
 {% if usertype > 0 -%}
-<form action="/cateinfo" method="post">
+<form id="submitform" action="/cateinfo" method="post">
 <table border="1" width="100%">
 	<tr>
 		<td align="center">版块/信息源</td>
@@ -58,5 +60,16 @@ a{TEXT-DECORATION:none}
 	</tr>{% endfor %}{% endfor %}
 </table>
 {%- endif -%}<br>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('button').click(function(e) {
+		e.preventDefault();
+		$.post({
+		    url: '/cateinfo',
+		    data: e.target.name + "=" + e.target.value
+    		});
+    	});
+});
+</script>
 </body>
 </html>

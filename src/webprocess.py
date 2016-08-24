@@ -685,6 +685,7 @@ def cate_info():
                 return '请求的版块列表有误：<br>' + cate
             c_message.make(web_back_queue, 'wb:request_fetch',
                            wvars.cfg_token, lst)
+        return ''
     
     show_list = db.get_forshow_by_user(username)
     all_s_num, set_s_num = db.get_sourcenum_by_user(username)

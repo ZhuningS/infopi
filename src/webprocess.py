@@ -480,7 +480,7 @@ def left():
 def ajax_exception():
     username = check_cookie()
     if not username:
-        return ''
+        return '尚未登录'
 
     if db.get_usertype(username) == 2:
         except_num = db.get_all_exception_num()

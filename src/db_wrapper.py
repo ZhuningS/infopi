@@ -679,6 +679,7 @@ class c_db_wrapper:
             i.iid for i in self.users[username].cate_indexlist_dict[-1]
         )
 
+    # 用户的异常数
     def get_exceptions_num_by_username(self, username):
         return len(self.users[username].cate_indexlist_dict[-1])
 

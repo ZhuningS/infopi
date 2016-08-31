@@ -482,11 +482,20 @@ def ajax_exception():
     if not username:
         return jump_to_login
 
-    ec = db.get_exceptions_num_by_username(username)
-    if ec == 0:
-        return ''
+    if db.get_usertype(username) == 2:
+        except_num = db.get_all_exception_num()
+        if except_num > 0:
+            ret = '所有用户有<br>%d条异常信息<br>' % except_num
+        else:
+            ret = ''
+    else:
+        except_num = db.get_exceptions_num_by_username(username)
+        if except_num > 0:
+            ret = '%d条异常信息<br>' % except_num
+        else:
+            ret = ''
 
-    return '%d条异常信息<br>' % ec
+    return ret
 
 
 @web.route('/m', methods=['GET', 'POST'])

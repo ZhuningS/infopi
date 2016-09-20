@@ -113,7 +113,8 @@ def parse_html(data_dict, base_url, html):
                 for sub_path_item in sub_path:
                     try:
                         temp_jj = temp_jj[sub_path_item]
-                    except:
+                    except Exception as e:
+                        print('异常：', e)
                         s1 = '处理第%d个block的映射时异常' % (i + 1)
                         s2 = 'path:%s,key:%s,map:%s,无法找到指定元素%s.' % \
                              (str(path), key, str(sub_path),

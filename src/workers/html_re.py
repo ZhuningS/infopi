@@ -126,6 +126,8 @@ def parse_html(data_dict, base_url, html):
                     info.pub_date = ss
                 elif k == 'suid':
                     info.suid = ss
+                elif k == 'temp':
+                    info.temp = ss
                 else:
                     print('无法处理map_rule', k, v)
 

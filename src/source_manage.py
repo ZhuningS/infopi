@@ -112,10 +112,9 @@ def load_xml(sources_path, path, filename):
     s.comment = get_text_from_tag(xml.find('comment'))
     s.link = get_text_from_tag(xml.find('link'))
 
+    # worker_id may be '' when using father source
+    # then will be set later
     s.worker_id = get_text_from_tag(xml.find('worker'))
-    s.data = parse_data(s.worker_id, string)
-    if s.data == None:
-        print('解析信息源%s的data失败' % s.source_id)
 
     callback = get_text_from_tag(xml.find('callback'))
     if callback != '':
@@ -123,10 +122,20 @@ def load_xml(sources_path, path, filename):
 
     # use father data
     if father:
+        # worker
+        if s.worker_id == '':
+            s.worker_id = temp_dict[father].worker_id
+
+        # parse data
+        s.data = parse_data(s.worker_id, string)
+        if s.data == None:
+            print('解析信息源%s的data失败' % s.source_id)
+
         # data
         father_data = copy.deepcopy(temp_dict[father].data)
         father_data.update(s.data)
         s.data = father_data
+
         # callback
         if s.callback == None:
             s.callback = temp_dict[father].callback
@@ -134,6 +143,11 @@ def load_xml(sources_path, path, filename):
         # father + xml
         s.xml = temp_dict[father].xml + string
     else:
+        # parse data
+        s.data = parse_data(s.worker_id, string)
+        if s.data == None:
+            print('解析信息源%s的data失败' % s.source_id)
+
         # xml content
         s.xml = string
 

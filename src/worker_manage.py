@@ -258,8 +258,9 @@ def test_source(source_id):
         lst = worker(source.data, worker_dict)
 
     except Exception as e:
-        s = '\n源%s出现异常:\n' % source.source_id
-        print(s + str(e))
+        print('\n    源%s出现异常:\n' % source.source_id)
+
+        raise e
 
     else:
         # callback函数

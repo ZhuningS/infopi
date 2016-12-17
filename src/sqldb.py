@@ -166,9 +166,8 @@ class c_sqldb:
 
     # open db
     def open(self, filename):
-        self.conn = sqlite3.connect(filename)
         # autocommit mode, for VACUUM operation
-        self.conn.isolation_level = None
+        self.conn = sqlite3.connect(filename, isolation_level=None)
         
         self.cursor = self.conn.cursor()
 

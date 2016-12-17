@@ -108,7 +108,7 @@ class c_sqldb:
         dest_fn = 'sql' + self.get_time_str() + '.db'
         dest_fn = os.path.join(self.dbfile_dir, dest_fn)
         shutil.copy2(self.current_file, dest_fn)
-        print('copy db file from %s to %s' %
+        print('copy db file from %s to %s' % 
               (self.current_file, dest_fn)
               )
 
@@ -139,8 +139,8 @@ class c_sqldb:
         # table
         sql = ('CREATE TABLE info_tbl ( '
                'id INTEGER PRIMARY KEY AUTOINCREMENT, '
-               'source_id TEXT, '              # index
-               'suid TEXT, '                   # index
+               'source_id TEXT, '  # index
+               'suid TEXT, '  # index
                'fetch_date INTEGER NOT NULL, '  # index
 
                'title TEXT NOT NULL, '
@@ -167,6 +167,9 @@ class c_sqldb:
     # open db
     def open(self, filename):
         self.conn = sqlite3.connect(filename)
+        # autocommit mode, for VACUUM operation
+        self.conn.isolation_level = None
+        
         self.cursor = self.conn.cursor()
 
     # close connection
@@ -246,8 +249,8 @@ class c_sqldb:
         else:
             sql = ('INSERT INTO info_tbl VALUES '
                    '(NULL, ?, '  # id, source_id
-                   ' ?, ?, '     # suid, fetch_date
-                   ' ?, ?, '     # title, url
+                   ' ?, ?, '  # suid, fetch_date
+                   ' ?, ?, '  # title, url
                    ' ?, ?, ?);'  # author, summary, pub_date
                    )
             self.cursor.execute(sql,

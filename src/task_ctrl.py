@@ -21,6 +21,7 @@ class c_run_heap_unit:
 
         self.xml = xml
         self.last_fetch_str = ''
+        # 通常为0；信息源执行后、web端数据库更新前，为next_time。
         self.temp_next_time = 0
 
     def __lt__(self, other):
@@ -155,7 +156,7 @@ class c_task_controller:
         for source_id in lst:
             if source_id in self.running_map:
                 sec_ago = now_time - self.running_map[source_id]
-                print('%s已经于%d秒前运行，尚未结束' %
+                print('%s已经于%d秒前运行，尚未结束' % 
                       (source_id, sec_ago)
                       )
                 continue

@@ -99,8 +99,6 @@ def load_config(version='test', web_port=0,
             return string
 
         return None
-    
-    bvars.gcfg = None
 
     cfg = c_config()
     cfg.version = version
@@ -300,5 +298,4 @@ def load_config(version='test', web_port=0,
     cfg.db_process_del_entries = max(cfg.runcfg.max_entries + 1,
                                      cfg.db_process_del_entries)
 
-    bvars.gcfg = cfg
     return cfg

@@ -49,8 +49,19 @@ def pre_process(users, all_source_dict,
                     sinfo[3] = source.name
                     sinfo[4] = source.comment
                     sinfo[5] = source.link
-                    sinfo[7] = source.max_db
                     xml = source.xml
+
+                    empty_max_db = source.max_db is None
+                    if source.max_len is not None:
+                        if source.max_db is not None:
+                            source.max_db = max(
+                                source.max_len + 1, source.max_db)
+                        else:
+                            source.max_db = source.max_len + 1
+                    if empty_max_db and source.max_db is not None and \
+                            source.max_db < gcfg.db_process_del_entries:
+                        source.max_db = None
+                    sinfo[7] = source.max_db
 
                     # for timer_heap
                     interval = gcfg.default_source_interval \

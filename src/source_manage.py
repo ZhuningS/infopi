@@ -187,21 +187,6 @@ def load_xml(sources_path, path, filename, test_sid):
                 print('信息源%s的max_len应大于0，忽略' % s.source_id)
         except:
             print('信息源%s的max_len有误，忽略: %s' % (s.source_id, max_len))
-            raise
-
-    # 防止维护数据库导致的反复添加
-    # +1是为异常信息预留的位置
-    empty_max_db = s.max_db is None
-
-    if s.max_len is not None:
-        if s.max_db is not None:
-            s.max_db = max(max_len + 1, s.max_db)
-        else:
-            s.max_db = max_len + 1
-
-    if empty_max_db and s.max_db is not None and bvars.gcfg is not None:
-        if s.max_db < bvars.gcfg.db_process_del_entries:
-            s.max_db = None
 
     # print max_len and max_db
     if test_sid == s.source_id:

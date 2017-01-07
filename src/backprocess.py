@@ -51,6 +51,9 @@ def pre_process(users, all_source_dict,
                     sinfo[5] = source.link
                     xml = source.xml
 
+                    # 生成max_db
+                    # 防止维护数据库导致的反复添加
+                    # +1是为异常信息预留的位置
                     empty_max_db = source.max_db is None
                     if source.max_len is not None:
                         if source.max_db is not None:

@@ -20,7 +20,7 @@ class c_source:
                  'worker_id', 'data',
                  'callback',
                  'xml',
-                 'max_len')
+                 'max_len', 'max_db')
 
     def __init__(self):
         self.source_id = ''
@@ -35,8 +35,9 @@ class c_source:
         self.callback = None
 
         self.xml = ''
-        
+
         self.max_len = None
+        self.max_db = None
 
 
 temp_dict = None
@@ -114,18 +115,40 @@ def load_xml(sources_path, path, filename):
     s.name = get_text_from_tag(xml.find('name'))
     s.comment = get_text_from_tag(xml.find('comment'))
     s.link = get_text_from_tag(xml.find('link'))
-    
+
+    # max_db
+    max_db = get_text_from_tag(xml.find('max_db'))
+    if max_db != '':
+        try:
+            max_db = int(max_db)
+            if max_db > 0:
+                s.max_db = max_db
+            else:
+                print('信息源%s的max_db应大于0' % s.source_id)
+        except:
+            print('信息源%s的max_db有误: %s' % (s.source_id, max_db))
+
+    # max_len
     max_len = get_text_from_tag(xml.find('max_len'))
     if max_len != '':
         try:
             max_len = int(max_len)
             if max_len > 0:
                 s.max_len = max_len
+                # 防止维护数据库导致的反复添加
+                # +1是为异常信息预留的位置
+                s.max_db = max_len + 1
             else:
                 print('信息源%s的max_len应大于0' % s.source_id)
         except:
             print('信息源%s的max_len有误: %s' % (s.source_id, max_len))
-    
+
+    # print max_len and max_db
+    if s.max_len != None:
+        print('信息源%s的max_len被设为%d' % (s.source_id, s.max_len))
+    if s.max_db != None:
+        print('信息源%s的max_db被设为%d' % (s.source_id, s.max_db))
+
     # worker_id may be '' when using father source
     # then will be set later
     s.worker_id = get_text_from_tag(xml.find('worker'))

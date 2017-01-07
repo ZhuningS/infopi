@@ -167,9 +167,12 @@ class c_user_cfg:
                             interval = 0
 
                         if current_category != None:
+                            # ! sync comments in 
+                            # backprocess.py and db_wrapper.py
+                            # with this list
                             current_category.append([sid, level, interval,
                                                      'name', 'comment', 'link',
-                                                     'last_fetch'])
+                                                     'last_fetch', 'max_db'])
                         else:
                             s = '文件%s出现错误，缺少分类:\n%s'
                             print(s % (f_filename, line))

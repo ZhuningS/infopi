@@ -38,19 +38,19 @@ def pre_process(users, all_source_dict,
     for user in users:
         for category, sinfo_list in user.category_list:
             for sinfo in sinfo_list:
+                # sinfo was created in user_manage
+                # 0~2   [sid, level, interval,
+                # 3~5    'name', 'comment', 'link',
+                # 6~7    'last_fetch', 'max_db']
                 sid = sinfo[0]
 
                 if sid in all_source_dict:
-                    tname = all_source_dict[sid].name
-                    tcomment = all_source_dict[sid].comment
-                    tlink = all_source_dict[sid].link
-                    xml = all_source_dict[sid].xml
-
-                    # sinfo的内容为
-                    # [sid, level, interval, name, comment, link]
-                    sinfo[3] = tname
-                    sinfo[4] = tcomment
-                    sinfo[5] = tlink
+                    source = all_source_dict[sid]
+                    sinfo[3] = source.name
+                    sinfo[4] = source.comment
+                    sinfo[5] = source.link
+                    sinfo[7] = source.max_db
+                    xml = source.xml
 
                     # for timer_heap
                     interval = gcfg.default_source_interval \
@@ -80,6 +80,7 @@ def pre_process(users, all_source_dict,
                     sinfo[4] = '无法找到或无法加载%s的xml文件' % sid
                     sinfo[5] = ''
                     sinfo[6] = ''
+                    sinfo[7] = None
 
                     s = ('用户:%s 版块:%s\n'
                          'source_id为%s的信息源定义不存在\n'
@@ -127,17 +128,6 @@ def pre_process(users, all_source_dict,
         for sinfo in sid_sinfolist_dict[sid]:
             sinfo[2] = unit.interval
             sinfo[6] = unit.last_fetch_str
-
-#     # print unused sources
-#     t_all_source = set(all_source_dict.keys())
-#     t_run_source = set(run_source_dict.keys())
-#     t_unuse_source = t_all_source.difference(t_run_source)
-#     for sid in t_unuse_source:
-#         tname = all_source_dict[sid].name
-#         tcomment = all_source_dict[sid].comment
-#         tlink = all_source_dict[sid].link
-#         s = ('未使用的源%s\nname:%s\ncomment:%s\nlink:%s\n')
-#         print(s % (sid, tname, tcomment, tlink))
 
     return timer_heap, users
 

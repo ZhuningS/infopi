@@ -80,7 +80,7 @@ class c_user_table:
 
 class c_source_table:
     __slots__ = ('source_id',
-                 'name', 'comment', 'link', 'interval',
+                 'name', 'comment', 'link', 'interval', 'max_db',
                  'user_cateset_dict', 'index_list', 'last_fetch_date')
 
     def __init__(self):
@@ -90,6 +90,7 @@ class c_source_table:
         self.comment = ''
         self.link = ''
         self.interval = 0
+        self.max_db = None
 
         # username -> <set>
         # <set>的元素为 category
@@ -270,6 +271,10 @@ class c_db_wrapper:
             ut.cate_list.append((cate_tuple[0], list()))
 
             for source_tuple in cate_tuple[1]:
+                # sinfo was created in user_manage
+                # 0~2   [sid, level, interval,
+                # 3~5    'name', 'comment', 'link',
+                # 6~7    'last_fetch', 'max_db']
                 now_sid = source_tuple[0]
 
                 # cate_list.cate.sid
@@ -292,6 +297,7 @@ class c_db_wrapper:
                     st.link = source_tuple[5]
                     if source_tuple[6]:
                         st.last_fetch_date = source_tuple[6]
+                    st.max_db = source_tuple[7]
                     #print(st.name, st.comment)
 
                 # source_table.user_cateset_dict
@@ -522,8 +528,10 @@ class c_db_wrapper:
             for s in self.sources.values():
                 sid = s.source_id
                 index = s.index_list
-                if len(index) > self.cfg.db_process_del_entries:
-                    p = self.cfg.db_process_del_entries
+
+                max_entires = s.max_db if s.max_db != None else self.cfg.db_process_del_entries
+                if len(index) > max_entires:
+                    p = max_entires
                     #(source_id, id, fetch_date)
                     tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])
                     del_lst.extend(tuple_lst)
@@ -535,7 +543,9 @@ class c_db_wrapper:
             for s in self.sources.values():
                 sid = s.source_id
                 index = s.index_list
-                if len(index) > self.cfg.db_process_del_entries:
+                
+                max_entires = s.max_db if s.max_db != None else self.cfg.db_process_del_entries
+                if len(index) > max_entires:
                     p = bisect.bisect_left(index, tmp_unit)
                     #(source_id, id, fetch_date)
                     tuple_lst = ((sid, i.iid, i.fetch_date) for i in index[p:])

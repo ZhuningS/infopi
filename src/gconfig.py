@@ -293,6 +293,8 @@ def load_config(version='test', web_port=0,
         else:
             print('无法识别的config.ini设置', k)
 
+    # 防止维护数据库导致的反复添加
+    # +1是为异常信息预留的位置
     cfg.db_process_del_entries = max(cfg.runcfg.max_entries + 1,
                                      cfg.db_process_del_entries)
 

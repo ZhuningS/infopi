@@ -46,34 +46,45 @@ def find_idle():
 
 
 def main():
+    show_msg = False
+
     # test a source
-    if len(sys.argv) == 2 and ':' in sys.argv[1]:
-        # load sources
-        source_manage.load_sources()
+    if len(sys.argv) == 2:
+        arg1 = sys.argv[1]
 
-        if sys.argv[1] in bvars.sources:
-            test_source(sys.argv[1])
+        if ':' in arg1:
+            # load sources
+            source_manage.load_sources(test_sid=arg1)
+
+            if arg1 in bvars.sources:
+                test_source(arg1)
+            else:
+                print('没有加载信息源%s' % arg1)
+
+        # test cfg
+        elif arg1.lower() == 'cfg':
+            # global config
+            from gconfig import load_config
+            load_config()
+
+            # load sources
+            source_manage.load_sources()
+
+            # users config
+            from user_manage import c_user_cfg
+            c_user_cfg.load_users()
+
+        # find idle sources
+        elif arg1.lower() == 'idle':
+            find_idle()
+
         else:
-            print('没有加载信息源%s' % sys.argv[1])
-
-    # test cfg
-    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'cfg':
-        # global config
-        from gconfig import load_config
-        load_config()
-
-        # load sources
-        source_manage.load_sources()
-
-        # users config
-        from user_manage import c_user_cfg
-        c_user_cfg.load_users()
-
-    # find idle sources
-    elif len(sys.argv) == 2 and sys.argv[1].lower() == 'idle':
-        find_idle()
+            show_msg = True
 
     else:
+        show_msg = True
+
+    if show_msg:
         s = '''\
 使用方法：
 

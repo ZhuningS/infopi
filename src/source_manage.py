@@ -43,7 +43,7 @@ class c_source:
 temp_dict = None
 
 
-def load_xml(sources_path, path, filename):
+def load_xml(sources_path, path, filename, test_sid):
     def get_text_from_tag(tag):
         if tag != None:
             return tag.text.strip()
@@ -92,7 +92,7 @@ def load_xml(sources_path, path, filename):
     try:
         xml = ET.fromstring(string)
     except Exception as e:
-        s = ('解析信息源XML文件失败,请检查格式 %s:%s\n'
+        s = ('解析信息源XML文件失败,请检查XML的格式 %s:%s\n'
              '异常:%s\n'
              '如果XML中出现如下字符，请转义替换:\n'
              '  &替换成&amp;\n'
@@ -106,7 +106,7 @@ def load_xml(sources_path, path, filename):
     # load father first
     father = xml.attrib.get('father', '')
     if father and father not in temp_dict:
-        load_xml(sources_path, path, father + '.xml')
+        load_xml(sources_path, path, father + '.xml', test_sid)
 
     # make source object
     s = c_source()
@@ -116,6 +116,54 @@ def load_xml(sources_path, path, filename):
     s.comment = get_text_from_tag(xml.find('comment'))
     s.link = get_text_from_tag(xml.find('link'))
 
+    # worker may be '', judge it later
+    s.worker_id = get_text_from_tag(xml.find('worker'))
+
+    callback = get_text_from_tag(xml.find('callback'))
+    if callback != '':
+        s.callback = compile(callback, '<string>', 'exec')
+
+    def common_procedure(s, string):
+        if s.worker_id == '':
+            raise Exception('信息源错误：worker为空')
+
+        # parse data
+        s.data = parse_data(s.worker_id, string)
+        if s.data == None:
+            msg = '解析信息源%s的data失败' % s.source_id
+            raise Exception(msg)
+
+    # use father data
+    if father:
+        father_s = temp_dict[father]
+
+        # worker
+        s.worker_id = s.worker_id or father_s.worker_id
+
+        # judge worker, parse
+        common_procedure(s, string)
+
+        # data
+        father_data = copy.deepcopy(father_s.data)
+        father_data.update(s.data)
+        s.data = father_data
+
+        # callback
+        if s.callback == None:
+            s.callback = father_s.callback
+
+        # father + xml
+        s.xml = father_s.xml + string
+
+        s.max_len = father_s.max_len
+        s.max_db = father_s.max_db
+    else:
+        # judge worker, parse
+        common_procedure(s, string)
+
+        # xml content
+        s.xml = string
+
     # max_db
     max_db = get_text_from_tag(xml.find('max_db'))
     if max_db != '':
@@ -124,9 +172,9 @@ def load_xml(sources_path, path, filename):
             if max_db > 0:
                 s.max_db = max_db
             else:
-                print('信息源%s的max_db应大于0' % s.source_id)
+                print('信息源%s的max_db应大于0，忽略' % s.source_id)
         except:
-            print('信息源%s的max_db有误: %s' % (s.source_id, max_db))
+            print('信息源%s的max_db有误，忽略: %s' % (s.source_id, max_db))
 
     # max_len
     max_len = get_text_from_tag(xml.find('max_len'))
@@ -139,61 +187,26 @@ def load_xml(sources_path, path, filename):
                 # +1是为异常信息预留的位置
                 s.max_db = max_len + 1
             else:
-                print('信息源%s的max_len应大于0' % s.source_id)
+                print('信息源%s的max_len应大于0，忽略' % s.source_id)
         except:
-            print('信息源%s的max_len有误: %s' % (s.source_id, max_len))
+            print('信息源%s的max_len有误，忽略: %s' % (s.source_id, max_len))
 
     # print max_len and max_db
-    if s.max_len != None:
-        print('信息源%s的max_len被设为%d' % (s.source_id, s.max_len))
-    if s.max_db != None:
-        print('信息源%s的max_db被设为%d' % (s.source_id, s.max_db))
-
-    # worker_id may be '' when using father source
-    # then will be set later
-    s.worker_id = get_text_from_tag(xml.find('worker'))
-
-    callback = get_text_from_tag(xml.find('callback'))
-    if callback != '':
-        s.callback = compile(callback, '<string>', 'exec')
-
-    # use father data
-    if father:
-        # worker
-        if s.worker_id == '':
-            s.worker_id = temp_dict[father].worker_id
-
-        # parse data
-        s.data = parse_data(s.worker_id, string)
-        if s.data == None:
-            print('解析信息源%s的data失败' % s.source_id)
-
-        # data
-        father_data = copy.deepcopy(temp_dict[father].data)
-        father_data.update(s.data)
-        s.data = father_data
-
-        # callback
-        if s.callback == None:
-            s.callback = temp_dict[father].callback
-
-        # father + xml
-        s.xml = temp_dict[father].xml + string
-    else:
-        # parse data
-        s.data = parse_data(s.worker_id, string)
-        if s.data == None:
-            print('解析信息源%s的data失败' % s.source_id)
-
-        # xml content
-        s.xml = string
+    if test_sid == s.source_id:
+        if s.max_len != None:
+            print('信息源%s的max_len被设为%d' % (s.source_id, s.max_len))
+        if s.max_db != None:
+            print('信息源%s的max_db被设为%d' % (s.source_id, s.max_db))
 
     # add to dict
     temp_dict[short_fn] = s
     sources[s.source_id] = s
 
 
-def load_sources():
+def load_sources(test_sid=None):
+    if test_sid is not None:
+        test_sid = test_sid.lower()
+
     # clear first
     sources.clear()
 
@@ -213,7 +226,8 @@ def load_sources():
             for l2_item in os.listdir(l1_path):
                 l2_path = os.path.join(l1_path, l2_item)
                 if os.path.isfile(l2_path):
-                    load_xml(sources_path, l1_item, l2_item)
+                    load_xml(sources_path, l1_item, l2_item,
+                             test_sid)
 
     print('back-side loaded %d sources' % len(sources))
 

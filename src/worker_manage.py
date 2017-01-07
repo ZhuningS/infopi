@@ -110,7 +110,8 @@ def worker_starter(runcfg, source_id):
         else:
             # max length of info list
             if source.max_len != None:
-                lst = lst[:source.max_len]
+                if len(lst) > source.max_len:
+                    lst = lst[:source.max_len]
             elif len(lst) > runcfg.max_entries:
                 lst = lst[:runcfg.max_entries]
 
@@ -242,7 +243,7 @@ def test_source(source_id):
     try:
         worker_tuple = bvars.workers[source.worker_id]
     except:
-        print('信息源%s没有找到指定worker: %s' % 
+        print('信息源%s没有找到指定worker: %s' %
               (source.source_id, source.worker_id)
               )
         return
@@ -267,8 +268,9 @@ def test_source(source_id):
     else:
         # max length of info list
         if source.max_len != None:
-            lst = lst[:source.max_len]
-        
+            if len(lst) > source.max_len:
+                lst = lst[:source.max_len]
+
         # callback函数
         if source.callback != None:
             newlst = list()

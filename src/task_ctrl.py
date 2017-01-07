@@ -95,7 +95,7 @@ class c_task_controller:
         self.timer_heap = timer_heap
 
         # database process timer
-        if self.timer_heap != None:
+        if self.timer_heap is not None:
             # dict: sid -> unit
             self.sid_unit_dic = {u.source_id: u for u in timer_heap}
 
@@ -255,7 +255,7 @@ class c_task_controller:
         s = ('timer heap length: %d<br>'
              'running source number: %d<br>'
              'queue length: %d<br>')
-        s = s % (len(self.timer_heap) if self.timer_heap != None
+        s = s % (len(self.timer_heap) if self.timer_heap is not None
                  else -1,
                  len(self.running_map),
                  len(self.queue_deque)

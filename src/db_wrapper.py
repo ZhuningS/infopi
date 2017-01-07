@@ -217,7 +217,7 @@ class c_db_wrapper:
         if updated:
             print('database was added or updated')
             # 发出响声
-            if winsound != None:
+            if winsound is not None:
                 try:
                     winsound.Beep(350, 300)
                 except:
@@ -529,7 +529,7 @@ class c_db_wrapper:
                 sid = s.source_id
                 index = s.index_list
 
-                max_entires = s.max_db if s.max_db != None else self.cfg.db_process_del_entries
+                max_entires = s.max_db if s.max_db is not None else self.cfg.db_process_del_entries
                 if len(index) > max_entires:
                     p = max_entires
                     #(source_id, id, fetch_date)
@@ -544,7 +544,7 @@ class c_db_wrapper:
                 sid = s.source_id
                 index = s.index_list
                 
-                max_entires = s.max_db if s.max_db != None else self.cfg.db_process_del_entries
+                max_entires = s.max_db if s.max_db is not None else self.cfg.db_process_del_entries
                 if len(index) > max_entires:
                     p = bisect.bisect_left(index, tmp_unit)
                     #(source_id, id, fetch_date)

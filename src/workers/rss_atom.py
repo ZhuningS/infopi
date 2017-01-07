@@ -60,7 +60,7 @@ def parse_xml(data_dict, xml):
         raise c_worker_exception('xml为空字符串', data_dict['url'], '')
 
     r = red.d(r'^\s*$')
-    if r.match(xml) != None:
+    if r.match(xml) is not None:
         raise c_worker_exception('xml只有空白', data_dict['url'], '')
 
     # remove namespace of atom
@@ -129,7 +129,7 @@ def parse_xml(data_dict, xml):
         else:
             url = ''
             link_iter = item.findall('link')
-            if link_iter != None:
+            if link_iter is not None:
                 for tag_link in link_iter:
                     if tag_link.get('rel') == 'alternate':
                         if tag_link.get('type') == 'text/html':
@@ -187,7 +187,7 @@ def rss_atom_parser(xml_string):
     d['errors'] = str_errors
 
     use_feed_author = data.find('use_feed_author')
-    if use_feed_author != None:
+    if use_feed_author is not None:
         d['use_feed_author'] = True
 
     return d

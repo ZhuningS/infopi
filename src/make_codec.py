@@ -84,5 +84,5 @@ def main():
         f.writelines('\n'.join(c))
 
 if __name__ == '__main__':
-    if webencodings != None:
+    if webencodings is not None:
         main()

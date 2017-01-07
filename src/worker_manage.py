@@ -109,14 +109,14 @@ def worker_starter(runcfg, source_id):
 
         else:
             # max length of info list
-            if source.max_len != None:
+            if source.max_len is not None:
                 if len(lst) > source.max_len:
                     lst = lst[:source.max_len]
             elif len(lst) > runcfg.max_entries:
                 lst = lst[:runcfg.max_entries]
 
             # callback函数
-            if source.callback != None:
+            if source.callback is not None:
                 newlst = list()
                 local_d = dict()
                 local_d['hasher'] = hasher
@@ -267,12 +267,12 @@ def test_source(source_id):
 
     else:
         # max length of info list
-        if source.max_len != None:
+        if source.max_len is not None:
             if len(lst) > source.max_len:
                 lst = lst[:source.max_len]
 
         # callback函数
-        if source.callback != None:
+        if source.callback is not None:
             newlst = list()
             local_d = dict()
             local_d['hasher'] = hasher

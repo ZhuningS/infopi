@@ -68,7 +68,7 @@ def parse_html(data_dict, base_url, html):
         raise c_worker_exception('html为空字符串', data_dict['url'], '')
 
     r = red.d(r'^\s*$')
-    if r.match(html) != None:
+    if r.match(html) is not None:
         raise c_worker_exception('html只有空白', data_dict['url'], '')
 
     re_lst = data_dict['blocks_list']
@@ -201,7 +201,7 @@ def html_re_parser(xml_string):
     data = ET.fromstring(xml_string).find('data')
 
     url_tag = data.find('url')
-    if url_tag != None:
+    if url_tag is not None:
         d['url'] = url_tag.text.strip()
 
         str_encoding = url_tag.attrib.get('encoding', '').strip()

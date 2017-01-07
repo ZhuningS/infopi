@@ -1016,7 +1016,7 @@ login_manager = c_login_manager(write_weberr)
 @web.errorhandler(500)
 def internal_error(exception):
     # beep
-    if winsound != None:
+    if winsound is not None:
         try:
             winsound.Beep(600, 1000)
         except:

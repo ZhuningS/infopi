@@ -23,7 +23,7 @@ def get_info_list(cfg, usertype, show_exceptions,
 
     # cpu temperature
     temp_float = get_cpu_temperature()
-    if temp_float != None:
+    if temp_float is not None:
         one = ('系统-CPU温度', str(temp_float))
         lst.append(one)
 

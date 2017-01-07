@@ -166,7 +166,7 @@ class c_user_cfg:
                             print(s % (user.username, sid, m.group(3)))
                             interval = 0
 
-                        if current_category != None:
+                        if current_category is not None:
                             # ! sync comments in 
                             # backprocess.py and db_wrapper.py
                             # with this list

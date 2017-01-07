@@ -36,7 +36,7 @@ def parse_html(data_dict, base_url, html):
         raise c_worker_exception('html为空字符串', data_dict['url'], '')
 
     r = red.d(r'^\s*$')
-    if r.match(html) != None:
+    if r.match(html) is not None:
         raise c_worker_exception('html只有空白', data_dict['url'], '')
 
     # extract json string
@@ -211,7 +211,7 @@ def html_json_parser(xml_string):
     data = ET.fromstring(xml_string).find('data')
 
     url_tag = data.find('url')
-    if url_tag != None:
+    if url_tag is not None:
         d['url'] = url_tag.text.strip()
 
         str_encoding = url_tag.attrib.get('encoding', '').strip()
@@ -222,13 +222,13 @@ def html_json_parser(xml_string):
 
     # extract json string
     re_tag = data.find('re')
-    if re_tag != None:
+    if re_tag is not None:
         d['re_pattern'] = process_multiline(re_tag.text)
         d['re_flags'] = process_flags(re_tag.attrib.get('flags', ''))
 
     # replace
     replace_tag = data.find('replace')
-    if replace_tag != None:
+    if replace_tag is not None:
         replace_re_tag = replace_tag.find('re')
         d['repl_pattern'] = process_multiline(replace_re_tag.text)
         d['repl_flags'] = process_flags(replace_re_tag.attrib.get('flags', ''))

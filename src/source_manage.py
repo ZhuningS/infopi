@@ -45,7 +45,7 @@ temp_dict = None
 
 def load_xml(sources_path, path, filename, test_sid):
     def get_text_from_tag(tag):
-        if tag != None:
+        if tag is not None:
             return tag.text.strip()
         else:
             return ''
@@ -205,9 +205,9 @@ def load_xml(sources_path, path, filename, test_sid):
 
     # print max_len and max_db
     if test_sid == s.source_id:
-        if s.max_len != None:
+        if s.max_len is not None:
             print('信息源%s的max_len被设为%d' % (s.source_id, s.max_len))
-        if s.max_db != None:
+        if s.max_db is not None:
             print('信息源%s的max_db被设为%d' % (s.source_id, s.max_db))
 
     # add to dict

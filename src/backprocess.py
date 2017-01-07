@@ -104,15 +104,15 @@ def pre_process(users, all_source_dict,
                     if remember_dic[sid].temp_next_time != 0 \
                     else remember_dic[sid].next_time
             else:
-                next_time = boot_time +\
-                    ((now_time - boot_time) // unit.interval) *\
+                next_time = boot_time + \
+                    ((now_time - boot_time) // unit.interval) * \
                     unit.interval
 
             # last fetch time
             last_fetch_time = remember_dic[sid].last_fetch_str
         else:
-            next_time = boot_time +\
-                ((now_time - boot_time) // unit.interval) *\
+            next_time = boot_time + \
+                ((now_time - boot_time) // unit.interval) * \
                 unit.interval
             last_fetch_time = ''
 
@@ -279,7 +279,7 @@ def main_process(version, web_port, https, tmpfs_path,
         # timer
         if msg.command == 'bb:timer':
             ctrl.timer()
-            #status_str = ctrl.get_status_str()
+            # status_str = ctrl.get_status_str()
             # print(status_str)
 
             # 检查发送队列
@@ -303,7 +303,7 @@ def main_process(version, web_port, https, tmpfs_path,
         # 运行sources
         elif msg.command == 'wb:request_fetch' and \
                 msg.token == bvars.cfg_token:
-            #print('web side request fetch')
+            # print('web side request fetch')
 
             # 挂起 或 无信息源
             if not fetch_all:
@@ -360,6 +360,9 @@ def fun_request_web_check(port, https):
         req = urllib.request.Request('https://127.0.0.1:%d/check' % port)
 
     def openit():
-        opener.open(req)
+        try:
+            opener.open(req, timeout=1)
+        except:
+            pass
 
     return openit

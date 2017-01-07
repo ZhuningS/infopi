@@ -63,7 +63,7 @@ def worker_starter(runcfg, source_id):
                        back_web_queue, bb_queue,
                        cfg_token):
 
-        #print('线程开始：%s' % source.source_id)
+        # print('线程开始：%s' % source.source_id)
 
         int_time = int(time.time())
         is_exception = True
@@ -109,7 +109,9 @@ def worker_starter(runcfg, source_id):
 
         else:
             # max length of info list
-            if len(lst) > runcfg.max_entries:
+            if source.max_len != None:
+                lst = lst[:source.max_len]
+            elif len(lst) > runcfg.max_entries:
                 lst = lst[:runcfg.max_entries]
 
             # callback函数
@@ -209,7 +211,7 @@ def worker_starter(runcfg, source_id):
                                cfg_token,
                                data)
 
-        #print('线程结束：%s' % source.source_id)
+        # print('线程结束：%s' % source.source_id)
 
     source = bvars.sources[source_id]
 
@@ -240,7 +242,7 @@ def test_source(source_id):
     try:
         worker_tuple = bvars.workers[source.worker_id]
     except:
-        print('信息源%s没有找到指定worker: %s' %
+        print('信息源%s没有找到指定worker: %s' % 
               (source.source_id, source.worker_id)
               )
         return
@@ -263,6 +265,10 @@ def test_source(source_id):
         raise e
 
     else:
+        # max length of info list
+        if source.max_len != None:
+            lst = lst[:source.max_len]
+        
         # callback函数
         if source.callback != None:
             newlst = list()

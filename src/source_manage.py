@@ -19,7 +19,8 @@ class c_source:
                  'name', 'comment', 'link',
                  'worker_id', 'data',
                  'callback',
-                 'xml')
+                 'xml',
+                 'max_len')
 
     def __init__(self):
         self.source_id = ''
@@ -34,6 +35,8 @@ class c_source:
         self.callback = None
 
         self.xml = ''
+        
+        self.max_len = None
 
 
 temp_dict = None
@@ -81,7 +84,7 @@ def load_xml(sources_path, path, filename):
 
     # windows不区分大小写，不必提示
     if short_fn in temp_dict:
-        #print('提示:\n%s:%s已存在，本程序不区分大小写' % (lpath, short_fn))
+        # print('提示:\n%s:%s已存在，本程序不区分大小写' % (lpath, short_fn))
         return
 
     # get xml object
@@ -111,7 +114,18 @@ def load_xml(sources_path, path, filename):
     s.name = get_text_from_tag(xml.find('name'))
     s.comment = get_text_from_tag(xml.find('comment'))
     s.link = get_text_from_tag(xml.find('link'))
-
+    
+    max_len = get_text_from_tag(xml.find('max_len'))
+    if max_len != '':
+        try:
+            max_len = int(max_len)
+            if max_len > 0:
+                s.max_len = max_len
+            else:
+                print('信息源%s的max_len应大于0' % s.source_id)
+        except:
+            print('信息源%s的max_len有误: %s' % (s.source_id, max_len))
+    
     # worker_id may be '' when using father source
     # then will be set later
     s.worker_id = get_text_from_tag(xml.find('worker'))

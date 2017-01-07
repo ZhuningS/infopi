@@ -156,7 +156,7 @@ def generate_page(all_count, now_pg,
 
     # format template
     template = template_cache.get((p_type, category))
-    if template == None:
+    if template is None:
         template = make_pattern(p_type, category)
         template_cache[(p_type, category)] = template
 
@@ -282,7 +282,7 @@ def generate_list(username, category, pagenum,
     if p_type == PG_TYPE.SOURCE:
         sid = db.get_sid_by_encoded(username, encoded_url)
         all_count, lst = db.get_infos_by_sid(username, sid, offset, limit)
-        if all_count == None:
+        if all_count is None:
             return None, None, None, None, None
     elif p_type in {PG_TYPE.P2_EXCEPTION,
                     PG_TYPE.BM_EXCEPTION,
@@ -298,7 +298,7 @@ def generate_list(username, category, pagenum,
         all_count, lst = db.get_infos_by_user_category(
             username, category,
             offset, limit)
-        if all_count == None:
+        if all_count is None:
             return None, None, None, None, None
 
     # nag part
@@ -521,7 +521,7 @@ def general_list(category, pagenum, p_type, dv_type, encoded_url=''):
         generate_list(username, category,
                       pagenum, p_type, dv_type, encoded_url)
 
-    if lst == None:
+    if lst is None:
         return wrong_key_html
 
     if dv_type == DV_TYPE.MOBILE:
@@ -650,7 +650,7 @@ def general_pad2(category, pagenum, p_type):
     lst, all_count, page_html, now_time, category = \
         generate_list(username, category,
                       pagenum, p_type, DV_TYPE.PAD)
-    if lst == None:
+    if lst is None:
         return wrong_key_html
 
     # exceptions number
@@ -721,7 +721,7 @@ def cate_info():
             elif 'cate' in request.form:
                 cate = request.form['cate']
                 lst = db.get_cate_list_for_fetch(username, cate)
-                if lst == None:
+                if lst is None:
                     return '请求的版块列表有误：<br>' + cate
                 c_message.make(web_back_queue, 'wb:request_fetch',
                                wvars.cfg_token, lst)

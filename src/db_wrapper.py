@@ -777,7 +777,7 @@ class c_login_manager:
         return msg
 
     def maintenace(self, now_time=None):
-        if now_time == None:
+        if now_time is None:
             now_time = int(time.time())
 
         recent = now_time - c_login_manager.RECENT_TIME

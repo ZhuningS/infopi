@@ -69,13 +69,13 @@ def worker_starter(runcfg, source_id):
         is_exception = True
 
         try:
-            if worker == None:
+            if worker is None:
                 s = '信息源%s没有找到指定worker: %s' % \
                     (source.source_id, source.worker_id)
                 print(s)
                 raise c_worker_exception(s)
 
-            if source.data == None:
+            if source.data is None:
                 s = '信息源%s的data未能被解析' % source.source_id
                 print(s)
                 raise c_worker_exception(s)
@@ -255,7 +255,7 @@ def test_source(source_id):
 
     # run
     try:
-        if source.data == None:
+        if source.data is None:
             raise Exception('信息源%s的data未能被解析' % source.source_id)
 
         lst = worker(source.data, worker_dict)

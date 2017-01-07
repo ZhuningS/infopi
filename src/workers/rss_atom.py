@@ -17,7 +17,7 @@ from datadefine import *
 def de_html_char(text):
     '''去掉html转义'''
 
-    if text == None:
+    if text is None:
         return ''
 
     # 去标签
@@ -82,13 +82,13 @@ def parse_xml(data_dict, xml):
                                      )
 
     # lxml
-    if doc == None:
+    if doc is None:
         try:
             parser = etree.XMLParser(recover=True, encoding='utf-8')
             doc = etree.fromstring(xml.encode('utf-8'), parser=parser)
             print('使用lxml解析%s' % data_dict['url'])
 
-            if doc == None:
+            if doc is None:
                 raise Exception('lxml模块也无法解析此XML')
 
         except Exception as e:
@@ -112,7 +112,7 @@ def parse_xml(data_dict, xml):
         f_author = de_html_char(doc.findtext(tagnames['f_author'][feedtype]))
 
     item_iter = doc.findall(tagnames['f_items'][feedtype])
-    if item_iter == None:
+    if item_iter is None:
         return []
 
     ret = []

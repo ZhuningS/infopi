@@ -300,7 +300,7 @@ def main_process(version, web_port, https, tmpfs_path,
                 continue
 
             # 运行source
-            ctrl.fetch(fetch_all if msg.data == None else msg.data)
+            ctrl.fetch(fetch_all if msg.data is None else msg.data)
 
         # load config, users
         elif msg.command == 'wb:request_load':
@@ -313,11 +313,11 @@ def main_process(version, web_port, https, tmpfs_path,
                                           ctrl.remember_nexttime_dict())
 
             # 加载cfg文件夹失败
-            if cfg_token == None:
+            if cfg_token is None:
                 continue
 
             # 挂起?
-            if timer_heap == None:
+            if timer_heap is None:
                 fetch_all = list()
             else:
                 fetch_all = [i.source_id for i in timer_heap]

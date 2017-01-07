@@ -41,13 +41,13 @@ def parse_html(data_dict, base_url, html):
 
     # extract json string
     re = red.d(data_dict['re_pattern'], data_dict['re_flags'])
-    if re == None:
+    if re is None:
         raise c_worker_exception('正则表达式编译失败',
                                  '',
                                  '用于提取json字符串的正则表达式编译失败')
 
     m = re.search(html)
-    if m == None:
+    if m is None:
         raise c_worker_exception('无法用re(正则表达式)提取json字符',
                                  data_dict['url'],
                                  '')
@@ -56,7 +56,7 @@ def parse_html(data_dict, base_url, html):
     # replace
     if 'repl' in data_dict:
         r = red.d(data_dict['repl_pattern'], data_dict['repl_flags'])
-        if r == None:
+        if r is None:
             raise c_worker_exception('replace正则表达式编译失败')
 
         json_str = r.sub(data_dict['repl'], json_str)

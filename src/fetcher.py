@@ -55,7 +55,7 @@ class Fetcher:
 
     @staticmethod
     def d(url, bytes_data):
-        if chardet == None:
+        if chardet is None:
             return ''
 
         Fetcher.lock.acquire()
@@ -214,7 +214,7 @@ class Fetcher:
 
         encoding = Fetcher.LABELS.get(in_encoding, None)
 
-        if encoding == None:
+        if encoding is None:
             try:
                 codecs.lookup(in_encoding)
             except:

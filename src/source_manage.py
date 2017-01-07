@@ -129,7 +129,7 @@ def load_xml(sources_path, path, filename, test_sid):
 
         # parse data
         s.data = parse_data(s.worker_id, string)
-        if s.data == None:
+        if s.data is None:
             msg = '解析信息源%s的data失败' % s.source_id
             raise Exception(msg)
 
@@ -149,7 +149,7 @@ def load_xml(sources_path, path, filename, test_sid):
         s.data = father_data
 
         # callback
-        if s.callback == None:
+        if s.callback is None:
             s.callback = father_s.callback
 
         # father + xml

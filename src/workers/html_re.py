@@ -78,7 +78,7 @@ def parse_html(data_dict, base_url, html):
 
         # block re
         block_prog = red.d(block[0][0], block[0][1])
-        if block_prog == None:
+        if block_prog is None:
             pattern_error(i)
 
         itr = block_prog.finditer(html)
@@ -92,7 +92,7 @@ def parse_html(data_dict, base_url, html):
 
         # item re
         item_prog = red.d(block[1][0], block[1][1])
-        if item_prog == None:
+        if item_prog is None:
             pattern_error(i, False)
 
         itr = item_prog.finditer(subhtml)

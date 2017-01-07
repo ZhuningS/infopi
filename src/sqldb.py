@@ -295,7 +295,7 @@ class c_sqldb:
         count = 0
         while True:
             row = self.cursor.fetchone()
-            if row == None:
+            if row is None:
                 break
 
             s = c_info()
@@ -417,7 +417,7 @@ class c_sqldb:
         row = r.fetchone()
 
         # no exception, return
-        if row == None:
+        if row is None:
             return
 
         # callback, remove from index
@@ -544,7 +544,7 @@ class c_sqldb_keeper(c_sqldb):
 
     def get_all_for_make_index(self):
         # first load
-        if self.full_list == None:
+        if self.full_list is None:
             self.full_list = list()
 
             # load data to build indexs

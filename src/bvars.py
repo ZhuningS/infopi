@@ -17,7 +17,7 @@ cfg_token = -2
 back_web_queue = None
 bb_queue = None
 
-#gcfg = None
+gcfg = None
 
 root_path = os.path.dirname(os.path.abspath(__file__))
 root_path = os.path.dirname(root_path)

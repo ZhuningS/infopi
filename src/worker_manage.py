@@ -109,7 +109,7 @@ def worker_starter(runcfg, source_id):
 
         else:
             # max length of info list
-            if source.max_len != None and len(lst) > source.max_len:
+            if source.max_len != None:
                 lst = lst[:source.max_len]
             elif len(lst) > runcfg.max_entries:
                 lst = lst[:runcfg.max_entries]
@@ -266,7 +266,7 @@ def test_source(source_id):
 
     else:
         # max length of info list
-        if source.max_len != None and len(lst) > source.max_len:
+        if source.max_len != None:
             lst = lst[:source.max_len]
         
         # callback函数

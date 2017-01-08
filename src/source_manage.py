@@ -181,10 +181,10 @@ def load_xml(sources_path, path, filename, test_sid):
     if max_db != '':
         try:
             max_db = int(max_db)
-            if max_db >= 0:
+            if max_db > 1:
                 s.max_db = max_db
             else:
-                print('信息源%s的max_db应>=0，忽略: %d' % (s.source_id, max_db))
+                print('信息源%s的max_db应>1，忽略: %d' % (s.source_id, max_db))
         except:
             print('信息源%s的max_db有误，忽略: %s' % (s.source_id, max_db))
 

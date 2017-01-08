@@ -55,12 +55,16 @@ def pre_process(users, all_source_dict,
                     # 防止维护数据库导致的反复添加
                     # +1是为异常信息预留的位置
                     empty_max_db = source.max_db is None
+
                     if source.max_len is not None:
                         if source.max_db is not None:
                             source.max_db = max(
                                 source.max_len + 1, source.max_db)
                         else:
                             source.max_db = source.max_len + 1
+                    elif source.max_db is not None:
+                        source.max_len = source.max_db - 1
+
                     if source.max_db is not None and empty_max_db and \
                             source.max_db <= gcfg.db_process_del_entries:
                         source.max_db = None

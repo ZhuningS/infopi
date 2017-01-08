@@ -61,8 +61,8 @@ def pre_process(users, all_source_dict,
                                 source.max_len + 1, source.max_db)
                         else:
                             source.max_db = source.max_len + 1
-                    if empty_max_db and source.max_db is not None and \
-                            source.max_db < gcfg.db_process_del_entries:
+                    if source.max_db is not None and empty_max_db and \
+                            source.max_db <= gcfg.db_process_del_entries:
                         source.max_db = None
                     sinfo[7] = source.max_db
 

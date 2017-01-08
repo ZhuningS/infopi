@@ -164,18 +164,6 @@ def load_xml(sources_path, path, filename, test_sid):
         # xml content
         s.xml = string
 
-    # max_db
-    max_db = get_text_from_tag(xml.find('max_db'))
-    if max_db != '':
-        try:
-            max_db = int(max_db)
-            if max_db > 0:
-                s.max_db = max_db
-            else:
-                print('信息源%s的max_db应大于0，忽略' % s.source_id)
-        except:
-            print('信息源%s的max_db有误，忽略: %s' % (s.source_id, max_db))
-
     # max_len
     max_len = get_text_from_tag(xml.find('max_len'))
     if max_len != '':
@@ -184,9 +172,21 @@ def load_xml(sources_path, path, filename, test_sid):
             if max_len > 0:
                 s.max_len = max_len
             else:
-                print('信息源%s的max_len应大于0，忽略' % s.source_id)
+                print('信息源%s的max_len应>0，忽略: %d' % (s.source_id, max_len))
         except:
             print('信息源%s的max_len有误，忽略: %s' % (s.source_id, max_len))
+
+    # max_db
+    max_db = get_text_from_tag(xml.find('max_db'))
+    if max_db != '':
+        try:
+            max_db = int(max_db)
+            if max_db >= 0:
+                s.max_db = max_db
+            else:
+                print('信息源%s的max_db应>=0，忽略: %d' % (s.source_id, max_db))
+        except:
+            print('信息源%s的max_db有误，忽略: %s' % (s.source_id, max_db))
 
     # print max_len and max_db
     if test_sid == s.source_id:

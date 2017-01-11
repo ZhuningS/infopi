@@ -108,7 +108,7 @@ class c_sqldb:
         dest_fn = 'sql' + self.get_time_str() + '.db'
         dest_fn = os.path.join(self.dbfile_dir, dest_fn)
         shutil.copy2(self.current_file, dest_fn)
-        print('copy db file from %s to %s' % 
+        print('copy db file from %s to %s' %
               (self.current_file, dest_fn)
               )
 
@@ -162,13 +162,16 @@ class c_sqldb:
         sql = 'CREATE INDEX fetch_date_info_idx ON info_tbl(fetch_date);'
         self.cursor.execute(sql)
 
+        # commit
+        self.conn.commit()
+
         print('database file created')
 
     # open db
     def open(self, filename):
         # autocommit mode, for VACUUM operation
         self.conn = sqlite3.connect(filename, isolation_level=None)
-        
+
         self.cursor = self.conn.cursor()
 
     # close connection

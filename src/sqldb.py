@@ -162,14 +162,13 @@ class c_sqldb:
         sql = 'CREATE INDEX fetch_date_info_idx ON info_tbl(fetch_date);'
         self.cursor.execute(sql)
 
-        # commit
-        self.conn.commit()
-
         print('database file created')
 
     # open db
     def open(self, filename):
-        # autocommit mode, for VACUUM operation
+        # isolation_level=None:
+        # sqlite3 module doesn't issue BEGIN and commit implicitly
+        # sqlite3 engine uses autocommit mode
         self.conn = sqlite3.connect(filename, isolation_level=None)
 
         self.cursor = self.conn.cursor()
@@ -236,7 +235,6 @@ class c_sqldb:
             if self.cursor.rowcount > 0:
                 one.id = _id
 
-                self.conn.commit()
                 self.has_changed = True
 
                 # update index
@@ -266,7 +264,6 @@ class c_sqldb:
             # 添加的id
             one.id = self.cursor.lastrowid
 
-            self.conn.commit()
             self.has_changed = True
 
             self.cb_add(one.source_id, one.id, one.fetch_date, one.suid)
@@ -406,7 +403,6 @@ class c_sqldb:
         self.cursor.execute(sql)
 
         if self.cursor.rowcount > 0:
-            self.conn.commit()
             self.has_changed = True
 
     def del_exception_by_sid(self, source_id):
@@ -433,7 +429,6 @@ class c_sqldb:
         self.cursor.execute(sql, (_id,))
 
         if self.cursor.rowcount > 0:
-            self.conn.commit()
             self.has_changed = True
 
     # lst: (source_id, id, fetch_date)
@@ -455,7 +450,6 @@ class c_sqldb:
         self.cursor.executemany(sql2, ((id,) for _, id, _ in lst[::-1]))
 
         if self.cursor.rowcount > 0:
-            self.conn.commit()
             self.has_changed = True
 
     # remove ghost source
@@ -479,7 +473,6 @@ class c_sqldb:
         self.cursor.execute(sql, (sid,))
 
         if self.cursor.rowcount > 0:
-            self.conn.commit()
             self.has_changed = True
             print('%s有%d条幽灵数据被删除' % (sid, self.cursor.rowcount))
 

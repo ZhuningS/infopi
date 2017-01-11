@@ -35,6 +35,31 @@ def pre_process(users, all_source_dict,
     sid_sinfolist_dict = dict()
     now_time = int(time.time())
 
+    # 调整max_len、max_db
+    # 要防止维护数据库导致的反复添加
+    # +1是为异常信息预留的位置
+    for source in all_source_dict.values():
+        empty_max_len = source.max_len is None
+        empty_max_db = source.max_db is None
+
+        if source.max_len is not None:
+            if source.max_db is not None:
+                source.max_db = max(
+                    source.max_len + 1, source.max_db)
+            else:
+                source.max_db = source.max_len + 1
+        elif source.max_db is not None:
+            source.max_len = source.max_db - 1
+
+        # clear unnecessary assignment
+        if source.max_len is not None and empty_max_len and \
+                source.max_len >= gcfg.runcfg.max_entries:
+            source.max_len = None
+
+        if source.max_db is not None and empty_max_db and \
+                source.max_db <= gcfg.db_process_del_entries:
+            source.max_db = None
+
     for user in users:
         for category, sinfo_list in user.category_list:
             for sinfo in sinfo_list:
@@ -49,31 +74,8 @@ def pre_process(users, all_source_dict,
                     sinfo[3] = source.name
                     sinfo[4] = source.comment
                     sinfo[5] = source.link
-                    xml = source.xml
-
-                    # 生成max_len、max_db
-                    # 要防止维护数据库导致的反复添加
-                    # +1是为异常信息预留的位置
-                    empty_max_len = source.max_len is None
-                    empty_max_db = source.max_db is None
-
-                    if source.max_len is not None:
-                        if source.max_db is not None:
-                            source.max_db = max(
-                                source.max_len + 1, source.max_db)
-                        else:
-                            source.max_db = source.max_len + 1
-                    elif source.max_db is not None:
-                        source.max_len = source.max_db - 1
-
-                    # clear unnecessary assignment
-                    if source.max_len is not None and empty_max_len and \
-                            source.max_len >= gcfg.runcfg.max_entries:
-                        source.max_len = None
-                    if source.max_db is not None and empty_max_db and \
-                            source.max_db <= gcfg.db_process_del_entries:
-                        source.max_db = None
                     sinfo[7] = source.max_db
+                    xml = source.xml
 
                     # for timer_heap
                     interval = gcfg.default_source_interval \

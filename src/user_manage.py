@@ -172,8 +172,7 @@ class c_user_cfg:
                             # with this list
                             current_category.append([sid, level, interval,
                                                      'name', 'comment', 'link',
-                                                     'last_fetch',
-                                                     'max_db'])
+                                                     'last_fetch', 'max_db'])
                         else:
                             s = '文件%s出现错误，缺少分类:\n%s'
                             print(s % (f_filename, line))

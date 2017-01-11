@@ -20,8 +20,9 @@ def item_process(text):
     # 去转义
     text = html.unescape(text)
 
-    # 0xe38080转空格
-    text = text.replace('　', ' ')
+    # U+3000、U+200B转空格
+    text = text.replace('\u3000', ' ')
+    text = text.replace('\u200b', ' ')
 
     # 空白
     text = text.replace('\n', ' ')

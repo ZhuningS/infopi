@@ -58,7 +58,7 @@ def hasher(string):
 
 
 def unixtime(string, fmt='%m-%d %H:%M'):
-    print('警告:callback里的unixtime函数已改名为funcs.unixtime，用法不变。')
+    print('警告:callback里的unixtime函数已更名为funcs.unixtime，用法不变。')
     print('2018年1月后不再提供unixtime函数，请改用新函数。')
     global funcs
     return funcs.unixtime(string, fmt)

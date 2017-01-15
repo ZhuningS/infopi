@@ -22,9 +22,10 @@ def de_html_char(text):
     # 去转义
     text = html.unescape(text)
 
-    # U+3000、U+200B转空格
+    # U+3000，表意字空格，转普通空格
     text = text.replace('\u3000', ' ')
-    text = text.replace('\u200b', ' ')
+    # U+200B，零宽空格，删
+    text = text.replace('\u200b', '')
 
     # 空白
     text = text.replace('\n', ' ')

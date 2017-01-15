@@ -19,24 +19,49 @@ def for_wz(s):
         replace('\n', '').replace('\r', '')
 
 
+class funcs:
+    '在callback代码里可使用的便利函数'
+    @staticmethod
+    def hasher(string):
+        try:
+            b = string.encode('utf-8')
+            h = hashlib.md5(b).hexdigest()
+            return h
+        except Exception as e:
+            print('funcs.hasher函数异常', e)
+            return ''
+
+    @staticmethod
+    def unixtime(string, fmt='%m-%d %H:%M'):
+        try:
+            return datetime.datetime.\
+                fromtimestamp(float(string)).\
+                strftime(fmt)
+        except Exception as e:
+            print('funcs.unixtime函数异常', e)
+            return ''
+
+    @staticmethod
+    def resub(pattern, repl, string, count=0):
+        try:
+            return red.sub(pattern, repl, string, count=count)
+        except Exception as e:
+            print('funcs.resub函数异常', e)
+            return ''
+
+
 def hasher(string):
-    try:
-        hashobj = hashlib.md5()
-        hashobj.update(string.encode('utf-8'))
-        return hashobj.hexdigest()
-    except Exception as e:
-        print('hasher函数异常', e)
-        return ''
+    print('警告:callback里的hasher函数已更名为funcs.hasher，用法不变。')
+    print('2018年1月后不再提供hasher函数，请改用新函数。')
+    global funcs
+    return funcs.hasher(string)
 
 
 def unixtime(string, fmt='%m-%d %H:%M'):
-    try:
-        return datetime.datetime.\
-            fromtimestamp(float(string)).\
-            strftime(fmt)
-    except Exception as e:
-        print('unixtime函数异常', e)
-        return ''
+    print('警告:callback里的unixtime函数已改名为funcs.unixtime，用法不变。')
+    print('2018年1月后不再提供unixtime函数，请改用新函数。')
+    global funcs
+    return funcs.unixtime(string, fmt)
 
 
 class c_worker_exception(Exception):
@@ -119,6 +144,9 @@ def worker_starter(runcfg, source_id):
             if source.callback is not None:
                 newlst = list()
                 local_d = dict()
+
+                global funcs, hasher, unixtime
+                local_d['funcs'] = funcs
                 local_d['hasher'] = hasher
                 local_d['unixtime'] = unixtime
 
@@ -275,6 +303,9 @@ def test_source(source_id):
         if source.callback is not None:
             newlst = list()
             local_d = dict()
+
+            global funcs, hasher, unixtime
+            local_d['funcs'] = funcs
             local_d['hasher'] = hasher
             local_d['unixtime'] = unixtime
 

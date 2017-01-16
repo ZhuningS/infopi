@@ -20,11 +20,12 @@ def for_wz(s):
 
 
 class Functions:
-    '在callback代码里可使用的便利函数'
+    '在callback代码里可使用的便利函数。需显式抛出异常。'
     __slots__ = ()
 
     def __setattr__(self, name, value):
         print('给funcs的赋值无效，funcs是只读对象。')
+        raise Exception('给funcs的%s赋值无效，funcs是只读对象。' % name)
 
     @staticmethod
     def hasher(string):
@@ -34,7 +35,7 @@ class Functions:
             return h
         except Exception as e:
             print('funcs.hasher函数异常', e)
-            return ''
+            raise
 
     @staticmethod
     def unixtime(string, fmt='%m-%d %H:%M'):
@@ -44,7 +45,7 @@ class Functions:
                 strftime(fmt)
         except Exception as e:
             print('funcs.unixtime函数异常', e)
-            return ''
+            raise
 
     # add in 2017.1.15
     @staticmethod
@@ -53,17 +54,18 @@ class Functions:
             return red.sub(pattern, repl, string, count=count)
         except Exception as e:
             print('funcs.resub函数异常', e)
-            return ''
+            raise
 
     # add in 2017.1.16b
     @staticmethod
     def research(pattern, string):
-        r = red.d(pattern)
-        if r is None:
-            return False
-
-        m = r.search(string)
-        return m is not None
+        try:
+            r = red.d(pattern)
+            m = r.search(string)
+            return m is not None
+        except Exception as e:
+            print('funcs.research函数异常', e)
+            raise
 
 funcs = Functions()
 

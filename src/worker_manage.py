@@ -97,7 +97,7 @@ def worker_starter(runcfg, source_id):
         # print('线程开始：%s' % source.source_id)
 
         int_time = int(time.time())
-        is_exception = True
+        is_exception = False
 
         try:
             if worker is None:
@@ -128,6 +128,8 @@ def worker_starter(runcfg, source_id):
 
             lst = [i]
 
+            is_exception = True
+
         except Exception as e:
             print('执行worker时程序异常:', e)
 
@@ -137,6 +139,8 @@ def worker_starter(runcfg, source_id):
             i.suid = '<exception>'
 
             lst = [i]
+
+            is_exception = True
 
         else:
             # max length of info list
@@ -185,8 +189,6 @@ def worker_starter(runcfg, source_id):
                     newlst.append(one)
 
             lst = newlst
-
-            is_exception = False
 
         finally:
             # 通知执行结束

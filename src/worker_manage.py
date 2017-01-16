@@ -46,6 +46,7 @@ class Functions:
             print('funcs.unixtime函数异常', e)
             return ''
 
+    # add in 2017.1.15
     @staticmethod
     def resub(pattern, repl, string, count=0):
         try:
@@ -53,6 +54,16 @@ class Functions:
         except Exception as e:
             print('funcs.resub函数异常', e)
             return ''
+
+    # add in 2017.1.16b
+    @staticmethod
+    def research(pattern, string):
+        r = red.d(pattern)
+        if r is None:
+            return False
+
+        m = r.search(string)
+        return m is not None
 
 funcs = Functions()
 

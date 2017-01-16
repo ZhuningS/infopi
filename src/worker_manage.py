@@ -6,6 +6,7 @@ import hashlib
 
 import bvars
 from datadefine import *
+from red import *
 
 
 def for_wz(s):

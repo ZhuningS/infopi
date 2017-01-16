@@ -7,10 +7,9 @@ import hashlib
 import bvars
 from datadefine import *
 
-# translate for wz_tooltip.js (web tooltip)
-
 
 def for_wz(s):
+    # translate for wz_tooltip.js (web tooltip)
     # 1st line: for html code
     # 2nd line: no line break
     #           replace("'", '"') this rely on html templates
@@ -19,8 +18,13 @@ def for_wz(s):
         replace('\n', '').replace('\r', '')
 
 
-class funcs:
+class Functions:
     '在callback代码里可使用的便利函数'
+    __slots__ = ()
+
+    def __setattr__(self, name, value):
+        print('给funcs的赋值无效，funcs是只读对象。')
+
     @staticmethod
     def hasher(string):
         try:
@@ -49,17 +53,15 @@ class funcs:
             print('funcs.resub函数异常', e)
             return ''
 
+funcs = Functions()
+
 
 def hasher(string):
-    print('警告:callback里的hasher函数已更名为funcs.hasher，用法不变。')
-    print('2018年1月后不再提供hasher函数，请改用新函数。')
     global funcs
     return funcs.hasher(string)
 
 
 def unixtime(string, fmt='%m-%d %H:%M'):
-    print('警告:callback里的unixtime函数已更名为funcs.unixtime，用法不变。')
-    print('2018年1月后不再提供unixtime函数，请改用新函数。')
     global funcs
     return funcs.unixtime(string, fmt)
 

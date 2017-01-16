@@ -57,16 +57,6 @@ class Functions:
 funcs = Functions()
 
 
-def hasher(string):
-    global funcs
-    return funcs.hasher(string)
-
-
-def unixtime(string, fmt='%m-%d %H:%M'):
-    global funcs
-    return funcs.unixtime(string, fmt)
-
-
 class c_worker_exception(Exception):
 
     def __init__(self, title, url='', summary=''):
@@ -148,10 +138,10 @@ def worker_starter(runcfg, source_id):
                 newlst = list()
                 local_d = dict()
 
-                global funcs, hasher, unixtime
+                global funcs
                 local_d['funcs'] = funcs
-                local_d['hasher'] = hasher
-                local_d['unixtime'] = unixtime
+                local_d['hasher'] = funcs.hasher
+                local_d['unixtime'] = funcs.unixtime
 
                 for i, info in enumerate(lst):
                     local_d['posi'] = i
@@ -307,10 +297,10 @@ def test_source(source_id):
             newlst = list()
             local_d = dict()
 
-            global funcs, hasher, unixtime
+            global funcs
             local_d['funcs'] = funcs
-            local_d['hasher'] = hasher
-            local_d['unixtime'] = unixtime
+            local_d['hasher'] = funcs.hasher
+            local_d['unixtime'] = funcs.unixtime
 
             for i, info in enumerate(lst):
                 local_d['posi'] = i

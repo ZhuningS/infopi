@@ -20,12 +20,22 @@ def for_wz(s):
 
 
 class Functions:
-    '在callback代码里可使用的便利函数。需显式抛出异常。'
+    '在callback代码里可使用的便利函数，显式抛出异常。'
     __slots__ = ()
 
     def __setattr__(self, name, value):
-        print('给funcs的赋值无效，funcs是只读对象。')
-        raise Exception('给funcs的%s赋值无效，funcs是只读对象。' % name)
+        s = '给funcs.%s的赋值无效，funcs是只读对象。' % name
+        print(s)
+        raise Exception(s)
+
+    def __getattribute__(self, name):
+        if name[:2] == "__":
+            raise Exception('请勿访问funcs对象的系统变量: %s' % name)
+
+        try:
+            return Functions.__dict__[name].__func__
+        except:
+            raise Exception('funcs对象没有这个方法: %s' % name)
 
     @staticmethod
     def hasher(string):
@@ -403,7 +413,8 @@ def worker(worker_id):
         if worker_id not in bvars.workers:
             bvars.workers[worker_id] = (func, dict())
         else:
-            print('worker_id: %s already exist in workers' % worker_id)
+            print('警告: 出现重复的<worker函数>，请检查src/workers目录下的程序。')
+            print('重复的<worker函数>为%s，由@worker装饰。' % worker_id)
         return func
 
     return worker_decorator
@@ -420,7 +431,8 @@ def dataparser(worker_id):
         if worker_id not in bvars.dataparsers:
             bvars.dataparsers[worker_id] = func
         else:
-            print('worker_id: %s already exist in dataparsers' % worker_id)
+            print('警告: 出现重复的<worker解析器>，请检查src/workers目录下的程序。')
+            print('重复的<worker解析器>为%s，由@dataparser装饰。' % worker_id)
         return func
 
     return dataparser_decorator

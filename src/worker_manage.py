@@ -395,7 +395,7 @@ def parse_data(worker_id, xml_string):
         # if worker_id doesn't exist, worker_starter will catch the issue.
         return dict()
 
-    # caller show catch exception for this
+    # caller should catch exception for this
     return parser(xml_string)
 
 # worker function:

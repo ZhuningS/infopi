@@ -386,7 +386,7 @@ def test_source(source_id):
             print()
 
 
-# parse source data, return a dict
+# parse source data, return a dict or raise
 def parse_data(worker_id, xml_string):
     try:
         parser = bvars.dataparsers[worker_id]
@@ -395,11 +395,8 @@ def parse_data(worker_id, xml_string):
         # if worker_id doesn't exist, worker_starter will catch the issue.
         return dict()
 
-    try:
-        return parser(xml_string)
-    except:
-        # can't parse the data, return None
-        return None
+    # caller show catch exception for this
+    return parser(xml_string)
 
 # worker function:
 # params: (data_dict, worker_dict)

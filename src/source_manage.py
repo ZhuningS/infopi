@@ -128,10 +128,11 @@ def load_xml(sources_path, path, filename, test_sid):
             raise Exception('信息源错误：worker为空')
 
         # parse data
-        s.data = parse_data(s.worker_id, string)
-        if s.data is None:
-            msg = '解析信息源%s的data失败' % s.source_id
-            raise Exception(msg)
+        try:
+            s.data = parse_data(s.worker_id, string)
+        except:
+            print('解析信息源%s的data失败' % s.source_id)
+            raise
 
     # use father data
     if father:

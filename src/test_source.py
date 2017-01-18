@@ -48,10 +48,10 @@ def find_idle():
 def main():
     show_msg = False
 
-    # test a source
     if len(sys.argv) == 2:
         arg1 = sys.argv[1]
 
+        # test a source
         if ':' in arg1:
             # load sources
             source_manage.load_sources(test_sid=arg1)
@@ -61,7 +61,7 @@ def main():
             else:
                 print('没有加载信息源%s' % arg1)
 
-        # test cfg
+        # test entire cfg
         elif arg1.lower() == 'cfg':
             # global config
             from gconfig import load_config

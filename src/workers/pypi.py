@@ -6,7 +6,7 @@ import xml.etree.ElementTree as ET
 
 from red import *
 
-from worker_manage import worker, dataparser
+from worker_manage import worker, dataparser, c_worker_exception
 
 from fetcher import *
 from datadefine import *

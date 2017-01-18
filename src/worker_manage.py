@@ -398,8 +398,8 @@ def parse_data(worker_id, xml_string):
     try:
         return parser(xml_string)
     except:
-        # can't parse the data, return None
-        return None
+        print('解析worker为%s的信息源时出错' % worker_id)
+        raise
 
 # worker function:
 # params: (data_dict, worker_dict)

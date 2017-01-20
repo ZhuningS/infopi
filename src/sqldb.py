@@ -528,6 +528,8 @@ class c_sqldb_keeper(c_sqldb):
     def callback_remove_from_indexs(self, source_id, iid, fetch_date, suid):
         item = c_keeper_item(iid, source_id, suid, fetch_date)
         p = bisect.bisect_left(self.full_list, item)
+
+        assert item == self.full_list[p], '删除时，c_sqldb_keeper的索引出错'
         del self.full_list[p]
 
         self.cb_remove2(source_id, iid, fetch_date, suid)

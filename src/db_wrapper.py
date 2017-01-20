@@ -468,24 +468,31 @@ class c_db_wrapper:
             if suid != '<exception>' or self.users[user].show_exceptions:
                 for cate in cate_set:
                     index = self.users[user].cate_indexlist_dict[cate]
-
                     p = bisect.bisect_left(index, unit)
+
+                    assert unit == index[p], '删除时，c_db_wrapper的索引出错'
                     del index[p]
 
         # source index
         sindex = self.sources[source_id].index_list
         p = bisect.bisect_left(sindex, unit)
+
+        assert unit == sindex[p], '删除时，c_db_wrapper的索引出错'
         del sindex[p]
 
         # exception index
         if suid == '<exception>':
             sindex = self.exceptions_index
             p = bisect.bisect_left(sindex, unit)
+
+            assert unit == sindex[p], '删除时，c_db_wrapper的索引出错'
             del sindex[p]
 
             for user in ucd.keys():
                 sindex = self.users[user].cate_indexlist_dict[-1]
                 p = bisect.bisect_left(sindex, unit)
+
+                assert unit == sindex[p], '删除时，c_db_wrapper的索引出错'
                 del sindex[p]
 
     # add to indexs
@@ -543,7 +550,7 @@ class c_db_wrapper:
             for s in self.sources.values():
                 sid = s.source_id
                 index = s.index_list
-                
+
                 max_entires = s.max_db if s.max_db is not None else self.cfg.db_process_del_entries
                 if len(index) > max_entires:
                     p = bisect.bisect_left(index, tmp_unit)

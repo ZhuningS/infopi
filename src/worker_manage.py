@@ -24,12 +24,10 @@ class Functions:
     __slots__ = ()
 
     def __setattr__(self, name, value):
-        s = '给funcs.%s的赋值无效，funcs是只读对象。' % name
-        print(s)
-        raise Exception(s)
+        raise Exception('给funcs.%s的赋值无效，funcs是只读对象。' % name)
 
     def __getattribute__(self, name):
-        if name[:2] == "__":
+        if name[:2] == '__':
             raise Exception('请勿访问funcs对象的系统变量: %s' % name)
 
         try:

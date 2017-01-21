@@ -191,7 +191,7 @@ class c_sqldb:
     #  添加info
     #--------------------------
 
-    # 添加单个
+    # 添加单个，调用者可能创建一个事务
     def add_info(self, one):
         # 是否已有suid, source_id？
         sql = ('SELECT id, fetch_date '
@@ -274,7 +274,9 @@ class c_sqldb:
     # return: updated count
     def add_info_list(self, lst_itr):
         # add one by one
+        self.cursor.execute('BEGIN')
         itr = (self.add_info(i) for i in lst_itr)
+        self.conn.commit()
 
         # rows count
         updated = sum(1 for i in itr

@@ -449,7 +449,10 @@ class c_sqldb:
 
         # remove from db
         sql2 = 'DELETE FROM info_tbl WHERE id = ?'
+
+        self.cursor.execute('BEGIN')
         self.cursor.executemany(sql2, ((id,) for _, id, _ in lst[::-1]))
+        self.conn.commit()
 
         if self.cursor.rowcount > 0:
             self.has_changed = True

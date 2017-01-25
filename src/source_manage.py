@@ -18,7 +18,7 @@ class c_source:
     __slots__ = ('source_id',
                  'name', 'comment', 'link',
                  'worker_id', 'data',
-                 'callback',
+                 'callback', 'list_callback',
                  'xml',
                  'max_len', 'max_db')
 
@@ -33,6 +33,7 @@ class c_source:
         self.data = None
 
         self.callback = None
+        self.list_callback = None
 
         self.xml = ''
 
@@ -123,6 +124,10 @@ def load_xml(sources_path, path, filename, test_sid):
     if callback != '':
         s.callback = compile(callback, '<string>', 'exec')
 
+    list_callback = get_text_from_tag(xml.find('list_callback'))
+    if list_callback != '':
+        s.list_callback = compile(list_callback, '<string>', 'exec')
+
     def common_procedure(s, string):
         if s.worker_id == '':
             raise Exception('信息源错误：worker为空')
@@ -152,6 +157,9 @@ def load_xml(sources_path, path, filename, test_sid):
         # callback
         if s.callback is None:
             s.callback = father_s.callback
+
+        if s.list_callback is None:
+            s.list_callback = father_s.list_callback
 
         # father + xml
         s.xml = father_s.xml + string

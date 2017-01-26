@@ -19,15 +19,15 @@ def for_wz(s):
     return s.replace('<', '[').replace('>', ']').replace("'", '"').\
         replace('\n', '').replace('\r', '')
 
+# for funcs.datetime()
+dt_namedtuple = collections.namedtuple('dt', ('year', 'mon', 'day',
+                                              'hour', 'min', 'sec',
+                                              'wday', 'yday', 'isdst'))
+
 
 class Functions:
     '在callback代码里可使用的便利函数，显式抛出异常。'
     __slots__ = ()
-
-    # for funcs.datetime()
-    dt = collections.namedtuple('dt', ('year', 'mon', 'day',
-                                       'hour', 'min', 'sec',
-                                       'wday', 'yday', 'isdst'))
 
     def __setattr__(self, name, value):
         raise Exception('给funcs.%s的赋值无效，funcs是只读对象。' % name)
@@ -84,10 +84,12 @@ class Functions:
     # add in 2017.1.25
     @staticmethod
     def datetime():
+        global dt_namedtuple
+
         t = time.localtime()
-        return Functions.dt(t.tm_year, t.tm_mon, t.tm_mday,
-                            t.tm_hour, t.tm_min, t.tm_sec,
-                            t.tm_wday + 1, t.tm_yday, t.tm_isdst)
+        return dt_namedtuple(t.tm_year, t.tm_mon, t.tm_mday,
+                             t.tm_hour, t.tm_min, t.tm_sec,
+                             t.tm_wday + 1, t.tm_yday, t.tm_isdst)
 
 funcs = Functions()
 

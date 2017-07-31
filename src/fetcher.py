@@ -6,7 +6,6 @@ import time
 import gzip
 import zlib
 import threading
-import random
 from http.cookiejar import CookieJar
 
 # import cchardet or chardet

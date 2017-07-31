@@ -6,6 +6,7 @@ import time
 import gzip
 import zlib
 import threading
+import random
 from http.cookiejar import CookieJar
 
 # import cchardet or chardet
@@ -23,13 +24,18 @@ from worker_manage import c_worker_exception
 #========================================
 #       网络获取
 #========================================
+req_headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate'
+}
 
 
 class FetcherInfo:
 
     def __init__(self):
-        self.ua = ('Mozilla/5.0 (Windows NT 6.1; rv:52.0)'
-                   ' Gecko/20100101 Firefox/52.0')
+        global req_headers
+        self.headers = req_headers
         self.referer = ''
         self.open_timeout = 120
         self.retry_count = 4
@@ -153,8 +159,7 @@ class Fetcher:
         # --------------主体开始-------------
 
         # request对象
-        req = urllib.request.Request(url)
-        req.add_header('User-Agent', self.info.ua)
+        req = urllib.request.Request(url, headers=self.info.headers)
 
         e = None
         # 重试用的循环

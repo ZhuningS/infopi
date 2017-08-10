@@ -105,7 +105,6 @@ class Fetcher:
         if not fetcher_info:
             fetcher_info = FetcherInfo()
 
-        self.referer = fetcher_info.referer
         self.info = fetcher_info
 
         # ============

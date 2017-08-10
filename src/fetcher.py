@@ -33,8 +33,15 @@ req_headers = {
 class FetcherInfo:
 
     def __init__(self):
+        __slots__ = ('headers',
+                     'ua', 'referer',
+                     'open_timeout',
+                     'retry_count', 'retry_interval')
+
         global req_headers
         self.headers = req_headers
+
+        self.ua = ''
         self.referer = ''
         self.open_timeout = 120
         self.retry_count = 4
@@ -158,7 +165,17 @@ class Fetcher:
         # --------------主体开始-------------
 
         # request对象
-        req = urllib.request.Request(url, headers=self.info.headers)
+        if self.info.ua or self.info.referer:
+            # 兼容以前的程序
+            req = urllib.request.Request(url)
+
+            if self.info.ua:
+                req.add_header('User-Agent', self.info.ua)
+            if self.info.referer:
+                req.add_header('Referer', self.info.referer)
+        else:
+            # 使用headers
+            req = urllib.request.Request(url, headers=self.info.headers)
 
         e = None
         # 重试用的循环

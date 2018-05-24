@@ -32,5 +32,3 @@ InfoPi的定位是**个人信息收集服务器**。
 分类查看  
 ![汇总查看](https://raw.githubusercontent.com/animalize/pics/master/infopi/2.PNG)
 
-
-

@@ -78,26 +78,29 @@ def get_info_list(cfg, usertype, show_exceptions,
 
 
 def get_meminfo():
-    with open('/proc/meminfo') as f:
-        lines = f.readlines()
+    d = {'MemTotal': '系统-总内存(MemTotal)',
+         'MemFree': '系统-剩余内存(MemFree)',
+         'MemAvailable': '系统-可用内存(MemAvailable)',
+         'Buffers': '系统-缓冲区内存(Buffers)',
+         'Cached': '系统-缓存内存(Cached)'}
 
     lst = list()
 
-    name, value, other = lines[0].split()
-    one = ('系统-总内存(MemTotal)', '%.1f MB' % (int(value) / 1024))
-    lst.append(one)
+    with open('/proc/meminfo') as f:
+        for i in range(5):
+            line = f.readline()
+            if not line:
+                continue
 
-    name, value, other = lines[1].split()
-    one = ('系统-剩余内存(MemFree)', '%.1f MB' % (int(value) / 1024))
-    lst.append(one)
+            name, value, _ = line.split()
+            name = name.rstrip(':')
 
-    name, value, other = lines[2].split()
-    one = ('系统-缓冲区内存(Buffers)', '%.1f MB' % (int(value) / 1024))
-    lst.append(one)
+            desc = d.get(name)
+            if desc is None:
+                continue
 
-    name, value, other = lines[3].split()
-    one = ('系统-缓存内存(Cached)', '%.1f MB' % (int(value) / 1024))
-    lst.append(one)
+            one = (desc, '%.1f MB' % (int(value) / 1024))
+            lst.append(one)
 
     return lst
 

@@ -77,7 +77,7 @@ class Fetcher:
             cd_confidence = cd_r['confidence']
             cd_encoding = cd_r['encoding']
 
-            if cd_confidence > 0.8:
+            if cd_confidence is not None and cd_confidence > 0.8:
                 ret = Fetcher.lookup_encoding(cd_encoding)
                 print('\n%s\nchardet[encoding:%s, confidence:%.5f]' %
                       (url, ret, cd_confidence)
